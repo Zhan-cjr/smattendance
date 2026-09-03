@@ -26,6 +26,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -58,6 +59,13 @@
             background-color: {{ $t['bg_body'] ?? '#f8fafc' }};
             color: #0f172a;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Mode Global Styles */
+        body.dark, html.dark body {
+            background-color: #070b14 !important;
+            color: #f8fafc !important;
         }
 
         .hero-gradient {
@@ -66,6 +74,11 @@
             border-bottom-right-radius: 36px;
             position: relative;
             box-shadow: 0 14px 35px -8px rgba(15, 118, 110, 0.35);
+        }
+        .dark .hero-gradient {
+            background: linear-gradient(145deg, #022c22 0%, #064e3b 50%, #031a15 100%) !important;
+            box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.8), 0 0 25px rgba(16, 185, 129, 0.15) !important;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.25) !important;
         }
 
         .glass-btn {
@@ -86,6 +99,10 @@
             transform: scale(0.92);
             background: rgba(255, 255, 255, 0.25);
         }
+        .dark .glass-btn {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        }
 
         /* Avatar glow */
         .avatar-ring {
@@ -96,6 +113,10 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.2));
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             position: relative;
+        }
+        .dark .avatar-ring {
+            background: linear-gradient(135deg, #10b981, rgba(255,255,255,0.3)) !important;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35) !important;
         }
 
         .avatar-img {
@@ -121,6 +142,13 @@
             border-radius: 10px;
             background: {{ $t['primary'] ?? '#0f766e' }};
         }
+        .dark .dot {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .dark .dot.active {
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+        }
 
         .carousel-wrapper { width: 100%; overflow: hidden; position: relative; border-radius: 20px; }
         .carousel-track { display: flex; transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
@@ -132,6 +160,12 @@
             border-radius: 24px;
             box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
             border: 1px solid rgba(226, 232, 240, 0.9);
+            transition: all 0.3s ease;
+        }
+        .dark .action-card {
+            background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px rgba(16, 185, 129, 0.08) !important;
         }
 
         /* App icon tiles */
@@ -147,9 +181,17 @@
             border: 1px solid rgba(241, 245, 249, 1);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .dark .app-tile {
+            background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+        }
         .app-tile:active {
             transform: scale(0.93);
             background: #f8fafc;
+        }
+        .dark .app-tile:active {
+            background: #1e293b !important;
         }
 
         .app-icon-box {
@@ -171,7 +213,44 @@
             padding: 12px 14px;
             border: 1px solid #f1f5f9;
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-            transition: transform 0.15s ease;
+            transition: all 0.15s ease;
+        }
+        .dark .presence-card {
+            background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+        }
+        .presence-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Dark Mode High-Contrast Overrides */
+        .dark .bg-white {
+            background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .dark .bg-slate-50 {
+            background-color: #182339 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        .dark .bg-slate-100 {
+            background-color: #1e293b !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        .dark .text-slate-800, .dark .text-slate-900 {
+            color: #f8fafc !important;
+        }
+        .dark .text-slate-700 {
+            color: #e2e8f0 !important;
+        }
+        .dark .text-slate-600 {
+            color: #cbd5e1 !important;
+        }
+        .dark .text-slate-500, .dark .text-slate-400 {
+            color: #94a3b8 !important;
+        }
+        .dark .border-slate-100, .dark .border-slate-200 {
+            border-color: rgba(255, 255, 255, 0.08) !important;
         }
     </style>
 </head>
@@ -186,18 +265,26 @@
         <div class="hero-gradient px-5 pt-6 pb-16 text-white">
             <!-- Top Controls -->
             <div class="flex justify-between items-center mb-4">
-                <a href="{{ route('karyawan-approval.index') }}" class="glass-btn relative">
-                    <ion-icon name="notifications-outline" style="font-size:22px;"></ion-icon>
-                    @if (isset($pendingApprovalCount) && $pendingApprovalCount > 0)
-                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full border-2 border-teal-800 text-[10px] font-extrabold flex items-center justify-center px-1">
-                            {{ $pendingApprovalCount }}
-                        </span>
-                    @endif
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('karyawan-approval.index') }}" class="glass-btn relative">
+                        <ion-icon name="notifications-outline" style="font-size:22px;"></ion-icon>
+                        @if (isset($pendingApprovalCount) && $pendingApprovalCount > 0)
+                            <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full border-2 border-teal-800 text-[10px] font-extrabold flex items-center justify-center px-1">
+                                {{ $pendingApprovalCount }}
+                            </span>
+                        @endif
+                    </a>
+
+                    {{-- Theme Toggle Button (Light/Dark Mode) --}}
+                    <button type="button" onclick="toggleTheme()" class="glass-btn" id="themeToggleBtn" title="Ganti Tema">
+                        <ion-icon name="moon-outline" id="themeIcon" style="font-size:20px;"></ion-icon>
+                    </button>
+                </div>
                 
                 <div class="flex items-center gap-2">
-                    <span class="text-[11px] font-semibold bg-white/15 px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
-                        {{ $karyawan->nama_cabang ?? 'Pusat' }}
+                    <span class="text-[11px] font-semibold bg-white/15 px-3 py-1 rounded-full backdrop-blur-md border border-white/20 flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-[10px] text-emerald-300"></i>
+                        <span>{{ $karyawan->nama_cabang ?? 'Pusat' }}</span>
                     </span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -208,18 +295,17 @@
                 </div>
             </div>
 
-            <!-- Profile Info -->
+            <!-- Profile Info & Greeting -->
             <div class="flex items-center justify-between mb-4">
                 <div class="flex-1 min-w-0 pr-3">
-                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-white/90 text-[11px] font-medium mb-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>{{ $karyawan->nama_jabatan }}</span>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-white text-[11px] font-semibold mb-1.5 backdrop-blur-sm border border-white/10">
+                        <span>{{ $greeting ?? 'Selamat Beraktivitas 👋' }}</span>
                     </div>
                     <h3 class="text-xl font-bold text-white truncate leading-tight">
-                        {{ $karyawan->nama_karyawan }} 👋
+                        {{ $karyawan->nama_karyawan }}
                     </h3>
                     <p class="text-xs text-white/70 truncate mt-0.5">
-                        NIK: {{ $karyawan->nik }} &bull; Dept: {{ $karyawan->nama_dept }}
+                        {{ $karyawan->nama_jabatan }} &bull; {{ $karyawan->nama_dept }}
                     </p>
                 </div>
 
@@ -241,43 +327,105 @@
                     <ion-icon name="calendar-outline"></ion-icon>
                     <span>{{ getNamaHari(date('D')) }}, {{ DateToIndo(date('Y-m-d')) }}</span>
                 </div>
+                
+                {{-- Today Scheduled Shift Chip --}}
+                <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/20 backdrop-blur-md text-[11px] font-medium text-emerald-200 border border-white/10">
+                    <i class="fa-solid fa-clock text-emerald-300"></i>
+                    @if ($jam_kerja_hari_ini)
+                        <span>Shift Hari Ini:</span>
+                        <strong class="text-white">{{ $jam_kerja_hari_ini->nama_jam_kerja }} ({{ date('H:i', strtotime($jam_kerja_hari_ini->jam_masuk)) }} - {{ date('H:i', strtotime($jam_kerja_hari_ini->jam_pulang)) }})</strong>
+                    @else
+                        <span class="text-white/90">Pilih Shift saat Absen Masuk</span>
+                    @endif
+                </div>
             </div>
         </div>
 
         {{-- ===== FLOATING ATTENDANCE ACTION CARD ===== --}}
         <div class="px-4 -mt-10 relative z-20">
             <div class="action-card p-4">
-                <!-- Status Badge -->
-                <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                <!-- Status Badge & Smart Action Button -->
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800">
                     <div>
                         <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Status Hari Ini</span>
                         @if (!empty($presensi->jam_out))
-                            <span class="text-xs font-bold text-blue-600 flex items-center gap-1 mt-0.5">
-                                <i class="fa-solid fa-circle-check text-[10px]"></i> Selesai Bekerja (Pulang)
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                Selesai Bekerja (Pulang)
                             </span>
                         @elseif (!empty($presensi->jam_in))
-                            <span class="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-0.5">
-                                <i class="fa-solid fa-circle-check text-[10px]"></i> Sudah Masuk Kerja
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Sedang Bekerja
                             </span>
                         @else
-                            <span class="text-xs font-bold text-amber-500 flex items-center gap-1 mt-0.5">
-                                <i class="fa-solid fa-clock text-[10px]"></i> Belum Melakukan Presensi
+                            <span class="text-xs font-bold text-amber-500 dark:text-amber-400 flex items-center gap-1.5 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                Belum Melakukan Presensi
                             </span>
                         @endif
                     </div>
 
-                    <a href="/presensi/create" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white shadow-md active:scale-95 transition-all"
-                       style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%);">
-                        <ion-icon name="finger-print" style="font-size:16px;"></ion-icon>
-                        <span>Absen Sekarang</span>
-                    </a>
+                    <!-- Dynamic Action Button -->
+                    @if (empty($presensi->jam_in))
+                        <a href="/presensi/create" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white shadow-md active:scale-95 transition-all"
+                           style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                            <ion-icon name="finger-print" style="font-size:16px;"></ion-icon>
+                            <span>Absen Masuk</span>
+                        </a>
+                    @elseif (empty($presensi->jam_out))
+                        <a href="/presensi/create" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white shadow-md active:scale-95 transition-all"
+                           style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);">
+                            <ion-icon name="log-out-outline" style="font-size:16px;"></ion-icon>
+                            <span>Absen Pulang</span>
+                        </a>
+                    @else
+                        <div class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                            <i class="fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400"></i>
+                            <span>Selesai</span>
+                        </div>
+                    @endif
                 </div>
+
+                <!-- Realtime GPS Office Radius Indicator -->
+                <div id="gpsStatusContainer" class="mb-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between transition-all">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <div id="gpsIconBox" class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-location-crosshairs animate-spin"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[10px] text-slate-400 dark:text-slate-400 font-bold uppercase block leading-tight">Status Radius GPS Kantor</span>
+                            <span id="gpsStatusText" class="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate block">
+                                Mendeteksi jangkauan lokasi...
+                            </span>
+                        </div>
+                    </div>
+                    <span id="gpsBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 shrink-0">
+                        GPS
+                    </span>
+                </div>
+
+                <!-- Live Work Duration Timer (Only when Clocked In & Not Clocked Out) -->
+                @if (!empty($presensi->jam_in) && empty($presensi->jam_out))
+                    <div class="mb-3 p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800/50 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-stopwatch animate-pulse"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-emerald-700 dark:text-emerald-300 font-medium block">Durasi Kerja Berjalan</span>
+                                <span id="liveWorkDuration" class="text-xs font-extrabold text-emerald-900 dark:text-emerald-200 tracking-wider">Menghitung...</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200/60 dark:bg-emerald-800/60 text-emerald-800 dark:text-emerald-200">Aktif</span>
+                    </div>
+                @endif
 
                 <!-- Jam In & Jam Out Details -->
                 <div class="grid grid-cols-2 gap-3">
                     <!-- Jam Masuk -->
-                    <div class="bg-slate-50 p-2.5 rounded-2xl flex items-center gap-2.5 border border-slate-100">
-                        <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative group">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-2xl flex items-center gap-2.5 border border-slate-100 dark:border-slate-800">
+                        <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center shrink-0 overflow-hidden relative group">
                             @if (!empty($presensi->foto_in) && Storage::disk('public')->exists('/uploads/absensi/' . $presensi->foto_in))
                                 <img src="{{ url('/storage/uploads/absensi/' . $presensi->foto_in) }}" class="w-full h-full object-cover">
                                 <a href="{{ url('/storage/uploads/absensi/' . $presensi->foto_in) }}" download class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -289,15 +437,15 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] font-bold text-slate-400 uppercase block">Jam Masuk</span>
-                            <span class="text-sm font-extrabold text-slate-800 tracking-wide">
+                            <span class="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-wide">
                                 {{ !empty($presensi->jam_in) ? date('H:i', strtotime($presensi->jam_in)) : '--:--' }}
                             </span>
                         </div>
                     </div>
 
                     <!-- Jam Pulang -->
-                    <div class="bg-slate-50 p-2.5 rounded-2xl flex items-center gap-2.5 border border-slate-100">
-                        <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative group">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-2xl flex items-center gap-2.5 border border-slate-100 dark:border-slate-800">
+                        <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center shrink-0 overflow-hidden relative group">
                             @if (!empty($presensi->foto_out) && Storage::disk('public')->exists('/uploads/absensi/' . $presensi->foto_out))
                                 <img src="{{ url('/storage/uploads/absensi/' . $presensi->foto_out) }}" class="w-full h-full object-cover">
                                 <a href="{{ url('/storage/uploads/absensi/' . $presensi->foto_out) }}" download class="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -309,7 +457,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-[10px] font-bold text-slate-400 uppercase block">Jam Pulang</span>
-                            <span class="text-sm font-extrabold text-slate-800 tracking-wide">
+                            <span class="text-sm font-extrabold text-slate-800 dark:text-slate-100 tracking-wide">
                                 {{ !empty($presensi->jam_out) ? date('H:i', strtotime($presensi->jam_out)) : '--:--' }}
                             </span>
                         </div>
@@ -332,19 +480,19 @@
                     <div class="carousel-track">
                         @foreach ($activeAlerts as $type)
                             @if($type == 'pengumuman')
-                                <a href="{{ route('pengumuman.show', Crypt::encrypt($pengumuman->id)) }}" class="alert-slide block p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-decoration-none hover:bg-sky-100/60 active:scale-[0.99] transition-all">
+                                <a href="{{ route('pengumuman.show', Crypt::encrypt($pengumuman->id)) }}" class="alert-slide block p-3.5 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-decoration-none hover:bg-sky-100/60 active:scale-[0.99] transition-all">
                                     <div class="flex items-start gap-3">
-                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-sky-100 text-sky-600">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-sky-100 dark:bg-sky-900/60 text-sky-600 dark:text-sky-300">
                                             <i class="fa-solid fa-bullhorn text-base"></i>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center justify-between gap-1">
-                                                <h5 class="text-xs font-bold text-sky-900 truncate">{{ $pengumuman->judul }}</h5>
-                                                <span class="text-[10px] text-sky-500 font-medium shrink-0">{{ \Carbon\Carbon::parse($pengumuman->created_at)->translatedFormat('d M Y') }}</span>
+                                                <h5 class="text-xs font-bold text-sky-900 dark:text-sky-200 truncate">{{ $pengumuman->judul }}</h5>
+                                                <span class="text-[10px] text-sky-500 dark:text-sky-400 font-medium shrink-0">{{ \Carbon\Carbon::parse($pengumuman->created_at)->translatedFormat('d M Y') }}</span>
                                             </div>
-                                            <div class="text-[11px] text-sky-700 mt-1 line-clamp-2 leading-snug">{!! strip_tags($pengumuman->isi) !!}</div>
+                                            <div class="text-[11px] text-sky-700 dark:text-sky-300 mt-1 line-clamp-2 leading-snug">{!! strip_tags($pengumuman->isi) !!}</div>
                                             <div class="mt-2 flex items-center justify-end">
-                                                <span class="text-[11px] font-bold text-sky-800 flex items-center gap-1 hover:underline">
+                                                <span class="text-[11px] font-bold text-sky-800 dark:text-sky-300 flex items-center gap-1 hover:underline">
                                                     <span>Baca Selengkapnya</span>
                                                     <i class="fa-solid fa-chevron-right text-[9px]"></i>
                                                 </span>
@@ -353,18 +501,18 @@
                                     </div>
                                 </a>
                             @elseif($type == 'kontrak')
-                                <a href="{{ route('kontrak.index') }}" class="alert-slide block p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-decoration-none hover:bg-amber-100/60 active:scale-[0.99] transition-all">
+                                <a href="{{ route('kontrak.index') }}" class="alert-slide block p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-decoration-none hover:bg-amber-100/60 active:scale-[0.99] transition-all">
                                     <div class="flex items-start gap-3">
-                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-100 text-amber-600">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-300">
                                             <i class="fa-solid fa-file-contract text-base"></i>
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <h5 class="text-xs font-bold text-amber-900">Masa Kontrak Berakhir Segera</h5>
-                                            <p class="text-[11px] text-amber-700 mt-0.5 leading-snug">
+                                            <h5 class="text-xs font-bold text-amber-900 dark:text-amber-200">Masa Kontrak Berakhir Segera</h5>
+                                            <p class="text-[11px] text-amber-700 dark:text-amber-300 mt-0.5 leading-snug">
                                                 Sisa masa kontrak: <strong>{{ $notif_kontrak['sisa_hari'] }} hari</strong> (Selesai: {{ $notif_kontrak['tanggal_akhir'] }}).
                                             </p>
                                             <div class="mt-2 flex items-center justify-end">
-                                                <span class="text-[11px] font-bold text-amber-800 flex items-center gap-1 hover:underline">
+                                                <span class="text-[11px] font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1 hover:underline">
                                                     <span>Lihat Detail Kontrak</span>
                                                     <i class="fa-solid fa-chevron-right text-[9px]"></i>
                                                 </span>
@@ -373,18 +521,18 @@
                                     </div>
                                 </a>
                             @elseif($type == 'sp')
-                                <a href="{{ route('pelanggaran.index') }}" class="alert-slide block p-3.5 rounded-2xl bg-red-50 border border-red-200 text-decoration-none hover:bg-red-100/60 active:scale-[0.99] transition-all">
+                                <a href="{{ route('pelanggaran.index') }}" class="alert-slide block p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-decoration-none hover:bg-red-100/60 active:scale-[0.99] transition-all">
                                     <div class="flex items-start gap-3">
-                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-red-100 text-red-600">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-300">
                                             <i class="fa-solid fa-triangle-exclamation text-base"></i>
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <h5 class="text-xs font-bold text-red-900">Peringatan Disiplin Aktif</h5>
-                                            <p class="text-[11px] text-red-700 mt-0.5 leading-snug">
+                                            <h5 class="text-xs font-bold text-red-900 dark:text-red-200">Peringatan Disiplin Aktif</h5>
+                                            <p class="text-[11px] text-red-700 dark:text-red-300 mt-0.5 leading-snug">
                                                 {{ $notif_sp->jenis_sp }} s/d {{ \Carbon\Carbon::parse($notif_sp->sampai)->translatedFormat('d M Y') }}.
                                             </p>
                                             <div class="mt-2 flex items-center justify-end">
-                                                <span class="text-[11px] font-bold text-red-800 flex items-center gap-1 hover:underline">
+                                                <span class="text-[11px] font-bold text-red-800 dark:text-red-300 flex items-center gap-1 hover:underline">
                                                     <span>Lihat Surat Peringatan</span>
                                                     <i class="fa-solid fa-chevron-right text-[9px]"></i>
                                                 </span>
@@ -407,48 +555,51 @@
             </div>
         @endif
 
-        {{-- ===== BENTO MONTHLY RECAP ===== --}}
+        {{-- ===== BENTO MONTHLY RECAP WITH ATTENDANCE RATE ===== --}}
         <div class="px-4 mt-4">
-            <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Rekap Bulan {{ $bulan_skrg }}</h4>
-                        <span class="text-[10px] text-slate-400">Total akumulasi presensi Anda</span>
+                        <h4 class="text-xs font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-wider">Rekap Bulan {{ $bulan_skrg }}</h4>
+                        <span class="text-[10px] text-slate-400">Akumulasi performa kehadiran Anda</span>
                     </div>
-                    <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-                        {{ date('H:i') }} WIB
-                    </span>
+                    @if (isset($attendance_rate))
+                        <span class="text-[10px] font-extrabold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <i class="fa-solid fa-chart-line text-[9px]"></i>
+                            <span>{{ $attendance_rate }}% Hadir</span>
+                        </span>
+                    @endif
                 </div>
 
                 <div class="grid grid-cols-5 gap-2 text-center">
                     <!-- Hadir -->
-                    <div class="bg-teal-50/70 p-2.5 rounded-2xl border border-teal-100/50">
-                        <span class="text-lg font-black text-teal-700 block leading-tight">{{ $rekappresensi->hadir ?? 0 }}</span>
-                        <span class="text-[10px] font-bold text-teal-600 block mt-0.5">Hadir</span>
+                    <div class="bg-teal-50/70 dark:bg-emerald-500/10 p-2.5 rounded-2xl border border-teal-100/50 dark:border-emerald-500/30">
+                        <span class="text-lg font-black text-teal-700 dark:text-emerald-400 block leading-tight">{{ $rekappresensi->hadir ?? 0 }}</span>
+                        <span class="text-[10px] font-bold text-teal-600 dark:text-emerald-300 block mt-0.5">Hadir</span>
                     </div>
 
                     <!-- Lembur -->
-                    <div class="bg-emerald-50/70 p-2.5 rounded-2xl border border-emerald-100/50">
-                        <span class="text-lg font-black text-emerald-700 block leading-tight">{{ $rekappresensi->lembur ?? 0 }}</span>
-                        <span class="text-[10px] font-bold text-emerald-600 block mt-0.5">Lembur</span>
+                    <div class="bg-emerald-50/70 dark:bg-teal-500/10 p-2.5 rounded-2xl border border-emerald-100/50 dark:border-teal-500/30">
+                        <span class="text-lg font-black text-emerald-700 dark:text-teal-400 block leading-tight">{{ $rekappresensi->lembur ?? 0 }}</span>
+                        <span class="text-[10px] font-bold text-emerald-600 dark:text-teal-300 block mt-0.5">Lembur</span>
                     </div>
 
                     <!-- Sakit -->
-                    <div class="bg-amber-50/70 p-2.5 rounded-2xl border border-amber-100/50">
-                        <span class="text-lg font-black text-amber-700 block leading-tight">{{ $rekappresensi->sakit ?? 0 }}</span>
-                        <span class="text-[10px] font-bold text-amber-600 block mt-0.5">Sakit</span>
+                    <div class="bg-amber-50/70 dark:bg-amber-500/10 p-2.5 rounded-2xl border border-amber-100/50 dark:border-amber-500/30">
+                        <span class="text-lg font-black text-amber-700 dark:text-amber-400 block leading-tight">{{ $rekappresensi->sakit ?? 0 }}</span>
+                        <span class="text-[10px] font-bold text-amber-600 dark:text-amber-300 block mt-0.5">Sakit</span>
                     </div>
 
                     <!-- Izin -->
-                    <div class="bg-sky-50/70 p-2.5 rounded-2xl border border-sky-100/50">
-                        <span class="text-lg font-black text-sky-700 block leading-tight">{{ $rekappresensi->izin ?? 0 }}</span>
-                        <span class="text-[10px] font-bold text-sky-600 block mt-0.5">Izin</span>
+                    <div class="bg-sky-50/70 dark:bg-sky-500/10 p-2.5 rounded-2xl border border-sky-100/50 dark:border-sky-500/30">
+                        <span class="text-lg font-black text-sky-700 dark:text-sky-400 block leading-tight">{{ $rekappresensi->izin ?? 0 }}</span>
+                        <span class="text-[10px] font-bold text-sky-600 dark:text-sky-300 block mt-0.5">Izin</span>
                     </div>
 
                     <!-- Cuti -->
-                    <div class="bg-purple-50/70 p-2.5 rounded-2xl border border-purple-100/50">
-                        <span class="text-lg font-black text-purple-700 block leading-tight">{{ $rekappresensi->cuti ?? 0 }}</span>
-                        <span class="text-[10px] font-bold text-purple-600 block mt-0.5">Cuti</span>
+                    <div class="bg-purple-50/70 dark:bg-purple-500/10 p-2.5 rounded-2xl border border-purple-100/50 dark:border-purple-500/30">
+                        <span class="text-lg font-black text-purple-700 dark:text-purple-400 block leading-tight">{{ $rekappresensi->cuti ?? 0 }}</span>
+                        <span class="text-[10px] font-bold text-purple-600 dark:text-purple-300 block mt-0.5">Cuti</span>
                     </div>
                 </div>
             </div>
@@ -459,79 +610,79 @@
             <div class="grid grid-cols-4 gap-2.5">
                 <!-- 1. ID Card -->
                 <a href="{{ route('karyawan.idcard', Crypt::encrypt($karyawan->nik)) }}" class="app-tile">
-                    <div class="app-icon-box bg-blue-50 text-blue-600">
+                    <div class="app-icon-box bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-transparent dark:border-blue-500/25">
                         <i class="fa-solid fa-id-card"></i>
                     </div>
-                    <span class="text-[11px] font-semibold text-slate-700">ID Card</span>
+                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">ID Card</span>
                 </a>
 
                 <!-- 2. Istirahat / Kontrak -->
                 @if ($general_setting->absen_istirahat == 1)
                     <a href="{{ route('presensiistirahat.create') }}" class="app-tile">
-                        <div class="app-icon-box bg-amber-50 text-amber-600">
+                        <div class="app-icon-box bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-transparent dark:border-amber-500/25">
                             <i class="fa-solid fa-mug-hot"></i>
                         </div>
-                        <span class="text-[11px] font-semibold text-slate-700">Istirahat</span>
+                        <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Istirahat</span>
                     </a>
                 @else
                     <a href="{{ route('kontrak.index') }}" class="app-tile">
-                        <div class="app-icon-box bg-amber-50 text-amber-600">
+                        <div class="app-icon-box bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-transparent dark:border-amber-500/25">
                             <i class="fa-solid fa-file-contract"></i>
                         </div>
-                        <span class="text-[11px] font-semibold text-slate-700">Kontrak</span>
+                        <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Kontrak</span>
                     </a>
                 @endif
 
                 <!-- 3. Lembur -->
                 <a href="{{ route('presensiistirahatlembur.create') }}" class="app-tile">
-                    <div class="app-icon-box bg-emerald-50 text-emerald-600">
+                    <div class="app-icon-box bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-transparent dark:border-emerald-500/25">
                         <i class="fa-solid fa-business-time"></i>
                     </div>
-                    <span class="text-[11px] font-semibold text-slate-700">Lembur</span>
+                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Lembur</span>
                 </a>
 
                 <!-- 4. Slip Gaji -->
                 <a href="{{ route('slipgaji.index') }}" class="app-tile">
-                    <div class="app-icon-box bg-teal-50 text-teal-600">
+                    <div class="app-icon-box bg-teal-50 dark:bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-transparent dark:border-teal-500/25">
                         <i class="fa-solid fa-receipt"></i>
                     </div>
-                    <span class="text-[11px] font-semibold text-slate-700">Slip Gaji</span>
+                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Slip Gaji</span>
                 </a>
 
                 <!-- 5. Aktivitas -->
                 @can('aktivitaskaryawan.index')
                     <a href="{{ route('aktivitaskaryawan.index') }}" class="app-tile">
-                        <div class="app-icon-box bg-indigo-50 text-indigo-600">
+                        <div class="app-icon-box bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-transparent dark:border-indigo-500/25">
                             <i class="fa-solid fa-list-check"></i>
                         </div>
-                        <span class="text-[11px] font-semibold text-slate-700">Aktivitas</span>
+                        <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Aktivitas</span>
                     </a>
                 @endcan
 
                 <!-- 6. Visit / Kunjungan -->
                 @can('kunjungan.index')
                     <a href="{{ route('kunjungan.index') }}" class="app-tile">
-                        <div class="app-icon-box bg-rose-50 text-rose-600">
+                        <div class="app-icon-box bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-transparent dark:border-rose-500/25">
                             <i class="fa-solid fa-map-location-dot"></i>
                         </div>
-                        <span class="text-[11px] font-semibold text-slate-700">Visit</span>
+                        <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Visit</span>
                     </a>
                 @endcan
 
                 <!-- 7. Scan Wajah -->
                 <a href="javascript:void(0)" id="btnDaftarkanWajah" class="app-tile">
-                    <div class="app-icon-box bg-purple-50 text-purple-600">
+                    <div class="app-icon-box bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-transparent dark:border-purple-500/25">
                         <i class="fa-solid fa-user-astronaut"></i>
                     </div>
-                    <span class="text-[11px] font-semibold text-slate-700">Wajah</span>
+                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Wajah</span>
                 </a>
 
                 <!-- 8. Lainnya -->
                 <a href="{{ route('shortcut.index') }}" class="app-tile">
-                    <div class="app-icon-box bg-slate-100 text-slate-700">
+                    <div class="app-icon-box bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 border border-transparent dark:border-slate-600/30">
                         <i class="fa-solid fa-ellipsis"></i>
                     </div>
-                    <span class="text-[11px] font-semibold text-slate-700">Lainnya</span>
+                    <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Lainnya</span>
                 </a>
             </div>
         </div>
@@ -539,12 +690,12 @@
         {{-- ===== ATTENDANCE HISTORY TABS ===== --}}
         <div class="px-4 mt-5">
             <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-extrabold text-slate-800">Riwayat Kehadiran</h4>
-                <div class="flex p-1 bg-slate-200/70 rounded-full text-xs font-semibold">
-                    <button id="tabPresensi" onclick="switchTab('presensi')" class="px-3 py-1 rounded-full bg-white text-slate-800 shadow-sm transition-all">
+                <h4 class="text-sm font-extrabold text-slate-800 dark:text-slate-100">Riwayat Kehadiran</h4>
+                <div class="flex p-1 bg-slate-200/70 dark:bg-slate-800 rounded-full text-xs font-semibold">
+                    <button id="tabPresensi" onclick="switchTab('presensi')" class="px-3 py-1 rounded-full bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm transition-all">
                         Presensi
                     </button>
-                    <button id="tabLembur" onclick="switchTab('lembur')" class="px-3 py-1 rounded-full text-slate-500 transition-all">
+                    <button id="tabLembur" onclick="switchTab('lembur')" class="px-3 py-1 rounded-full text-slate-500 dark:text-slate-400 transition-all">
                         Lembur
                     </button>
                 </div>
@@ -560,60 +711,79 @@
                         $day_short = strtoupper(substr($day_indo, 0, 3));
                         $tgl = date('d', strtotime($d->tanggal));
 
-                        $statusBadgeClass = 'bg-teal-50 text-teal-700 border-teal-200';
+                        $statusBadgeClass = 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800';
                         $statusText = 'Hadir';
-                        if ($d->status == 'i') { $statusBadgeClass = 'bg-sky-50 text-sky-700 border-sky-200'; $statusText = 'Izin'; }
-                        elseif ($d->status == 's') { $statusBadgeClass = 'bg-amber-50 text-amber-700 border-amber-200'; $statusText = 'Sakit'; }
-                        elseif ($d->status == 'c') { $statusBadgeClass = 'bg-purple-50 text-purple-700 border-purple-200'; $statusText = 'Cuti'; }
-                        elseif ($d->status == 'a') { $statusBadgeClass = 'bg-red-50 text-red-700 border-red-200'; $statusText = 'Alpha'; }
+                        if ($d->status == 'i') { $statusBadgeClass = 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'; $statusText = 'Izin'; }
+                        elseif ($d->status == 's') { $statusBadgeClass = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'; $statusText = 'Sakit'; }
+                        elseif ($d->status == 'c') { $statusBadgeClass = 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'; $statusText = 'Cuti'; }
+                        elseif ($d->status == 'a') { $statusBadgeClass = 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800'; $statusText = 'Alpha'; }
                     @endphp
 
-                    <div class="presence-card flex items-center gap-3">
+                    <div class="presence-card flex items-center gap-3 cursor-pointer"
+                         onclick="showPresensiDetail('{{ $d->tanggal }}', '{{ DateToIndo($d->tanggal) }}', '{{ $d->nama_jam_kerja ?? '-' }}', '{{ $d->jam_in ? date('H:i', strtotime($d->jam_in)) : '-' }}', '{{ $d->jam_out ? date('H:i', strtotime($d->jam_out)) : '-' }}', '{{ $d->jam_masuk ? date('H:i', strtotime($d->jam_masuk)) : '-' }}', '{{ $d->jam_pulang ? date('H:i', strtotime($d->jam_pulang)) : '-' }}', '{{ $statusText }}', '{{ $d->keterangan_izin ?? $d->keterangan_izin_sakit ?? $d->keterangan_izin_cuti ?? '' }}', '{{ !empty($d->foto_in) ? url('/storage/uploads/absensi/' . $d->foto_in) : '' }}', '{{ !empty($d->foto_out) ? url('/storage/uploads/absensi/' . $d->foto_out) : '' }}')">
                         <!-- Date Badge -->
-                        <div class="w-12 h-12 rounded-2xl bg-slate-100 flex flex-col items-center justify-center shrink-0 border border-slate-200/60">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase leading-none">{{ $day_short }}</span>
-                            <span class="text-base font-extrabold text-slate-800 leading-none mt-0.5">{{ $tgl }}</span>
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center shrink-0 border border-slate-200/60 dark:border-slate-700">
+                            <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase leading-none">{{ $day_short }}</span>
+                            <span class="text-base font-extrabold text-slate-800 dark:text-slate-100 leading-none mt-0.5">{{ $tgl }}</span>
                         </div>
 
                         <!-- Info -->
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between gap-1">
-                                <h5 class="text-xs font-bold text-slate-800 truncate">{{ DateToIndo($d->tanggal) }}</h5>
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ DateToIndo($d->tanggal) }}</h5>
+                                </div>
                                 <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full border {{ $statusBadgeClass }}">
                                     {{ $statusText }}
                                 </span>
                             </div>
 
+                            @if (!empty($d->nama_jam_kerja))
+                                <div class="flex items-center gap-1 mt-0.5">
+                                    <span class="inline-flex items-center text-[9.5px] font-bold px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+                                        <i class="fa-solid fa-clock mr-1 text-[8.5px] text-blue-500"></i>
+                                        {{ $d->nama_jam_kerja }}
+                                        @if (!empty($d->jam_masuk) && !empty($d->jam_pulang))
+                                            <span class="font-medium text-blue-500 dark:text-blue-400 ml-1">({{ date('H:i', strtotime($d->jam_masuk)) }} - {{ date('H:i', strtotime($d->jam_pulang)) }})</span>
+                                        @endif
+                                    </span>
+                                </div>
+                            @endif
+
                             @if ($d->status == 'h')
                                 @php
                                     $jam_in_ts = strtotime($d->jam_in);
-                                    $jam_masuk_ts = strtotime($d->tanggal . ' ' . $d->jam_masuk);
-                                    $is_late = $jam_in_ts > $jam_masuk_ts;
+                                    $jam_masuk_ts = !empty($d->jam_masuk) ? strtotime($d->tanggal . ' ' . $d->jam_masuk) : null;
+                                    $is_late = ($jam_masuk_ts && $jam_in_ts > $jam_masuk_ts);
                                 @endphp
                                 <div class="flex items-center justify-between mt-1 text-[11px]">
-                                    <span class="font-bold text-slate-700">
+                                    <span class="font-bold text-slate-700 dark:text-slate-300">
                                         {{ $d->jam_in ? date('H:i', strtotime($d->jam_in)) : '--:--' }} - {{ $d->jam_out ? date('H:i', strtotime($d->jam_out)) : '--:--' }}
                                     </span>
                                     @if ($is_late)
-                                        <span class="text-red-500 font-bold text-[10px]">Terlambat</span>
+                                        <span class="text-red-500 font-bold text-[10px] flex items-center gap-0.5">
+                                            <i class="fa-solid fa-circle-exclamation text-[9px]"></i> Terlambat
+                                        </span>
                                     @else
-                                        <span class="text-teal-600 font-bold text-[10px]">Tepat Waktu</span>
+                                        <span class="text-teal-600 dark:text-teal-400 font-bold text-[10px] flex items-center gap-0.5">
+                                            <i class="fa-solid fa-circle-check text-[9px]"></i> Tepat Waktu
+                                        </span>
                                     @endif
                                 </div>
                             @elseif ($d->status == 'i')
-                                <p class="text-[11px] text-sky-600 truncate mt-0.5">Izin: {{ $d->keterangan_izin }}</p>
+                                <p class="text-[11px] text-sky-600 dark:text-sky-400 truncate mt-0.5">Izin: {{ $d->keterangan_izin }}</p>
                             @elseif ($d->status == 's')
-                                <p class="text-[11px] text-amber-600 truncate mt-0.5">Sakit: {{ $d->keterangan_izin_sakit }}</p>
+                                <p class="text-[11px] text-amber-600 dark:text-amber-400 truncate mt-0.5">Sakit: {{ $d->keterangan_izin_sakit }}</p>
                             @elseif ($d->status == 'c')
-                                <p class="text-[11px] text-purple-600 truncate mt-0.5">Cuti: {{ $d->keterangan_izin_cuti }}</p>
+                                <p class="text-[11px] text-purple-600 dark:text-purple-400 truncate mt-0.5">Cuti: {{ $d->keterangan_izin_cuti }}</p>
                             @else
-                                <p class="text-[11px] text-red-600 truncate mt-0.5">Alpha / Tanpa Keterangan</p>
+                                <p class="text-[11px] text-red-600 dark:text-red-400 truncate mt-0.5">Alpha / Tanpa Keterangan</p>
                             @endif
                         </div>
                     </div>
                 @empty
                     <div class="text-center py-8 text-slate-400 text-xs">
-                        <i class="fa-solid fa-calendar-xmark text-2xl mb-1 text-slate-300 block"></i>
+                        <i class="fa-solid fa-calendar-xmark text-2xl mb-1 text-slate-300 dark:text-slate-600 block"></i>
                         Belum ada riwayat presensi di bulan ini.
                     </div>
                 @endforelse
@@ -627,26 +797,79 @@
                         $day_short = strtoupper(date('D', strtotime($d->tanggal)));
                     @endphp
                     <div class="presence-card flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex flex-col items-center justify-center shrink-0 border border-emerald-100">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex flex-col items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-800">
                             <span class="text-[9px] font-bold uppercase leading-none">{{ $day_short }}</span>
                             <span class="text-base font-extrabold leading-none mt-0.5">{{ $tgl }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between">
-                                <h5 class="text-xs font-bold text-slate-800">{{ DateToIndo($d->tanggal) }}</h5>
-                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Lembur</span>
+                                <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ DateToIndo($d->tanggal) }}</h5>
+                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">Lembur</span>
                             </div>
-                            <div class="text-[11px] font-semibold text-slate-600 mt-1">
+                            @if (!empty($d->nama_jam_kerja))
+                                <div class="flex items-center gap-1 mt-0.5">
+                                    <span class="inline-flex items-center text-[9.5px] font-bold px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+                                        <i class="fa-solid fa-clock mr-1 text-[8.5px] text-blue-500"></i>
+                                        {{ $d->nama_jam_kerja }}
+                                    </span>
+                                </div>
+                            @endif
+                            <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 mt-1">
                                 {{ $d->jam_in ? date('H:i', strtotime($d->jam_in)) : '--:--' }} s/d {{ $d->jam_out ? date('H:i', strtotime($d->jam_out)) : '--:--' }}
                             </div>
                         </div>
                     </div>
                 @empty
                     <div class="text-center py-8 text-slate-400 text-xs">
-                        <i class="fa-solid fa-business-time text-2xl mb-1 text-slate-300 block"></i>
+                        <i class="fa-solid fa-business-time text-2xl mb-1 text-slate-300 dark:text-slate-600 block"></i>
                         Belum ada data lembur di bulan ini.
                     </div>
                 @endforelse
+            </div>
+        </div>
+
+        {{-- ===== BOTTOM SHEET MODAL DETAIL PRESENSI ===== --}}
+        <div id="detailPresensiModal" class="fixed inset-0 z-[999] flex items-end justify-center p-0" style="display:none;">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-xs" onclick="hidePresensiDetail()"></div>
+            <div class="relative bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[32px] overflow-hidden shadow-2xl p-5 z-10 animate-slide-up max-h-[85vh] overflow-y-auto border-t border-slate-200 dark:border-slate-800">
+                <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4"></div>
+                
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <div>
+                        <h4 id="detailTanggal" class="text-sm font-extrabold text-slate-800 dark:text-slate-100">-</h4>
+                        <span id="detailShift" class="text-xs text-blue-600 dark:text-blue-400 font-semibold block mt-0.5">-</span>
+                    </div>
+                    <span id="detailStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                        Hadir
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 my-4">
+                    <div class="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase block">Jam Masuk</span>
+                        <span id="detailJamIn" class="text-base font-extrabold text-slate-800 dark:text-slate-100 tracking-wide mt-0.5 block">-</span>
+                        <div id="detailFotoInContainer" class="mt-2 w-full h-24 rounded-xl bg-slate-200 dark:bg-slate-700 overflow-hidden hidden">
+                            <img id="detailFotoIn" src="" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-100 dark:border-slate-700 text-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase block">Jam Pulang</span>
+                        <span id="detailJamOut" class="text-base font-extrabold text-slate-800 dark:text-slate-100 tracking-wide mt-0.5 block">-</span>
+                        <div id="detailFotoOutContainer" class="mt-2 w-full h-24 rounded-xl bg-slate-200 dark:bg-slate-700 overflow-hidden hidden">
+                            <img id="detailFotoOut" src="" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="detailKeteranganContainer" class="mb-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 text-xs hidden">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Catatan / Keterangan:</span>
+                    <p id="detailKeterangan" class="text-slate-700 dark:text-slate-300 font-medium leading-relaxed"></p>
+                </div>
+
+                <button onclick="hidePresensiDetail()" class="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-700 dark:text-slate-300 active:scale-95 transition-all text-xs">
+                    Tutup
+                </button>
             </div>
         </div>
 
@@ -675,8 +898,8 @@
         @endif
 
         {{-- ===== DEVELOPER FOOTER ===== --}}
-        <div class="text-center py-6 pb-24 text-[11px] text-slate-400">
-            <span>SMATT V3 &bull; Dikembangkan oleh <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" class="text-slate-600 font-bold hover:underline">ZhanSoft - Amnal</a></span>
+        <div class="text-center py-6 pb-24 text-[11px] text-slate-400 dark:text-slate-500">
+            <span>SMATT V3 &bull; Dikembangkan oleh <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" class="text-slate-600 dark:text-slate-400 font-bold hover:underline">ZhanSoft - Amnal</a></span>
         </div>
 
         {{-- ===== BOTTOM NAVIGATION ===== --}}
@@ -686,6 +909,36 @@
 
     <!-- Scripts -->
     <script>
+        // ===== THEME TOGGLE (DARK / LIGHT MODE) =====
+        function initTheme() {
+            var savedTheme = localStorage.getItem('smatt_theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+                updateThemeIcon(true);
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+                updateThemeIcon(false);
+            }
+        }
+
+        function toggleTheme() {
+            var isDark = document.documentElement.classList.toggle('dark');
+            document.body.classList.toggle('dark', isDark);
+            localStorage.setItem('smatt_theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
+        }
+
+        function updateThemeIcon(isDark) {
+            var icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.setAttribute('name', isDark ? 'sunny-outline' : 'moon-outline');
+            }
+        }
+        initTheme();
+
+        // ===== DIGITAL CLOCK =====
         function updateClock() {
             var d = new Date();
             var h = d.getHours() < 10 ? '0' + d.getHours() : d.getHours();
@@ -696,6 +949,104 @@
             setTimeout(updateClock, 1000);
         }
         updateClock();
+
+        // ===== REALTIME GPS OFFICE RADIUS CHECKER =====
+        var officeCoords = "{{ $karyawan->lokasi_cabang ?? '' }}".split(',');
+        var officeRadius = parseInt("{{ $karyawan->radius_cabang ?? 50 }}") || 50;
+
+        function checkGpsRadius() {
+            if (!navigator.geolocation) {
+                updateGpsUI(false, 'Browser tidak mendukung GPS', 0);
+                return;
+            }
+
+            if (officeCoords.length < 2 || !officeCoords[0] || !officeCoords[1]) {
+                updateGpsUI(true, 'Lokasi kantor fleksibel (Bebas Radius)', 0, true);
+                return;
+            }
+
+            var officeLat = parseFloat(officeCoords[0]);
+            var officeLon = parseFloat(officeCoords[1]);
+
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    var userLat = pos.coords.latitude;
+                    var userLon = pos.coords.longitude;
+                    var dist = getDistanceFromLatLonInM(userLat, userLon, officeLat, officeLon);
+                    var isInside = dist <= officeRadius;
+
+                    if (isInside) {
+                        updateGpsUI(true, 'Dalam Radius Kantor (~' + dist + 'm dari kantor)', dist);
+                    } else {
+                        updateGpsUI(false, 'Di Luar Radius (~' + dist + 'm, Max: ' + officeRadius + 'm)', dist);
+                    }
+                },
+                function(err) {
+                    updateGpsUI(false, 'GPS nonaktif / Izin lokasi ditolak', 0);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+            );
+        }
+
+        function updateGpsUI(isInside, text, dist, isFlexible) {
+            var iconBox = document.getElementById('gpsIconBox');
+            var statusText = document.getElementById('gpsStatusText');
+            var badge = document.getElementById('gpsBadge');
+            if (!iconBox || !statusText || !badge) return;
+
+            statusText.textContent = text;
+            if (isFlexible) {
+                iconBox.className = 'w-7 h-7 rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 flex items-center justify-center text-xs shrink-0';
+                iconBox.innerHTML = '<i class="fa-solid fa-map-pin"></i>';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 shrink-0';
+                badge.textContent = 'Fleksibel';
+            } else if (isInside) {
+                iconBox.className = 'w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 flex items-center justify-center text-xs shrink-0';
+                iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 shrink-0';
+                badge.textContent = 'Valid';
+            } else {
+                iconBox.className = 'w-7 h-7 rounded-lg bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 flex items-center justify-center text-xs shrink-0';
+                iconBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 shrink-0';
+                badge.textContent = 'Luar Radius';
+            }
+        }
+
+        function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
+            var R = 6371000;
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return Math.round(R * c);
+        }
+
+        checkGpsRadius();
+
+        // ===== LIVE WORK DURATION TIMER =====
+        @if (!empty($presensi->jam_in) && empty($presensi->jam_out))
+            var jamInTime = new Date("{{ date('Y-m-d') }}T{{ date('H:i:s', strtotime($presensi->jam_in)) }}").getTime();
+            function updateWorkDuration() {
+                var now = new Date().getTime();
+                var diff = Math.max(0, now - jamInTime);
+                var hours = Math.floor(diff / (1000 * 60 * 60));
+                var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                var formatted = (hours < 10 ? '0' + hours : hours) + 'j ' +
+                                (minutes < 10 ? '0' + minutes : minutes) + 'm ' +
+                                (seconds < 10 ? '0' + seconds : seconds) + 'd';
+
+                var el = document.getElementById('liveWorkDuration');
+                if (el) el.textContent = formatted;
+                setTimeout(updateWorkDuration, 1000);
+            }
+            updateWorkDuration();
+        @endif
 
         $(document).ready(function() {
             var track = $('.carousel-track');
@@ -726,14 +1077,50 @@
             if (tab === 'presensi') {
                 $('#contentPresensi').removeClass('hidden');
                 $('#contentLembur').addClass('hidden');
-                $('#tabPresensi').addClass('bg-white text-slate-800 shadow-sm').removeClass('text-slate-500');
-                $('#tabLembur').removeClass('bg-white text-slate-800 shadow-sm').addClass('text-slate-500');
+                $('#tabPresensi').addClass('bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm').removeClass('text-slate-500 dark:text-slate-400');
+                $('#tabLembur').removeClass('bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm').addClass('text-slate-500 dark:text-slate-400');
             } else {
                 $('#contentPresensi').addClass('hidden');
                 $('#contentLembur').removeClass('hidden');
-                $('#tabLembur').addClass('bg-white text-slate-800 shadow-sm').removeClass('text-slate-500');
-                $('#tabPresensi').removeClass('bg-white text-slate-800 shadow-sm').addClass('text-slate-500');
+                $('#tabLembur').addClass('bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm').removeClass('text-slate-500 dark:text-slate-400');
+                $('#tabPresensi').removeClass('bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm').addClass('text-slate-500 dark:text-slate-400');
             }
+        }
+
+        // ===== DETAIL BOTTOM SHEET =====
+        function showPresensiDetail(tanggal, tanggalIndo, shiftName, jamIn, jamOut, jadwalMasuk, jadwalPulang, status, keterangan, fotoIn, fotoOut) {
+            $('#detailTanggal').text(tanggalIndo);
+            $('#detailShift').text(shiftName !== '-' ? 'Shift: ' + shiftName + ' (' + jadwalMasuk + ' - ' + jadwalPulang + ')' : 'Jadwal Fleksibel');
+            $('#detailStatusBadge').text(status);
+            $('#detailJamIn').text(jamIn);
+            $('#detailJamOut').text(jamOut);
+
+            if (fotoIn) {
+                $('#detailFotoIn').attr('src', fotoIn);
+                $('#detailFotoInContainer').removeClass('hidden');
+            } else {
+                $('#detailFotoInContainer').addClass('hidden');
+            }
+
+            if (fotoOut) {
+                $('#detailFotoOut').attr('src', fotoOut);
+                $('#detailFotoOutContainer').removeClass('hidden');
+            } else {
+                $('#detailFotoOutContainer').addClass('hidden');
+            }
+
+            if (keterangan && keterangan.trim() !== '') {
+                $('#detailKeterangan').text(keterangan);
+                $('#detailKeteranganContainer').removeClass('hidden');
+            } else {
+                $('#detailKeteranganContainer').addClass('hidden');
+            }
+
+            $('#detailPresensiModal').fadeIn(200);
+        }
+
+        function hidePresensiDetail() {
+            $('#detailPresensiModal').fadeOut(200);
         }
 
         $("#btnDaftarkanWajah").click(function(e) {

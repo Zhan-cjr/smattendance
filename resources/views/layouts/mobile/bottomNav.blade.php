@@ -85,6 +85,30 @@
         transform: scale(0.92) translateY(2px) !important;
         box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
     }
+
+    /* Dark Mode Bottom Navigation */
+    .dark .appBottomMenu, html.dark .appBottomMenu {
+        background: rgba(15, 23, 42, 0.92) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.6) !important;
+    }
+    .dark .appBottomMenu .item ion-icon {
+        color: #64748b !important;
+    }
+    .dark .appBottomMenu .item strong {
+        color: #94a3b8 !important;
+    }
+    .dark .appBottomMenu .item.active ion-icon,
+    .dark .appBottomMenu .item.active strong {
+        color: #10b981 !important;
+    }
+    .dark .appBottomMenu .item .action-button.large {
+        border: 3px solid #0f172a !important;
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45) !important;
+    }
 </style>
 
 <div class="appBottomMenu">

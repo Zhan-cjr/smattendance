@@ -409,6 +409,36 @@ class DashboardController extends Controller
             
             $data['notif_sp'] = $notif_sp;
 
+            // Cek Jadwal Jam Kerja Hari Ini (Diambil dari presensi hari ini jika sudah absen)
+            $jam_kerja_hari_ini = null;
+            if ($data['presensi'] && !empty($data['presensi']->kode_jam_kerja)) {
+                $jam_kerja_hari_ini = DB::table('presensi_jamkerja')->where('kode_jam_kerja', $data['presensi']->kode_jam_kerja)->first();
+            }
+            $data['jam_kerja_hari_ini'] = $jam_kerja_hari_ini;
+
+            // Persentase Kehadiran (Attendance Rate): Jumlah Hadir / Target Hari Kerja (Total Hari Bulan - Jatah Off 1 Hari/Minggu)
+            $carbon_bulan = Carbon::parse($hari_ini);
+            $total_hari_bulan = $carbon_bulan->daysInMonth;
+            $total_off_mingguan = ceil($total_hari_bulan / 7); // 1 hari libur per minggu (4-5 hari)
+            $target_hari_kerja = max(1, $total_hari_bulan - $total_off_mingguan);
+            
+            $hadir_count = $data['rekappresensi']->hadir ?? 0;
+            $data['attendance_rate'] = min(100, round(($hadir_count / $target_hari_kerja) * 100, 1));
+            $data['target_hari_kerja'] = $target_hari_kerja;
+
+            // Dynamic Greeting berdasarkan waktu lokal
+            $hour_now = (int) Carbon::now(config('app.timezone'))->format('H');
+            if ($hour_now >= 4 && $hour_now < 11) {
+                $greeting = 'Selamat Pagi ☀️';
+            } elseif ($hour_now >= 11 && $hour_now < 15) {
+                $greeting = 'Selamat Siang 🌤️';
+            } elseif ($hour_now >= 15 && $hour_now < 18) {
+                $greeting = 'Selamat Sore 🌅';
+            } else {
+                $greeting = 'Selamat Malam 🌙';
+            }
+            $data['greeting'] = $greeting;
+
             // Cek Pengumuman Aktif (Ambil yang terakhir dibuat)
             $data['pengumuman'] = Pengumuman::orderBy('created_at', 'desc')->first();
             $data['namasettings'] = Pengaturanumum::first();
