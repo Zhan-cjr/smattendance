@@ -1,0 +1,203 @@
+@extends('layouts.app')
+@section('titlepage', 'Edit Kunjungan')
+
+@section('content')
+@section('navigasi')
+    <span>Edit Kunjungan</span>
+@endsection
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary">
+                    <i class="ti ti-arrow-left me-2"></i>Kembali
+                </a>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('kunjungan.update', $kunjungan) }}" method="POST" id="formKunjungan" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="row">
+                        <!-- Karyawan -->
+                        <div class="col-lg-6 col-sm-12 col-md-12">
+                            <div class="form-group mb-3">
+                                <select name="nik" id="nik" class="form-select select2Nik @error('nik') is-invalid @enderror" required>
+                                    <option value="">Pilih Karyawan</option>
+                                    @foreach ($karyawans as $karyawan)
+                                        <option value="{{ $karyawan->nik }}" {{ old('nik', $kunjungan->nik) == $karyawan->nik ? 'selected' : '' }}>
+                                            {{ $karyawan->nik }} - {{ $karyawan->nama_karyawan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('nik')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Tanggal -->
+                        <div class="col-lg-6 col-sm-12 col-md-12">
+                            <div class="form-group mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ti ti-calendar"></i></span>
+                                    <input type="text" class="form-control flatpickr-date @error('tanggal_kunjungan') is-invalid @enderror" 
+                                        id="tanggal_kunjungan" name="tanggal_kunjungan"
+                                        placeholder="Tanggal Kunjungan" value="{{ old('tanggal_kunjungan', $kunjungan->tanggal_kunjungan->format('Y-m-d')) }}">
+                                    @error('tanggal_kunjungan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lokasi -->
+                        <div class="col-lg-6 col-sm-12 col-md-12">
+                            <div class="form-group mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ti ti-map-pin"></i></span>
+                                    <input type="text" class="form-control @error('lokasi') is-invalid @enderror" 
+                                        id="lokasi" name="lokasi"
+                                        value="{{ old('lokasi', $kunjungan->lokasi) }}" placeholder="Lokasi Kunjungan">
+                                    @error('lokasi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Foto -->
+                        <div class="col-lg-6 col-sm-12 col-md-12">
+                            <div class="form-group mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ti ti-photo"></i></span>
+                                    <input type="file" class="form-control @error('foto') is-invalid @enderror" 
+                                        id="foto" name="foto" accept="image/*">
+                                    @error('foto')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="d-flex justify-content-between align-items-start mt-1">
+                                    <small class="text-muted" style="font-size: 0.75rem">Format: JPG, PNG, GIF. Max 2MB.</small>
+                                    @if ($kunjungan->foto)
+                                        <div class="text-end">
+                                            <a href="{{ asset('storage/uploads/kunjungan/' . $kunjungan->foto) }}" target="_blank">
+                                                <img src="{{ asset('storage/uploads/kunjungan/' . $kunjungan->foto) }}" alt="Foto saat ini"
+                                                    class="img-thumbnail rounded" style="width: 40px; height: 40px; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Deskripsi -->
+                        <div class="col-12">
+                            <div class="form-group mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ti ti-notes"></i></span>
+                                    <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
+                                        id="deskripsi" name="deskripsi" rows="3"
+                                        placeholder="Deskripsi Kunjungan">{{ old('deskripsi', $kunjungan->deskripsi) }}</textarea>
+                                    @error('deskripsi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-12 text-end">
+                            <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary me-1">
+                                <i class="ti ti-x me-1"></i>Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="btnSimpan">
+                                <i class="ti ti-device-floppy me-1"></i>Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('myscript')
+<script>
+    $(function() {
+        // Initialize select2 for karyawan
+        const select2Nik = $(".select2Nik");
+        if (select2Nik.length) {
+            select2Nik.each(function() {
+                var $this = $(this);
+                $this.wrap('<div class="position-relative"></div>').select2({
+                    placeholder: 'Pilih Karyawan',
+                    allowClear: true,
+                    dropdownParent: $this.parent()
+                });
+            });
+        }
+
+        // Initialize flatpickr for date inputs
+        $('.flatpickr-date').flatpickr({
+            dateFormat: 'Y-m-d',
+            allowInput: false
+        });
+
+        function buttonDisabled() {
+            $("#btnSimpan").prop('disabled', true);
+            $("#btnSimpan").html(`
+            <div class="spinner-border spinner-border-sm text-white me-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Loading..`);
+        }
+
+        $("#formKunjungan").submit(function(e) {
+            const nik = $("#nik").val();
+            const tanggal_kunjungan = $("#tanggal_kunjungan").val();
+            const deskripsi = $("#deskripsi").val();
+            const lokasi = $("#lokasi").val();
+
+            if (nik == '') {
+                Swal.fire({
+                    title: "Oops!",
+                    text: "Karyawan harus diisi !",
+                    icon: "warning",
+                    showConfirmButton: true,
+                    didClose: () => {
+                        $("#nik").focus();
+                    }
+                });
+                return false;
+            } else if (tanggal_kunjungan == '') {
+                Swal.fire({
+                    title: "Oops!",
+                    text: 'Tanggal Kunjungan Harus Diisi !',
+                    icon: "warning",
+                    showConfirmButton: true,
+                    didClose: () => {
+                        $("#tanggal_kunjungan").focus();
+                    }
+                });
+                return false;
+            } else if (deskripsi == '') {
+                Swal.fire({
+                    title: "Oops!",
+                    text: 'Deskripsi Harus Diisi !',
+                    icon: "warning",
+                    showConfirmButton: true,
+                    didClose: () => {
+                        $("#deskripsi").focus();
+                    }
+                });
+                return false;
+            } else {
+                buttonDisabled();
+            }
+        });
+    });
+</script>
+@endpush

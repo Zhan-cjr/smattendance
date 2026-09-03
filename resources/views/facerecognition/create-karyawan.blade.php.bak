@@ -1,0 +1,738 @@
+@extends('layouts.mobile.app')
+@section('content')
+<style>
+    /* ============================================
+       PROFESSIONAL FACE RECOGNITION UI DESIGN
+       ============================================ */
+    
+    /* Fullscreen container */
+    .webcam-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .webcam-capture {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0;
+        padding: 0;
+        background: #000;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .webcam-capture video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        background: #000;
+    }
+
+    /* ============================================
+       STEP INDICATOR (Professional Wizard)
+       ============================================ */
+    .step-indicator {
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+        z-index: 1002;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px 25px;
+        border-radius: 50px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .step-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        min-width: 50px;
+    }
+
+    .step-item.active {
+        color: white;
+    }
+
+    .step-item.completed {
+        color: #22c55e;
+    }
+
+    .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .step-item.active .step-number {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        border-color: #22c55e;
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+        transform: scale(1.1);
+    }
+
+    .step-item.completed .step-number {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        border-color: #22c55e;
+    }
+
+    .step-item.completed .step-number::after {
+        content: '✓';
+        color: white;
+    }
+
+    /* ============================================
+       FACE GUIDE (Animated Border)
+       ============================================ */
+    .face-guide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        height: 420px;
+        border: 3px dashed rgba(34, 197, 94, 0.6);
+        border-radius: 20px;
+        pointer-events: none;
+        z-index: 1001;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+    }
+
+    .face-guide.ready {
+        border-color: #22c55e;
+        border-style: solid;
+        box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2),
+            0 0 30px rgba(34, 197, 94, 0.3);
+        animation: pulseGuide 2s infinite;
+    }
+
+    @keyframes pulseGuide {
+        0%, 100% {
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2),
+                0 0 30px rgba(34, 197, 94, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.1),
+                0 0 50px rgba(34, 197, 94, 0.5);
+        }
+    }
+
+    /* ============================================
+       PROGRESS BAR (Modern Design)
+       ============================================ */
+    .progress-container {
+        position: absolute;
+        bottom: 200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 400px;
+        max-width: 90%;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 15px 20px;
+        border-radius: 15px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: none;
+        z-index: 1001;
+    }
+
+    .progress-container.active {
+        display: block;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 8px;
+        position: relative;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+        border-radius: 10px;
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 0%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent);
+        animation: progressShine 2s infinite;
+    }
+
+    @keyframes progressShine {
+        0% {
+            left: -100%;
+        }
+        100% {
+            left: 100%;
+        }
+    }
+
+    .progress-text {
+        color: white;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* ============================================
+       GUIDE TEXT (Modern Card Design)
+       ============================================ */
+    .guide-text {
+        position: absolute;
+        bottom: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        color: white;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 18px 30px;
+        border-radius: 15px;
+        font-weight: 500;
+        font-size: 15px;
+        min-width: 320px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 1001;
+        transition: all 0.3s ease;
+    }
+
+    .guide-text.ready {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(22, 163, 74, 0.95));
+        border-color: rgba(34, 197, 94, 0.5);
+        box-shadow: 0 8px 32px rgba(34, 197, 94, 0.4);
+        animation: guideReady 0.5s ease-out;
+    }
+
+    @keyframes guideReady {
+        0% {
+            transform: translateX(-50%) scale(0.95);
+        }
+        50% {
+            transform: translateX(-50%) scale(1.05);
+        }
+        100% {
+            transform: translateX(-50%) scale(1);
+        }
+    }
+
+    /* ============================================
+       CAPTURE COUNTER (Professional Badge)
+       ============================================ */
+    .capture-counter {
+        position: absolute;
+        bottom: 180px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 14px;
+        display: none;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        z-index: 1001;
+        animation: counterPop 0.4s ease-out;
+    }
+
+    @keyframes counterPop {
+        0% {
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0;
+        }
+        50% {
+            transform: translateX(-50%) scale(1.1);
+        }
+        100% {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+        }
+    }
+
+    .capture-counter.active {
+        display: block;
+    }
+
+    /* ============================================
+       QUALITY WARNING OVERLAY (Direct on Camera)
+       ============================================ */
+    .quality-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 30px;
+        min-width: 400px;
+        max-width: 90%;
+        z-index: 2000;
+        display: none;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(239, 68, 68, 0.5);
+        animation: qualityOverlaySlide 0.4s ease-out;
+    }
+
+    @keyframes qualityOverlaySlide {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+
+    .quality-overlay.active {
+        display: block;
+    }
+
+    .quality-overlay-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .quality-overlay-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #ef4444;
+    }
+
+    .quality-overlay-title {
+        flex: 1;
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .quality-overlay-errors {
+        margin-bottom: 20px;
+    }
+
+    .quality-error-item {
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 3px solid #ef4444;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .quality-error-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .quality-scores {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .quality-scores-title {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .quality-score-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        color: white;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .quality-score-item:last-child {
+        border-bottom: none;
+    }
+
+    .quality-score-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .quality-score-value {
+        font-weight: 600;
+    }
+
+    .quality-score-value.good {
+        color: #22c55e;
+    }
+
+    .quality-score-value.warning {
+        color: #f59e0b;
+    }
+
+    .quality-score-value.bad {
+        color: #ef4444;
+    }
+
+    .quality-overlay-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .quality-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .quality-btn-retry {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: white;
+    }
+
+    .quality-btn-retry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+    }
+
+    .quality-btn-skip {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .quality-btn-skip:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ============================================
+       START BUTTON (Professional)
+       ============================================ */
+    .btn-start-overlay {
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: white;
+        border: none;
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 1002;
+        box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-start-overlay:hover {
+        transform: translateX(-50%) translateY(-2px);
+        box-shadow: 0 12px 32px rgba(34, 197, 94, 0.5),
+            0 0 0 4px rgba(34, 197, 94, 0.2);
+    }
+
+    .btn-start-overlay:active {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================
+       LOADING OVERLAY (Professional)
+       ============================================ */
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        z-index: 2000;
+        backdrop-filter: blur(10px);
+    }
+
+    .loading-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .loading-content {
+        text-align: center;
+    }
+
+    .loading-content .spinner-border {
+        width: 60px;
+        height: 60px;
+        border-width: 5px;
+        border-color: #22c55e;
+        border-right-color: transparent;
+    }
+
+    /* ============================================
+       STATUS INDICATOR
+       ============================================ */
+    .status-indicator {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        z-index: 1001;
+        transition: all 0.3s ease;
+    }
+
+    .status-indicator.ready {
+        background: #22c55e;
+        border-color: #16a34a;
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+        .step-indicator {
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px 20px;
+            max-width: 90%;
+        }
+
+        .step-item {
+            font-size: 11px;
+        }
+
+        .guide-text {
+            min-width: 280px;
+            font-size: 14px;
+            padding: 15px 20px;
+        }
+
+        .progress-container {
+            width: 90%;
+        }
+
+        .quality-overlay {
+            min-width: 90%;
+            padding: 20px;
+        }
+    }
+</style>
+
+<!-- Fullscreen Professional Face Recognition Interface -->
+<div class="webcam-container">
+    <div class="webcam-capture"></div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator" id="stepIndicator">
+        <div class="step-item" data-step="1">
+            <div class="step-number">1</div>
+            <span>Posisi</span>
+        </div>
+        <div class="step-item" data-step="2">
+            <div class="step-number">2</div>
+            <span>Depan</span>
+        </div>
+        <div class="step-item" data-step="3">
+            <div class="step-number">3</div>
+            <span>Kiri</span>
+        </div>
+        <div class="step-item" data-step="4">
+            <div class="step-number">4</div>
+            <span>Kanan</span>
+        </div>
+        <div class="step-item" data-step="5">
+            <div class="step-number">5</div>
+            <span>Atas</span>
+        </div>
+        <div class="step-item" data-step="6">
+            <div class="step-number">6</div>
+            <span>Bawah</span>
+        </div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div class="status-indicator" id="statusIndicator"></div>
+
+    <!-- Face Guide -->
+    <div class="face-guide" id="faceGuide"></div>
+
+    <!-- Progress Container -->
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Stabilitas: 0%</div>
+    </div>
+
+    <!-- Guide Text -->
+    <div class="guide-text" id="guideText">
+        Klik tombol di bawah untuk mulai merekam wajah
+    </div>
+
+    <!-- Capture Counter -->
+    <div class="capture-counter" id="captureCounter">
+        <i class="ti ti-camera me-2"></i>
+        <span id="captureText">Mengambil foto...</span>
+    </div>
+
+    <!-- Start Button -->
+    <button class="btn-start-overlay" id="btnMulaiRekam">
+        <i class="ti ti-video me-2"></i>Mulai Rekam Wajah
+    </button>
+
+    <!-- Quality Warning Overlay -->
+    <div class="quality-overlay" id="qualityOverlay">
+        <div class="quality-overlay-header">
+            <div class="quality-overlay-icon">
+                <i class="ti ti-alert-triangle"></i>
+            </div>
+            <div class="quality-overlay-title">Kualitas Gambar Tidak Memenuhi</div>
+        </div>
+        
+        <div class="quality-overlay-errors" id="qualityErrors">
+            <!-- Error messages akan diisi oleh JavaScript -->
+        </div>
+        
+        <div class="quality-scores" id="qualityScores">
+            <div class="quality-scores-title">Detail Kualitas</div>
+            <div id="qualityScoresList">
+                <!-- Scores akan diisi oleh JavaScript -->
+            </div>
+        </div>
+        
+        <div class="quality-overlay-actions">
+            <button class="quality-btn quality-btn-retry" id="qualityBtnRetry">
+                <i class="ti ti-refresh me-2"></i>Coba Lagi
+            </button>
+            <button class="quality-btn quality-btn-skip" id="qualityBtnSkip">
+                <i class="ti ti-check me-2"></i>Tetap Simpan
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner-border text-light mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="h4 mb-2">Memproses foto...</div>
+            <div class="text-muted">Mohon tunggu sebentar</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+<script>
+    // Copy semua JavaScript dari create.blade.php (baris 922-2266)
+    // Saya akan menambahkan script lengkap di sini
+</script>
+@endsection
+

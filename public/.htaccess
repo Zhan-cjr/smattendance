@@ -1,0 +1,34 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indices
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Force environment variables for Fingerspot headers (Support Underscores)
+    RewriteCond %{HTTP:dev_id} ^(.*)$
+    RewriteRule .* - [E=HTTP_DEV_ID:%1]
+    RewriteCond %{HTTP:request_code} ^(.*)$
+    RewriteRule .* - [E=HTTP_REQUEST_CODE:%1]
+    RewriteCond %{HTTP:trans_id} ^(.*)$
+    RewriteRule .* - [E=HTTP_TRANS_ID:%1]
+
+    # Optional: Match hyphenated versions as well
+    SetEnvIf No-Case ^Request-Code$ (.+) HTTP_REQUEST_CODE=$1
+    SetEnvIf No-Case ^Trans-Id$ (.+) HTTP_TRANS_ID=$1
+    SetEnvIf No-Case ^Dev-Id$ (.+) HTTP_DEV_ID=$1
+
+    # Redirect Trailing Slashes If Not A Directory...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
