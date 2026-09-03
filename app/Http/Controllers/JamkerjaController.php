@@ -52,6 +52,10 @@ class JamkerjaController extends Controller
                 'required',
                 'in:0,1'
             ],
+            'istirahatlembur' => [
+                'nullable',
+                'in:0,1'
+            ],
             'lintashari' => [
                 'required',
                 'in:0,1'
@@ -69,6 +73,16 @@ class JamkerjaController extends Controller
             ],
             'jam_akhir_istirahat' => [
                 'required_if:istirahat,1',
+                'nullable',
+                'date_format:H:i'
+            ],
+            'jam_awal_istirahatlembur' => [
+                'required_if:istirahatlembur,1',
+                'nullable',
+                'date_format:H:i'
+            ],
+            'jam_akhir_istirahatlembur' => [
+                'required_if:istirahatlembur,1',
                 'nullable',
                 'date_format:H:i'
             ],
@@ -104,6 +118,10 @@ class JamkerjaController extends Controller
             'jam_awal_istirahat.date_format' => 'Format Jam Awal Istirahat harus HH:mm',
             'jam_akhir_istirahat.required_if' => 'Jam Akhir Istirahat wajib diisi jika istirahat dipilih',
             'jam_akhir_istirahat.date_format' => 'Format Jam Akhir Istirahat harus HH:mm',
+            'jam_awal_istirahatlembur.required_if' => 'Jam Awal Istirahat Lembur wajib diisi jika istirahat lembur dipilih',
+            'jam_awal_istirahatlembur.date_format' => 'Format Jam Awal Istirahat Lembur harus HH:mm',
+            'jam_akhir_istirahatlembur.required_if' => 'Jam Akhir Istirahat Lembur wajib diisi jika istirahat lembur dipilih',
+            'jam_akhir_istirahatlembur.date_format' => 'Format Jam Akhir Istirahat Lembur harus HH:mm',
             'keterangan.max' => 'Keterangan maksimal 255 karakter'
         ]);
 
@@ -155,10 +173,13 @@ class JamkerjaController extends Controller
                 'jam_masuk' => $request->jam_masuk,
                 'jam_pulang' => $request->jam_pulang,
                 'istirahat' => $request->istirahat,
+                'istirahatlembur' => $request->istirahatlembur ?? '0',
                 'lintashari' => $request->lintashari,
                 'total_jam' => $total_jam,
                 'jam_awal_istirahat' => $request->istirahat == '1' ? $request->jam_awal_istirahat : null,
                 'jam_akhir_istirahat' => $request->istirahat == '1' ? $request->jam_akhir_istirahat : null,
+                'jam_awal_istirahatlembur' => $request->istirahatlembur == '1' ? $request->jam_awal_istirahatlembur : null,
+                'jam_akhir_istirahatlembur' => $request->istirahatlembur == '1' ? $request->jam_akhir_istirahatlembur : null,
                 'keterangan' => $keterangan,
                 'color' => $request->color
             ]);
@@ -220,6 +241,10 @@ class JamkerjaController extends Controller
                 'required',
                 'in:0,1'
             ],
+            'istirahatlembur' => [
+                'nullable',
+                'in:0,1'
+            ],
             'lintashari' => [
                 'required',
                 'in:0,1'
@@ -237,6 +262,16 @@ class JamkerjaController extends Controller
             ],
             'jam_akhir_istirahat' => [
                 'required_if:istirahat,1',
+                'nullable',
+                'date_format:H:i'
+            ],
+            'jam_awal_istirahatlembur' => [
+                'required_if:istirahatlembur,1',
+                'nullable',
+                'date_format:H:i'
+            ],
+            'jam_akhir_istirahatlembur' => [
+                'required_if:istirahatlembur,1',
                 'nullable',
                 'date_format:H:i'
             ],
@@ -269,6 +304,10 @@ class JamkerjaController extends Controller
             'jam_awal_istirahat.date_format' => 'Format Jam Awal Istirahat harus HH:mm',
             'jam_akhir_istirahat.required_if' => 'Jam Akhir Istirahat wajib diisi jika istirahat dipilih',
             'jam_akhir_istirahat.date_format' => 'Format Jam Akhir Istirahat harus HH:mm',
+            'jam_awal_istirahatlembur.required_if' => 'Jam Awal Istirahat Lembur wajib diisi jika istirahat lembur dipilih',
+            'jam_awal_istirahatlembur.date_format' => 'Format Jam Awal Istirahat Lembur harus HH:mm',
+            'jam_akhir_istirahatlembur.required_if' => 'Jam Akhir Istirahat Lembur wajib diisi jika istirahat lembur dipilih',
+            'jam_akhir_istirahatlembur.date_format' => 'Format Jam Akhir Istirahat Lembur harus HH:mm',
             'keterangan.max' => 'Keterangan maksimal 255 karakter'
         ]);
 
@@ -305,10 +344,13 @@ class JamkerjaController extends Controller
                 'jam_masuk' => $request->jam_masuk,
                 'jam_pulang' => $request->jam_pulang,
                 'istirahat' => $request->istirahat,
+                'istirahatlembur' => $request->istirahatlembur ?? '0',
                 'lintashari' => $request->lintashari,
                 'total_jam' => $total_jam,
                 'jam_awal_istirahat' => $request->istirahat == '1' ? $request->jam_awal_istirahat : null,
                 'jam_akhir_istirahat' => $request->istirahat == '1' ? $request->jam_akhir_istirahat : null,
+                'jam_awal_istirahatlembur' => $request->istirahatlembur == '1' ? $request->jam_awal_istirahatlembur : null,
+                'jam_akhir_istirahatlembur' => $request->istirahatlembur == '1' ? $request->jam_akhir_istirahatlembur : null,
                 'keterangan' => $keterangan,
                 'color' => $request->color
             ]);

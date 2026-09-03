@@ -92,7 +92,7 @@
                         callback: {
                             message: 'Jam Akhir Istirahat Harus Diisi',
                             callback: function (input) {
-                                const istirahatValue = document.querySelector('[name="istirahat"]').value;
+                                const istirahatValue = document.querySelector('#formcreateJamKerja [name="istirahat"]')?.value;
                                 if (istirahatValue === '1') {
                                     return input.value !== '';
                                 }
@@ -103,8 +103,52 @@
                             regexp: /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/,
                             message: 'Format Jam Akhir Istirahat harus hh:mm',
                             enabled: function () {
-                                const istirahatValue = document.querySelector('[name="istirahat"]').value;
+                                const istirahatValue = document.querySelector('#formcreateJamKerja [name="istirahat"]')?.value;
                                 return istirahatValue === '1';
+                            }
+                        }
+                    }
+                },
+                jam_awal_istirahatlembur: {
+                    validators: {
+                        callback: {
+                            message: 'Jam Awal Istirahat Lembur Harus Diisi',
+                            callback: function (input) {
+                                const elem = document.querySelector('#formcreateJamKerja [name="istirahatlembur"]');
+                                if (elem && elem.value === '1') {
+                                    return input.value !== '';
+                                }
+                                return true;
+                            }
+                        },
+                        regexp: {
+                            regexp: /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/,
+                            message: 'Format Jam Awal Istirahat Lembur harus hh:mm',
+                            enabled: function () {
+                                const elem = document.querySelector('#formcreateJamKerja [name="istirahatlembur"]');
+                                return elem && elem.value === '1';
+                            }
+                        }
+                    }
+                },
+                jam_akhir_istirahatlembur: {
+                    validators: {
+                        callback: {
+                            message: 'Jam Akhir Istirahat Lembur Harus Diisi',
+                            callback: function (input) {
+                                const elem = document.querySelector('#formcreateJamKerja [name="istirahatlembur"]');
+                                if (elem && elem.value === '1') {
+                                    return input.value !== '';
+                                }
+                                return true;
+                            }
+                        },
+                        regexp: {
+                            regexp: /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/,
+                            message: 'Format Jam Akhir Istirahat Lembur harus hh:mm',
+                            enabled: function () {
+                                const elem = document.querySelector('#formcreateJamKerja [name="istirahatlembur"]');
+                                return elem && elem.value === '1';
                             }
                         }
                     }
@@ -162,11 +206,21 @@
                 });
 
                 // Tambahkan event listener untuk select istirahat
-                document.querySelector('[name="istirahat"]').addEventListener('change', function () {
-                    // Revalidate jam_awal_istirahat dan jam_akhir_istirahat
-                    fv.revalidateField('jam_awal_istirahat');
-                    fv.revalidateField('jam_akhir_istirahat');
-                });
+                const selIstirahat = document.querySelector('#formcreateJamKerja [name="istirahat"]');
+                if (selIstirahat) {
+                    selIstirahat.addEventListener('change', function () {
+                        fv.revalidateField('jam_awal_istirahat');
+                        fv.revalidateField('jam_akhir_istirahat');
+                    });
+                }
+
+                const selIstirahatLembur = document.querySelector('#formcreateJamKerja [name="istirahatlembur"]');
+                if (selIstirahatLembur) {
+                    selIstirahatLembur.addEventListener('change', function () {
+                        fv.revalidateField('jam_awal_istirahatlembur');
+                        fv.revalidateField('jam_akhir_istirahatlembur');
+                    });
+                }
             }
         });
 
@@ -287,7 +341,7 @@
                         callback: {
                             message: 'Jam Akhir Istirahat Harus Diisi',
                             callback: function (input) {
-                                const istirahatValue = document.querySelector('#formeditJamKerja [name="istirahat"]').value;
+                                const istirahatValue = document.querySelector('#formeditJamKerja [name="istirahat"]')?.value;
                                 if (istirahatValue === '1') {
                                     return input.value !== '';
                                 }
@@ -298,8 +352,52 @@
                             regexp: /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/,
                             message: 'Format Jam Akhir Istirahat harus hh:mm',
                             enabled: function () {
-                                const istirahatValue = document.querySelector('#formeditJamKerja [name="istirahat"]').value;
+                                const istirahatValue = document.querySelector('#formeditJamKerja [name="istirahat"]')?.value;
                                 return istirahatValue === '1';
+                            }
+                        }
+                    }
+                },
+                jam_awal_istirahatlembur: {
+                    validators: {
+                        callback: {
+                            message: 'Jam Awal Istirahat Lembur Harus Diisi',
+                            callback: function (input) {
+                                const elem = document.querySelector('#formeditJamKerja [name="istirahatlembur"]');
+                                if (elem && elem.value === '1') {
+                                    return input.value !== '';
+                                }
+                                return true;
+                            }
+                        },
+                        regexp: {
+                            regexp: /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/,
+                            message: 'Format Jam Awal Istirahat Lembur harus hh:mm',
+                            enabled: function () {
+                                const elem = document.querySelector('#formeditJamKerja [name="istirahatlembur"]');
+                                return elem && elem.value === '1';
+                            }
+                        }
+                    }
+                },
+                jam_akhir_istirahatlembur: {
+                    validators: {
+                        callback: {
+                            message: 'Jam Akhir Istirahat Lembur Harus Diisi',
+                            callback: function (input) {
+                                const elem = document.querySelector('#formeditJamKerja [name="istirahatlembur"]');
+                                if (elem && elem.value === '1') {
+                                    return input.value !== '';
+                                }
+                                return true;
+                            }
+                        },
+                        regexp: {
+                            regexp: /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/,
+                            message: 'Format Jam Akhir Istirahat Lembur harus hh:mm',
+                            enabled: function () {
+                                const elem = document.querySelector('#formeditJamKerja [name="istirahatlembur"]');
+                                return elem && elem.value === '1';
                             }
                         }
                     }
@@ -353,11 +451,21 @@
                 });
 
                 // Tambahkan event listener untuk select istirahat
-                document.querySelector('#formeditJamKerja [name="istirahat"]').addEventListener('change', function () {
-                    // Revalidate jam_awal_istirahat dan jam_akhir_istirahat
-                    fvEdit.revalidateField('jam_awal_istirahat');
-                    fvEdit.revalidateField('jam_akhir_istirahat');
-                });
+                const selEditIstirahat = document.querySelector('#formeditJamKerja [name="istirahat"]');
+                if (selEditIstirahat) {
+                    selEditIstirahat.addEventListener('change', function () {
+                        fvEdit.revalidateField('jam_awal_istirahat');
+                        fvEdit.revalidateField('jam_akhir_istirahat');
+                    });
+                }
+
+                const selEditIstirahatLembur = document.querySelector('#formeditJamKerja [name="istirahatlembur"]');
+                if (selEditIstirahatLembur) {
+                    selEditIstirahatLembur.addEventListener('change', function () {
+                        fvEdit.revalidateField('jam_awal_istirahatlembur');
+                        fvEdit.revalidateField('jam_akhir_istirahatlembur');
+                    });
+                }
             }
         });
 

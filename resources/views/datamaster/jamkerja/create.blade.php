@@ -30,6 +30,23 @@
             <x-input-with-icon icon="ti ti-clock" label="Jam Akhir Istirahat" name="jam_akhir_istirahat" />
         </div>
     </div>
+    <div class="form-group mb-3">
+        <label for="istirahatlembur" class="form-label" style="font-weight: 600;">
+            Istirahat Lembur <span class="text-muted font-normal" style="font-size: 11px;">(Khusus Shift Lembur)</span>
+        </label>
+        <select name="istirahatlembur" id="istirahatlembur" class="form-select">
+            <option value="0">Tidak</option>
+            <option value="1">Ya</option>
+        </select>
+    </div>
+    <div class="row" id="sectionIstirahatLembur" style="display: none;">
+        <div class="col-lg-6 col-md-12 col-sm-12">
+            <x-input-with-icon icon="ti ti-clock" label="Jam Awal Istirahat Lembur" name="jam_awal_istirahatlembur" />
+        </div>
+        <div class="col-lg-6 col-md-12 col-sm-12">
+            <x-input-with-icon icon="ti ti-clock" label="Jam Akhir Istirahat Lembur" name="jam_akhir_istirahatlembur" />
+        </div>
+    </div>
     <x-input-with-icon icon="ti ti-clock" label="Total Jam" name="total_jam" type="number" placeholder="Contoh: 8 (Minimal 1, Maksimal 24 jam)"
         min="1" max="24" required />
     <x-input-with-icon icon="ti ti-file-text" label="Keterangan" name="keterangan" maxlength="255"
@@ -56,19 +73,32 @@
 <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
 <script>
     $(document).ready(function() {
-        // function toogleIstirahat() {
-        //     if ($('#istirahat').val() == 1) {
-        //         $('#sectionIstirahat').show();
-        //     } else {
-        //         $('#sectionIstirahat').hide();
-        //     }
-        // }
-        // toogleIstirahat();
+        function toogleIstirahat() {
+            if ($('#istirahat').val() == 1) {
+                $('#sectionIstirahat').show();
+            } else {
+                $('#sectionIstirahat').hide();
+            }
+        }
+        toogleIstirahat();
 
-        // $('#istirahat').on('change', function() {
-        //     toogleIstirahat();
-        // });
+        $('#istirahat').on('change', function() {
+            toogleIstirahat();
+        });
 
-        $("#jam_masuk,#jam_pulang,#jam_awal_istirahat,#jam_akhir_istirahat").mask("00:00");
+        function toogleIstirahatLembur() {
+            if ($('#istirahatlembur').val() == 1) {
+                $('#sectionIstirahatLembur').show();
+            } else {
+                $('#sectionIstirahatLembur').hide();
+            }
+        }
+        toogleIstirahatLembur();
+
+        $('#istirahatlembur').on('change', function() {
+            toogleIstirahatLembur();
+        });
+
+        $("#jam_masuk,#jam_pulang,#jam_awal_istirahat,#jam_akhir_istirahat,#jam_awal_istirahatlembur,#jam_akhir_istirahatlembur").mask("00:00");
     });
 </script>

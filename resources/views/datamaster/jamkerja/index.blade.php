@@ -67,14 +67,13 @@
                     <table class="table table-hover mb-0">
                         <thead style="background-color: var(--theme-color-1) !important; color: white !important;">
                             <tr>
-                                <th class="text-white py-3" style="width: 60px;">NO.</th>
+                                <th class="text-white py-3" style="width: 50px;">NO.</th>
                                 <th class="text-white py-3">KODE</th>
                                 <th class="text-white py-3">NAMA JAM KERJA</th>
                                 <th class="text-white py-3">MASUK</th>
                                 <th class="text-white py-3">PULANG</th>
                                 <th class="text-white py-3 text-center">ISTIRAHAT</th>
-                                <th class="text-white py-3">MULAI</th>
-                                <th class="text-white py-3">AKHIR</th>
+                                <th class="text-white py-3 text-center">IST. LEMBUR</th>
                                 <th class="text-white py-3 text-center">LINTAS</th>
                                 <th class="text-white py-3 text-center">TOTAL</th>
                                 <th class="text-white py-3 text-center">WARNA</th>
@@ -87,22 +86,37 @@
                                     <td class="py-2">{{ $loop->iteration }}</td>
                                     <td class="fw-bold py-2">{{ $d->kode_jam_kerja }}</td>
                                     <td class="py-2">{{ $d->nama_jam_kerja }}</td>
-                                    <td class="py-2">{{ $d->jam_masuk }}</td>
-                                    <td class="py-2">{{ $d->jam_pulang }}</td>
+                                    <td class="py-2"><span class="badge bg-label-primary px-2 py-1">{{ $d->jam_masuk }}</span></td>
+                                    <td class="py-2"><span class="badge bg-label-info px-2 py-1">{{ $d->jam_pulang }}</span></td>
                                     <td class="py-2 text-center">
                                         @if ($d->istirahat == 1)
-                                            <i class="ti ti-checks text-success fs-5"></i>
+                                            <div class="d-flex flex-column align-items-center">
+                                                <span class="badge bg-label-success px-2 py-0.5 mb-1" style="font-size: 11px;">Ya</span>
+                                                <small class="text-muted" style="font-size: 0.75rem;">
+                                                    {{ $d->jam_awal_istirahat ? date('H:i', strtotime($d->jam_awal_istirahat)) : '-' }} - {{ $d->jam_akhir_istirahat ? date('H:i', strtotime($d->jam_akhir_istirahat)) : '-' }}
+                                                </small>
+                                            </div>
                                         @else
-                                            <i class="ti ti-square-x text-danger fs-5"></i>
+                                            <span class="badge bg-label-secondary px-2 py-0.5" style="font-size: 11px;">Tidak</span>
                                         @endif
                                     </td>
-                                    <td class="py-2 text-muted" style="font-size: 0.85rem;">{{ $d->jam_awal_istirahat != null ? date('H:i', strtotime($d->jam_awal_istirahat)) : '-' }}</td>
-                                    <td class="py-2 text-muted" style="font-size: 0.85rem;">{{ $d->jam_akhir_istirahat != null ? date('H:i', strtotime($d->jam_akhir_istirahat)) : '-' }}</td>
+                                    <td class="py-2 text-center">
+                                        @if (($d->istirahatlembur ?? 0) == 1)
+                                            <div class="d-flex flex-column align-items-center">
+                                                <span class="badge bg-label-warning px-2 py-0.5 mb-1" style="font-size: 11px;">Ya</span>
+                                                <small class="text-muted" style="font-size: 0.75rem;">
+                                                    {{ $d->jam_awal_istirahatlembur ? date('H:i', strtotime($d->jam_awal_istirahatlembur)) : '-' }} - {{ $d->jam_akhir_istirahatlembur ? date('H:i', strtotime($d->jam_akhir_istirahatlembur)) : '-' }}
+                                                </small>
+                                            </div>
+                                        @else
+                                            <span class="badge bg-label-secondary px-2 py-0.5" style="font-size: 11px;">Tidak</span>
+                                        @endif
+                                    </td>
                                     <td class="py-2 text-center">
                                         @if ($d->lintashari == 1)
-                                            <i class="ti ti-checks text-success fs-5"></i>
+                                            <i class="ti ti-checks text-success fs-5" title="Lintas Hari"></i>
                                         @else
-                                            <i class="ti ti-square-x text-danger fs-5"></i>
+                                            <i class="ti ti-minus text-muted fs-5"></i>
                                         @endif
                                     </td>
                                     <td class="py-2 text-center fw-bold">{{ $d->total_jam }}j</td>
@@ -136,7 +150,7 @@
                             @endforeach
                             @if($jamkerja->isEmpty())
                                 <tr>
-                                    <td colspan="12" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
+                                    <td colspan="11" class="text-center py-4 text-muted">Data tidak ditemukan.</td>
                                 </tr>
                             @endif
                         </tbody>
