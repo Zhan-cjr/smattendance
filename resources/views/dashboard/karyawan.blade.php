@@ -331,35 +331,68 @@
                 <div id="alertCarousel" class="carousel-wrapper shadow-sm">
                     <div class="carousel-track">
                         @foreach ($activeAlerts as $type)
-                            <div class="alert-slide p-3.5 rounded-2xl {{ $type == 'kontrak' ? 'bg-amber-50 border border-amber-200' : ($type == 'sp' ? 'bg-red-50 border border-red-200' : 'bg-sky-50 border border-sky-200') }}">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 {{ $type == 'kontrak' ? 'bg-amber-100 text-amber-600' : ($type == 'sp' ? 'bg-red-100 text-red-600' : 'bg-sky-100 text-sky-600') }}">
-                                        @if($type == 'kontrak')
-                                            <i class="fa-solid fa-file-contract text-base"></i>
-                                        @elseif($type == 'sp')
-                                            <i class="fa-solid fa-triangle-exclamation text-base"></i>
-                                        @else
+                            @if($type == 'pengumuman')
+                                <a href="{{ route('pengumuman.show', Crypt::encrypt($pengumuman->id)) }}" class="alert-slide block p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-decoration-none hover:bg-sky-100/60 active:scale-[0.99] transition-all">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-sky-100 text-sky-600">
                                             <i class="fa-solid fa-bullhorn text-base"></i>
-                                        @endif
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-1">
+                                                <h5 class="text-xs font-bold text-sky-900 truncate">{{ $pengumuman->judul }}</h5>
+                                                <span class="text-[10px] text-sky-500 font-medium shrink-0">{{ \Carbon\Carbon::parse($pengumuman->created_at)->translatedFormat('d M Y') }}</span>
+                                            </div>
+                                            <div class="text-[11px] text-sky-700 mt-1 line-clamp-2 leading-snug">{!! strip_tags($pengumuman->isi) !!}</div>
+                                            <div class="mt-2 flex items-center justify-end">
+                                                <span class="text-[11px] font-bold text-sky-800 flex items-center gap-1 hover:underline">
+                                                    <span>Baca Selengkapnya</span>
+                                                    <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        @if($type == 'kontrak')
+                                </a>
+                            @elseif($type == 'kontrak')
+                                <a href="{{ route('kontrak.index') }}" class="alert-slide block p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-decoration-none hover:bg-amber-100/60 active:scale-[0.99] transition-all">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-amber-100 text-amber-600">
+                                            <i class="fa-solid fa-file-contract text-base"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
                                             <h5 class="text-xs font-bold text-amber-900">Masa Kontrak Berakhir Segera</h5>
                                             <p class="text-[11px] text-amber-700 mt-0.5 leading-snug">
                                                 Sisa masa kontrak: <strong>{{ $notif_kontrak['sisa_hari'] }} hari</strong> (Selesai: {{ $notif_kontrak['tanggal_akhir'] }}).
                                             </p>
-                                        @elseif($type == 'sp')
+                                            <div class="mt-2 flex items-center justify-end">
+                                                <span class="text-[11px] font-bold text-amber-800 flex items-center gap-1 hover:underline">
+                                                    <span>Lihat Detail Kontrak</span>
+                                                    <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            @elseif($type == 'sp')
+                                <a href="{{ route('pelanggaran.index') }}" class="alert-slide block p-3.5 rounded-2xl bg-red-50 border border-red-200 text-decoration-none hover:bg-red-100/60 active:scale-[0.99] transition-all">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-red-100 text-red-600">
+                                            <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
                                             <h5 class="text-xs font-bold text-red-900">Peringatan Disiplin Aktif</h5>
                                             <p class="text-[11px] text-red-700 mt-0.5 leading-snug">
                                                 {{ $notif_sp->jenis_sp }} s/d {{ \Carbon\Carbon::parse($notif_sp->sampai)->translatedFormat('d M Y') }}.
                                             </p>
-                                        @else
-                                            <h5 class="text-xs font-bold text-sky-900">{{ $pengumuman->judul }}</h5>
-                                            <div class="text-[11px] text-sky-700 mt-0.5 line-clamp-2 leading-snug">{!! strip_tags($pengumuman->isi) !!}</div>
-                                        @endif
+                                            <div class="mt-2 flex items-center justify-end">
+                                                <span class="text-[11px] font-bold text-red-800 flex items-center gap-1 hover:underline">
+                                                    <span>Lihat Surat Peringatan</span>
+                                                    <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
+                                </a>
+                            @endif
                         @endforeach
                     </div>
                 </div>
