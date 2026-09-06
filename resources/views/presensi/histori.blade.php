@@ -47,19 +47,19 @@
 
         /* Bento Filter Card */
         .filter-card {
-            background-color: #ffffff;
-            border-radius: 20px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            background-color: #ffffff !important;
+            border-radius: 20px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
             transition: all 0.2s ease;
         }
 
         /* History Card */
         .histori-card {
-            background-color: #ffffff;
-            border-radius: 18px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+            background-color: #ffffff !important;
+            border-radius: 18px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -67,6 +67,69 @@
 
         .histori-card:active {
             transform: scale(0.98);
+        }
+
+        .histori-title-text {
+            color: #0f172a !important;
+            font-size: 13px !important;
+            font-weight: 800 !important;
+            line-height: 1.3 !important;
+        }
+
+        .histori-shift-pill {
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
+            border: 1px solid #e2e8f0 !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            padding: 2px 8px !important;
+            border-radius: 8px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+        }
+
+        .histori-time-box {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 8px 10px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        .histori-time-label {
+            color: #64748b !important;
+            font-weight: 700 !important;
+            font-size: 10px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.03em !important;
+        }
+
+        .histori-time-val {
+            color: #0f172a !important;
+            font-weight: 800 !important;
+            font-size: 13px !important;
+            letter-spacing: 0.03em !important;
+        }
+
+        .histori-filter-input {
+            background-color: #f8fafc !important;
+            border: 1.5px solid #e2e8f0 !important;
+            color: #0f172a !important;
+            font-weight: 800 !important;
+            font-size: 12px !important;
+            border-radius: 12px !important;
+            padding: 8px 6px !important;
+            text-align: center !important;
+            width: 100% !important;
+            outline: none !important;
+        }
+
+        .histori-filter-input:focus {
+            border-color: {{ $t['primary'] ?? '#0f766e' }} !important;
+            background-color: #ffffff !important;
         }
 
         /* Dark Mode Overrides */
@@ -85,6 +148,35 @@
             background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
             border-color: rgba(255, 255, 255, 0.08) !important;
             box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        html.dark .histori-title-text, body.dark .histori-title-text {
+            color: #f8fafc !important;
+        }
+
+        html.dark .histori-shift-pill, body.dark .histori-shift-pill {
+            background-color: #1e293b !important;
+            color: #cbd5e1 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html.dark .histori-time-box, body.dark .histori-time-box {
+            background-color: #182339 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html.dark .histori-time-label, body.dark .histori-time-label {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .histori-time-val, body.dark .histori-time-val {
+            color: #f8fafc !important;
+        }
+
+        html.dark .histori-filter-input, body.dark .histori-filter-input {
+            background-color: #182339 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            color: #f8fafc !important;
         }
 
         /* Air Datepicker Dark Mode */
@@ -126,17 +218,17 @@
                 <div class="grid grid-cols-5 gap-2 items-center">
                     {{-- Dari --}}
                     <div class="col-span-2">
-                        <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Dari</label>
+                        <label class="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-1">Dari</label>
                         <input type="text" name="dari" id="dari" 
-                            class="w-full rounded-xl py-2 px-2 text-xs font-bold text-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500/30 transition-all cursor-pointer"
+                            class="histori-filter-input cursor-pointer"
                             placeholder="YYYY-MM-DD" value="{{ Request('dari') }}" autocomplete="off" required readonly>
                     </div>
 
                     {{-- Sampai --}}
                     <div class="col-span-2">
-                        <label class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Sampai</label>
+                        <label class="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block mb-1">Sampai</label>
                         <input type="text" name="sampai" id="sampai" 
-                            class="w-full rounded-xl py-2 px-2 text-xs font-bold text-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500/30 transition-all cursor-pointer"
+                            class="histori-filter-input cursor-pointer"
                             placeholder="YYYY-MM-DD" value="{{ Request('sampai') }}" autocomplete="off" required readonly>
                     </div>
 
@@ -155,7 +247,7 @@
 
         {{-- ===== SECTION TITLE & COUNT ===== --}}
         <div class="flex items-center justify-between px-2 mb-3">
-            <span class="text-xs font-extrabold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 Catatan Presensi ({{ count($datapresensi) }})
             </span>
             @if(Request('dari') || Request('sampai'))
@@ -196,28 +288,28 @@
                     $statusStyles = [
                         'h' => [
                             'label' => 'Hadir',
-                            'badge' => 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
-                            'box' => 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-300/50 dark:border-emerald-700/50'
+                            'badge' => 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800/60',
+                            'box' => 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/50'
                         ],
                         'i' => [
                             'label' => 'Izin',
-                            'badge' => 'bg-sky-100 dark:bg-sky-950/70 text-sky-800 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
-                            'box' => 'bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 border-sky-300/50 dark:border-sky-700/50'
+                            'badge' => 'bg-sky-100 dark:bg-sky-950/70 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-800/60',
+                            'box' => 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-700/50'
                         ],
                         's' => [
                             'label' => 'Sakit',
-                            'badge' => 'bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
-                            'box' => 'bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-300/50 dark:border-rose-700/50'
+                            'badge' => 'bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800/60',
+                            'box' => 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-700/50'
                         ],
                         'c' => [
                             'label' => 'Cuti',
-                            'badge' => 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
-                            'box' => 'bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-300/50 dark:border-amber-700/50'
+                            'badge' => 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800/60',
+                            'box' => 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700/50'
                         ],
                         'a' => [
                             'label' => 'Alpha',
-                            'badge' => 'bg-red-100 dark:bg-red-950/70 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800/60',
-                            'box' => 'bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 border-red-300/50 dark:border-red-700/50'
+                            'badge' => 'bg-red-100 dark:bg-red-950/70 text-red-800 dark:text-red-300 border-red-300 dark:border-red-800/60',
+                            'box' => 'bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700/50'
                         ],
                     ];
                     $st = $statusStyles[$d->status] ?? $statusStyles['a'];
@@ -246,35 +338,35 @@
                     <div class="flex items-center gap-3">
                         {{-- Date Badge --}}
                         <div class="w-12 h-12 rounded-2xl flex flex-col items-center justify-center border shrink-0 {{ $st['box'] }}">
-                            <span class="text-[10px] font-extrabold uppercase leading-none">{{ $day_short }}</span>
+                            <span class="text-[10px] font-black uppercase leading-none">{{ $day_short }}</span>
                             <span class="text-base font-black leading-tight mt-0.5">{{ $tgl }}</span>
                         </div>
 
                         {{-- Details --}}
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between gap-1.5 mb-1">
-                                <h3 class="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate">
+                                <div class="histori-title-text truncate">
                                     {{ DateToIndo($d->tanggal) }}
-                                </h3>
+                                </div>
                                 <span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 {{ $st['badge'] }}">
                                     {{ $st['label'] }}
                                 </span>
                             </div>
 
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">
-                                    <i class="fa-solid fa-clock-rotate-left text-[9px] opacity-70"></i>
+                                <span class="histori-shift-pill">
+                                    <i class="fa-solid fa-clock-rotate-left text-[9px] opacity-75"></i>
                                     {{ $d->nama_jam_kerja ?? 'Shift Reguler' }}
                                 </span>
 
                                 @if ($d->status == 'h')
                                     @if ($is_late)
-                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800/60">
                                             <i class="fa-solid fa-triangle-exclamation text-[9px]"></i>
                                             Telat
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/60">
                                             <i class="fa-solid fa-check text-[9px]"></i>
                                             Tepat Waktu
                                         </span>
@@ -287,16 +379,16 @@
                     {{-- Bottom Row: Time Stamps or Notes --}}
                     @if ($d->status == 'h')
                         <div class="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800">
-                            <div class="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Masuk:</span>
-                                <span class="text-xs font-black text-slate-800 dark:text-slate-100 tracking-wider">
+                            <div class="histori-time-box">
+                                <span class="histori-time-label">Masuk:</span>
+                                <span class="histori-time-val">
                                     {{ $d->jam_in ? date('H:i', strtotime($d->jam_in)) : '--:--' }}
                                 </span>
                             </div>
 
-                            <div class="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Pulang:</span>
-                                <span class="text-xs font-black text-slate-800 dark:text-slate-100 tracking-wider">
+                            <div class="histori-time-box">
+                                <span class="histori-time-label">Pulang:</span>
+                                <span class="histori-time-val">
                                     {{ $d->jam_out ? date('H:i', strtotime($d->jam_out)) : '--:--' }}
                                 </span>
                             </div>
@@ -306,33 +398,33 @@
                         @if ($denda_display > 0 || $pulangcepat > 0)
                             <div class="flex items-center gap-1.5 flex-wrap mt-2">
                                 @if ($denda_display > 0)
-                                    <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/60">
+                                    <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-800/60">
                                         Denda: Rp {{ number_format($denda_display, 0, ',', '.') }}
                                     </span>
                                 @endif
                                 @if ($pulangcepat > 0)
-                                    <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                    <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
                                         Pulang Cepat
                                     </span>
                                 @endif
                             </div>
                         @endif
                     @else
-                        <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+                        <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11.5px] font-medium">
                             @if ($d->status == 'i')
-                                <div class="text-sky-700 dark:text-sky-300 font-medium">
+                                <div class="text-sky-800 dark:text-sky-300">
                                     <i class="fa-solid fa-info-circle mr-1"></i> Izin: {{ $d->keterangan_izin ?? '-' }}
                                 </div>
                             @elseif ($d->status == 's')
-                                <div class="text-rose-700 dark:text-rose-300 font-medium">
+                                <div class="text-rose-800 dark:text-rose-300">
                                     <i class="fa-solid fa-notes-medical mr-1"></i> Sakit: {{ $d->keterangan_izin_sakit ?? '-' }}
                                 </div>
                             @elseif ($d->status == 'c')
-                                <div class="text-amber-700 dark:text-amber-300 font-medium">
+                                <div class="text-amber-800 dark:text-amber-300">
                                     <i class="fa-solid fa-umbrella-beach mr-1"></i> Cuti: {{ $d->keterangan_izin_cuti ?? '-' }}
                                 </div>
                             @else
-                                <div class="text-red-700 dark:text-red-300 font-medium">
+                                <div class="text-red-800 dark:text-red-300">
                                     <i class="fa-solid fa-circle-xmark mr-1"></i> Alpha: Tanpa Keterangan
                                 </div>
                             @endif

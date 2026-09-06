@@ -46,23 +46,141 @@
 
         /* Bento Card Izin */
         .izin-card {
-            background-color: #ffffff;
-            border-radius: 20px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05);
+            background-color: #ffffff !important;
+            border-radius: 20px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05) !important;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
+        /* Typography & Content within Izin Card */
+        .izin-title-text {
+            color: #0f172a !important;
+            font-size: 13.5px !important;
+            font-weight: 800 !important;
+            line-height: 1.25 !important;
+        }
+
+        .izin-subtitle-text {
+            color: #64748b !important;
+            font-size: 10.5px !important;
+            font-weight: 600 !important;
+        }
+
+        .izin-date-box {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 6px 10px !important;
+        }
+
+        .izin-date-label {
+            font-size: 9.5px !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            display: block !important;
+        }
+
+        .izin-date-val {
+            font-size: 12px !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            margin-top: 2px !important;
+            display: block !important;
+        }
+
+        .izin-keterangan-text {
+            font-size: 11.5px !important;
+            color: #334155 !important;
+            line-height: 1.4 !important;
+        }
+
+        .izin-keterangan-label {
+            font-size: 9.5px !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            display: block !important;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            padding: 10px 8px !important;
+            border-radius: 16px !important;
+            text-align: center !important;
+            border: 1px solid transparent !important;
+        }
+
+        .stat-card.stat-pending {
+            background-color: #fef3c7 !important;
+            border-color: #fde68a !important;
+        }
+        .stat-card.stat-pending .stat-label {
+            color: #92400e !important;
+        }
+        .stat-card.stat-pending .stat-val {
+            color: #78350f !important;
+        }
+
+        .stat-card.stat-approved {
+            background-color: #d1fae5 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .stat-card.stat-approved .stat-label {
+            color: #065f46 !important;
+        }
+        .stat-card.stat-approved .stat-val {
+            color: #064e3b !important;
+        }
+
+        .stat-card.stat-rejected {
+            background-color: #ffe4e6 !important;
+            border-color: #fecdd3 !important;
+        }
+        .stat-card.stat-rejected .stat-label {
+            color: #9f1239 !important;
+        }
+        .stat-card.stat-rejected .stat-val {
+            color: #881337 !important;
+        }
+
+        .stat-label {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            display: block !important;
+        }
+
+        .stat-val {
+            font-size: 18px !important;
+            font-weight: 900 !important;
+            display: block !important;
+            margin-top: 1px !important;
+        }
+
         /* Filter Tab Buttons */
         .tab-btn {
-            transition: all 0.2s ease;
-            white-space: nowrap;
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border: 1px solid #e2e8f0 !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            padding: 6px 12px !important;
+            border-radius: 12px !important;
+            transition: all 0.2s ease !important;
+            white-space: nowrap !important;
         }
         .tab-btn.active {
             background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%) !important;
             color: #ffffff !important;
+            border-color: transparent !important;
+            font-weight: 800 !important;
             box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
         }
 
@@ -102,6 +220,78 @@
             box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.4) !important;
         }
 
+        html.dark .izin-title-text, body.dark .izin-title-text {
+            color: #f8fafc !important;
+        }
+
+        html.dark .izin-subtitle-text, body.dark .izin-subtitle-text {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .izin-date-box, body.dark .izin-date-box {
+            background-color: #182339 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html.dark .izin-date-label, body.dark .izin-date-label {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .izin-date-val, body.dark .izin-date-val {
+            color: #f8fafc !important;
+        }
+
+        html.dark .izin-keterangan-text, body.dark .izin-keterangan-text {
+            color: #cbd5e1 !important;
+        }
+
+        html.dark .izin-keterangan-label, body.dark .izin-keterangan-label {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .stat-card.stat-pending, body.dark .stat-card.stat-pending {
+            background-color: rgba(120, 53, 15, 0.25) !important;
+            border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+        html.dark .stat-card.stat-pending .stat-label, body.dark .stat-card.stat-pending .stat-label {
+            color: #fbbf24 !important;
+        }
+        html.dark .stat-card.stat-pending .stat-val, body.dark .stat-card.stat-pending .stat-val {
+            color: #fef3c7 !important;
+        }
+
+        html.dark .stat-card.stat-approved, body.dark .stat-card.stat-approved {
+            background-color: rgba(6, 78, 59, 0.25) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+        html.dark .stat-card.stat-approved .stat-label, body.dark .stat-card.stat-approved .stat-label {
+            color: #34d399 !important;
+        }
+        html.dark .stat-card.stat-approved .stat-val, body.dark .stat-card.stat-approved .stat-val {
+            color: #d1fae5 !important;
+        }
+
+        html.dark .stat-card.stat-rejected, body.dark .stat-card.stat-rejected {
+            background-color: rgba(136, 19, 55, 0.25) !important;
+            border-color: rgba(244, 63, 94, 0.3) !important;
+        }
+        html.dark .stat-card.stat-rejected .stat-label, body.dark .stat-card.stat-rejected .stat-label {
+            color: #fb7185 !important;
+        }
+        html.dark .stat-card.stat-rejected .stat-val, body.dark .stat-card.stat-rejected .stat-val {
+            color: #ffe4e6 !important;
+        }
+
+        html.dark .tab-btn, body.dark .tab-btn {
+            background-color: #1e293b !important;
+            color: #cbd5e1 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        html.dark .tab-btn.active, body.dark .tab-btn.active {
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%) !important;
+            color: #ffffff !important;
+        }
+
         html.dark .fab-modern, body.dark .fab-modern {
             border-color: #0f172a !important;
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5) !important;
@@ -121,37 +311,37 @@
 
         {{-- ===== STATS OVERVIEW BENTO ===== --}}
         <div class="grid grid-cols-3 gap-2 mb-3.5">
-            <div class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-center">
-                <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider block">Menunggu</span>
-                <span class="text-lg font-black text-amber-900 dark:text-amber-200 block mt-0.5">{{ $pendingCount }}</span>
+            <div class="stat-card stat-pending">
+                <span class="stat-label">Menunggu</span>
+                <span class="stat-val">{{ $pendingCount }}</span>
             </div>
 
-            <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-center">
-                <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Disetujui</span>
-                <span class="text-lg font-black text-emerald-900 dark:text-emerald-200 block mt-0.5">{{ $approvedCount }}</span>
+            <div class="stat-card stat-approved">
+                <span class="stat-label">Disetujui</span>
+                <span class="stat-val">{{ $approvedCount }}</span>
             </div>
 
-            <div class="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-800/60 text-center">
-                <span class="text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider block">Ditolak</span>
-                <span class="text-lg font-black text-rose-900 dark:text-rose-200 block mt-0.5">{{ $rejectedCount }}</span>
+            <div class="stat-card stat-rejected">
+                <span class="stat-label">Ditolak</span>
+                <span class="stat-val">{{ $rejectedCount }}</span>
             </div>
         </div>
 
         {{-- ===== CATEGORY FILTER TABS ===== --}}
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 mb-3 scrollbar-none">
-            <button type="button" onclick="filterIzin('all', this)" class="tab-btn active px-3 py-1.5 rounded-xl text-[11px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <button type="button" onclick="filterIzin('all', this)" class="tab-btn active">
                 Semua ({{ $totalCount }})
             </button>
-            <button type="button" onclick="filterIzin('i', this)" class="tab-btn px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <button type="button" onclick="filterIzin('i', this)" class="tab-btn">
                 📝 Absen
             </button>
-            <button type="button" onclick="filterIzin('s', this)" class="tab-btn px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <button type="button" onclick="filterIzin('s', this)" class="tab-btn">
                 🤒 Sakit
             </button>
-            <button type="button" onclick="filterIzin('c', this)" class="tab-btn px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <button type="button" onclick="filterIzin('c', this)" class="tab-btn">
                 🏖️ Cuti
             </button>
-            <button type="button" onclick="filterIzin('d', this)" class="tab-btn px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <button type="button" onclick="filterIzin('d', this)" class="tab-btn">
                 💼 Dinas
             </button>
         </div>
@@ -221,12 +411,12 @@
                                 <i class="fa-solid {{ $iconClass }}"></i>
                             </div>
                             <div class="min-w-0">
-                                <h3 class="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate">
+                                <div class="izin-title-text truncate">
                                     {{ $ket_text }}
-                                </h3>
-                                <span class="text-[10.5px] font-semibold text-slate-400 block">
+                                </div>
+                                <div class="izin-subtitle-text mt-0.5">
                                     {{ $totalDays }} Hari Pengajuan
-                                </span>
+                                </div>
                             </div>
                         </div>
 
@@ -238,15 +428,15 @@
 
                     {{-- Dates Box --}}
                     <div class="grid grid-cols-2 gap-2 mt-2.5">
-                        <div class="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
-                            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Mulai</span>
-                            <span class="text-xs font-black text-slate-700 dark:text-slate-200 mt-0.5 block">
+                        <div class="izin-date-box">
+                            <span class="izin-date-label">Mulai</span>
+                            <span class="izin-date-val">
                                 {{ DateToIndo($d->dari) }}
                             </span>
                         </div>
-                        <div class="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
-                            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Sampai</span>
-                            <span class="text-xs font-black text-slate-700 dark:text-slate-200 mt-0.5 block">
+                        <div class="izin-date-box">
+                            <span class="izin-date-label">Sampai</span>
+                            <span class="izin-date-val">
                                 {{ DateToIndo($d->sampai) }}
                             </span>
                         </div>
@@ -254,9 +444,9 @@
 
                     {{-- Reason / Keterangan --}}
                     <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-start justify-between gap-2">
-                        <div class="text-[11.5px] text-slate-600 dark:text-slate-300 leading-snug flex-1">
-                            <span class="font-bold text-slate-400 block text-[9.5px] uppercase">Keterangan:</span>
-                            <span class="mt-0.5 block">{{ $d->keterangan ?? '-' }}</span>
+                        <div class="leading-snug flex-1">
+                            <span class="izin-keterangan-label">Keterangan:</span>
+                            <span class="izin-keterangan-text mt-0.5 block">{{ $d->keterangan ?? '-' }}</span>
                         </div>
 
                         {{-- Action Button (Delete if Pending) --}}
@@ -277,8 +467,8 @@
                     <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-2xl mx-auto mb-3">
                         <i class="fa-solid fa-calendar-plus"></i>
                     </div>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100">Belum Ada Pengajuan</h4>
-                    <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                    <div class="text-sm font-extrabold text-slate-800 dark:text-slate-100">Belum Ada Pengajuan</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto">
                         Anda belum memiliki riwayat pengajuan izin, sakit, cuti, atau dinas.
                     </p>
                     <button type="button" onclick="showAjukanIzinModal()" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md active:scale-95 transition-all" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%);">

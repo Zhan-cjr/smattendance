@@ -52,50 +52,57 @@
         }
 
         .form-card {
-            background-color: #ffffff;
-            border-radius: 22px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05);
+            background-color: #ffffff !important;
+            border-radius: 22px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05) !important;
+        }
+
+        .profile-section-title {
+            color: #0f172a !important;
+            font-size: 13px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.01em;
         }
 
         .input-group-modern {
             position: relative;
-            background-color: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 16px;
+            background-color: #f8fafc !important;
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 16px !important;
             transition: all 0.2s ease;
         }
 
         .input-group-modern:focus-within {
-            border-color: {{ $t['primary'] ?? '#0f766e' }};
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+            border-color: {{ $t['primary'] ?? '#0f766e' }} !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15) !important;
         }
 
         .input-group-modern input,
         .input-group-modern textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #0f172a;
-            font-weight: 700;
-            font-size: 13.5px;
-            padding: 22px 14px 8px 42px;
+            width: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            color: #0f172a !important;
+            font-weight: 700 !important;
+            font-size: 13.5px !important;
+            padding: 22px 14px 8px 42px !important;
         }
 
         .input-group-modern textarea {
-            min-height: 80px;
-            resize: none;
+            min-height: 80px !important;
+            resize: none !important;
         }
 
         .input-group-modern label {
             position: absolute;
             left: 42px;
             top: 7px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #64748b;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
             text-transform: uppercase;
             letter-spacing: 0.04em;
             pointer-events: none;
@@ -105,24 +112,36 @@
             position: absolute;
             left: 14px;
             top: 15px;
-            font-size: 16px;
-            color: #64748b;
+            font-size: 16px !important;
+            color: #64748b !important;
             pointer-events: none;
         }
 
         .upload-drop-zone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 18px;
-            padding: 16px;
-            text-align: center;
-            background-color: #f8fafc;
-            cursor: pointer;
+            border: 2px dashed #cbd5e1 !important;
+            border-radius: 18px !important;
+            padding: 16px !important;
+            text-align: center !important;
+            background-color: #f8fafc !important;
+            cursor: pointer !important;
             transition: all 0.2s ease;
         }
 
         .upload-drop-zone:hover, .upload-drop-zone:active {
-            border-color: {{ $t['primary'] ?? '#0f766e' }};
-            background-color: rgba(15, 118, 110, 0.04);
+            border-color: {{ $t['primary'] ?? '#0f766e' }} !important;
+            background-color: rgba(15, 118, 110, 0.04) !important;
+        }
+
+        .upload-drop-title {
+            color: #0f172a !important;
+            font-weight: 800 !important;
+            font-size: 12.5px !important;
+        }
+
+        .upload-drop-sub {
+            color: #64748b !important;
+            font-size: 10.5px !important;
+            font-weight: 600 !important;
         }
 
         /* Dark Mode Overrides */
@@ -135,6 +154,10 @@
             background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
             border-color: rgba(255, 255, 255, 0.08) !important;
             box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        html.dark .profile-section-title, body.dark .profile-section-title {
+            color: #f8fafc !important;
         }
 
         html.dark .input-group-modern, body.dark .input-group-modern {
@@ -164,6 +187,14 @@
         html.dark .upload-drop-zone, body.dark .upload-drop-zone {
             background-color: #182339 !important;
             border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        html.dark .upload-drop-title, body.dark .upload-drop-title {
+            color: #f8fafc !important;
+        }
+
+        html.dark .upload-drop-sub, body.dark .upload-drop-sub {
+            color: #94a3b8 !important;
         }
     </style>
 @endpush
@@ -212,7 +243,7 @@
                     <div class="w-7 h-7 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xs font-bold border border-teal-200/60 dark:border-teal-800/60">
                         <i class="fa-solid fa-id-card"></i>
                     </div>
-                    <span class="text-xs font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">
+                    <span class="profile-section-title">
                         Informasi Pribadi
                     </span>
                 </div>
@@ -252,7 +283,7 @@
                     <div class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs font-bold border border-sky-200/60 dark:border-sky-800/60">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
-                    <span class="text-xs font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">
+                    <span class="profile-section-title">
                         Akun & Akses
                     </span>
                 </div>
@@ -278,7 +309,7 @@
                     <div class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs font-bold border border-amber-200/60 dark:border-amber-800/60">
                         <i class="fa-solid fa-image"></i>
                     </div>
-                    <span class="text-xs font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">
+                    <span class="profile-section-title">
                         Foto Profil Baru
                     </span>
                 </div>
@@ -288,8 +319,8 @@
                     <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xl mb-2 border border-teal-200/60 dark:border-teal-800/60">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
-                    <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 block">Ketuk untuk pilih foto profil</span>
-                    <span class="text-[10.5px] text-slate-400 block mt-0.5">Format JPG, JPEG, PNG (Maks 2MB)</span>
+                    <span class="upload-drop-title block">Ketuk untuk pilih foto profil</span>
+                    <span class="upload-drop-sub block mt-0.5">Format JPG, JPEG, PNG (Maks 2MB)</span>
                     <div id="fileName" class="text-xs font-bold text-teal-600 dark:text-teal-400 mt-2 truncate max-w-[240px]"></div>
                 </div>
             </div>
@@ -354,4 +385,3 @@
         });
     </script>
 @endpush
-
