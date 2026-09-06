@@ -387,22 +387,68 @@
                     @endif
                 </div>
 
-                <!-- Realtime GPS Office Radius Indicator -->
-                <div id="gpsStatusContainer" class="mb-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between transition-all">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <div id="gpsIconBox" class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs shrink-0">
-                            <i class="fa-solid fa-location-crosshairs animate-spin"></i>
+                <!-- UNIFIED REALTIME GPS RADIUS & LIVE USER WEATHER CARD -->
+                <div id="unifiedGpsWeatherContainer" class="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 transition-all">
+                    <!-- Top Bar: GPS Status & Live Weather Pill -->
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-200/60 dark:border-slate-700/60">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <div id="gpsIconBox" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs shrink-0 transition-all">
+                                <i class="fa-solid fa-location-crosshairs animate-spin"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span id="userGpsLocationName" class="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate">
+                                        Mendeteksi Lokasi GPS...
+                                    </span>
+                                </div>
+                                <span id="gpsStatusText" class="text-[10.5px] font-semibold text-slate-500 dark:text-slate-400 truncate block">
+                                    Memeriksa radius kantor...
+                                </span>
+                            </div>
                         </div>
-                        <div class="min-w-0">
-                            <span class="text-[10px] text-slate-400 dark:text-slate-400 font-bold uppercase block leading-tight">Status Radius GPS Kantor</span>
-                            <span id="gpsStatusText" class="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate block">
-                                Mendeteksi jangkauan lokasi...
+
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <!-- Weather Temp Pill (When GPS is active) -->
+                            <div id="weatherPill" class="flex items-center gap-1 px-2 py-1 rounded-xl bg-white dark:bg-slate-700/80 border border-slate-200/80 dark:border-slate-600 shadow-2xs">
+                                <i id="weatherMainIcon" class="fa-solid fa-cloud-sun text-xs text-amber-500"></i>
+                                <span id="weatherTemp" class="text-xs font-black text-slate-800 dark:text-slate-100">--°C</span>
+                            </div>
+                            <!-- GPS Radius Badge -->
+                            <span id="gpsBadge" class="text-[10px] font-bold px-2 py-1 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 shrink-0">
+                                GPS
                             </span>
+                            <!-- Refresh Button -->
+                            <button type="button" onclick="checkGpsRadius(true)" class="w-7 h-7 rounded-lg bg-slate-200/80 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center text-[11px] active:scale-95 transition-all" title="Perbarui Lokasi & Cuaca">
+                                <i class="fa-solid fa-arrows-rotate" id="weatherRefreshIcon"></i>
+                            </button>
                         </div>
                     </div>
-                    <span id="gpsBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 shrink-0">
-                        GPS
-                    </span>
+
+                    <!-- Mini Weather & GPS Stats -->
+                    <div class="grid grid-cols-3 gap-1.5 mt-2 pt-0.5 text-center">
+                        <div class="bg-white/80 dark:bg-slate-900/60 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                            <span class="text-[9.5px] text-slate-400 dark:text-slate-400 font-medium block">Kondisi Cuaca</span>
+                            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate block mt-0.5" id="weatherConditionDesc">Mendeteksi...</span>
+                        </div>
+                        <div class="bg-white/80 dark:bg-slate-900/60 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                            <span class="text-[9.5px] text-slate-400 dark:text-slate-400 font-medium block">💧 Lembab & 💨 Angin</span>
+                            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate block mt-0.5" id="weatherEnvStats">-- / --</span>
+                        </div>
+                        <div class="bg-white/80 dark:bg-slate-900/60 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                            <span class="text-[9.5px] text-slate-400 dark:text-slate-400 font-medium block">🎯 Akurasi GPS</span>
+                            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate block mt-0.5" id="gpsAccuracy">-- m</span>
+                        </div>
+                    </div>
+
+                    <!-- Unified Field & Radius Advisory -->
+                    <div id="weatherAdvisoryBox" class="mt-2 p-2 rounded-xl bg-slate-200/60 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600/50 flex items-start gap-2 transition-all">
+                        <div id="weatherAdvisoryIcon" class="w-5 h-5 rounded-md bg-slate-400 text-white flex items-center justify-center text-[9px] shrink-0 mt-0.5">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <p id="weatherAdvisoryText" class="text-[10.5px] text-slate-600 dark:text-slate-300 font-medium leading-snug">
+                            Menghubungkan sensor GPS untuk membaca radius kantor & cuaca di titik Anda...
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Live Work Duration Timer (Only when Clocked In & Not Clocked Out) -->
@@ -951,65 +997,289 @@
         updateClock();
 
         // ===== REALTIME GPS OFFICE RADIUS CHECKER =====
+        // ===== UNIFIED REALTIME GPS RADIUS & USER-LOCATION WEATHER =====
         var officeCoords = "{{ $karyawan->lokasi_cabang ?? '' }}".split(',');
         var officeRadius = parseInt("{{ $karyawan->radius_cabang ?? 50 }}") || 50;
+        var isGpsChecking = false;
 
-        function checkGpsRadius() {
+        function checkGpsRadius(isManual) {
+            if (isGpsChecking) return;
+            isGpsChecking = true;
+
+            var refreshIcon = document.getElementById('weatherRefreshIcon');
+            if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+            var locNameEl = document.getElementById('userGpsLocationName');
+            var statusTextEl = document.getElementById('gpsStatusText');
+            if (locNameEl && isManual) locNameEl.textContent = 'Mendeteksi Posisi Anda...';
+            if (statusTextEl && isManual) statusTextEl.textContent = 'Memeriksa radius kantor & cuaca...';
+
             if (!navigator.geolocation) {
-                updateGpsUI(false, 'Browser tidak mendukung GPS', 0);
+                handleGpsError('Browser tidak mendukung GPS');
                 return;
             }
 
-            if (officeCoords.length < 2 || !officeCoords[0] || !officeCoords[1]) {
-                updateGpsUI(true, 'Lokasi kantor fleksibel (Bebas Radius)', 0, true);
-                return;
-            }
-
-            var officeLat = parseFloat(officeCoords[0]);
-            var officeLon = parseFloat(officeCoords[1]);
+            var officeLat = (officeCoords.length >= 2 && officeCoords[0]) ? parseFloat(officeCoords[0]) : null;
+            var officeLon = (officeCoords.length >= 2 && officeCoords[1]) ? parseFloat(officeCoords[1]) : null;
+            var isFlexible = (officeLat === null || officeLon === null);
 
             navigator.geolocation.getCurrentPosition(
                 function(pos) {
                     var userLat = pos.coords.latitude;
                     var userLon = pos.coords.longitude;
-                    var dist = getDistanceFromLatLonInM(userLat, userLon, officeLat, officeLon);
-                    var isInside = dist <= officeRadius;
-
-                    if (isInside) {
-                        updateGpsUI(true, 'Dalam Radius Kantor (~' + dist + 'm dari kantor)', dist);
-                    } else {
-                        updateGpsUI(false, 'Di Luar Radius (~' + dist + 'm, Max: ' + officeRadius + 'm)', dist);
+                    var acc = pos.coords.accuracy ? Math.round(pos.coords.accuracy) : 10;
+                    
+                    var dist = 0;
+                    var isInside = true;
+                    if (!isFlexible) {
+                        dist = getDistanceFromLatLonInM(userLat, userLon, officeLat, officeLon);
+                        isInside = dist <= officeRadius;
                     }
+
+                    updateGpsRadiusUI(isInside, isFlexible, dist, acc);
+                    fetchUserLocationName(userLat, userLon);
+                    fetchUserWeather(userLat, userLon, isInside, isFlexible, dist);
                 },
                 function(err) {
-                    updateGpsUI(false, 'GPS nonaktif / Izin lokasi ditolak', 0);
+                    var errMsg = 'GPS nonaktif / Izin lokasi ditolak';
+                    if (err.code === 2) errMsg = 'Posisi GPS tidak ditemukan';
+                    if (err.code === 3) errMsg = 'Waktu permintaan GPS habis';
+                    handleGpsError(errMsg);
                 },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+                { enableHighAccuracy: true, timeout: 12000, maximumAge: 15000 }
             );
         }
 
-        function updateGpsUI(isInside, text, dist, isFlexible) {
+        function updateGpsRadiusUI(isInside, isFlexible, dist, acc) {
             var iconBox = document.getElementById('gpsIconBox');
             var statusText = document.getElementById('gpsStatusText');
             var badge = document.getElementById('gpsBadge');
-            if (!iconBox || !statusText || !badge) return;
+            var accEl = document.getElementById('gpsAccuracy');
 
-            statusText.textContent = text;
+            if (accEl) accEl.textContent = acc ? '±' + acc + ' m' : '-- m';
+
             if (isFlexible) {
-                iconBox.className = 'w-7 h-7 rounded-lg bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 flex items-center justify-center text-xs shrink-0';
-                iconBox.innerHTML = '<i class="fa-solid fa-map-pin"></i>';
-                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 shrink-0';
-                badge.textContent = 'Fleksibel';
+                if (statusText) statusText.textContent = 'Lokasi Fleksibel (Bebas Radius)';
+                if (iconBox) {
+                    iconBox.className = 'w-8 h-8 rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 flex items-center justify-center text-xs shrink-0 transition-all';
+                    iconBox.innerHTML = '<i class="fa-solid fa-map-pin"></i>';
+                }
+                if (badge) {
+                    badge.className = 'text-[10px] font-bold px-2 py-1 rounded-xl bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 shrink-0';
+                    badge.textContent = 'Fleksibel';
+                }
             } else if (isInside) {
-                iconBox.className = 'w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 flex items-center justify-center text-xs shrink-0';
-                iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 shrink-0';
-                badge.textContent = 'Valid';
+                if (statusText) statusText.textContent = 'Dalam Radius Kantor (~' + dist + 'm dari kantor)';
+                if (iconBox) {
+                    iconBox.className = 'w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 flex items-center justify-center text-xs shrink-0 transition-all';
+                    iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                }
+                if (badge) {
+                    badge.className = 'text-[10px] font-bold px-2 py-1 rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 shrink-0';
+                    badge.textContent = 'Valid';
+                }
             } else {
-                iconBox.className = 'w-7 h-7 rounded-lg bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 flex items-center justify-center text-xs shrink-0';
+                if (statusText) statusText.textContent = 'Di Luar Radius (~' + dist + 'm, Max: ' + officeRadius + 'm)';
+                if (iconBox) {
+                    iconBox.className = 'w-8 h-8 rounded-xl bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 flex items-center justify-center text-xs shrink-0 transition-all';
+                    iconBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                }
+                if (badge) {
+                    badge.className = 'text-[10px] font-bold px-2 py-1 rounded-xl bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 shrink-0';
+                    badge.textContent = 'Luar Radius';
+                }
+            }
+        }
+
+        function fetchUserLocationName(lat, lon) {
+            var geocodeUrl = 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=id';
+            fetch(geocodeUrl)
+                .then(function(res) { return res.json(); })
+                .then(function(geo) {
+                    var place = 'Lokasi Terdeteksi';
+                    if (geo.locality && geo.city) {
+                        place = geo.locality + ', ' + geo.city;
+                    } else if (geo.locality || geo.city) {
+                        place = geo.locality || geo.city;
+                    } else if (geo.principalSubdivision) {
+                        place = geo.principalSubdivision;
+                    }
+                    var locEl = document.getElementById('userGpsLocationName');
+                    if (locEl) locEl.textContent = '📍 ' + place;
+                })
+                .catch(function() {
+                    var locEl = document.getElementById('userGpsLocationName');
+                    if (locEl) locEl.textContent = '📍 Titik GPS (' + lat.toFixed(3) + ', ' + lon.toFixed(3) + ')';
+                });
+        }
+
+        function fetchUserWeather(lat, lon, isInside, isFlexible, dist) {
+            var weatherUrl = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto';
+            fetch(weatherUrl)
+                .then(function(res) {
+                    if (!res.ok) throw new Error('Weather API error');
+                    return res.json();
+                })
+                .then(function(data) {
+                    if (data && data.current) {
+                        renderUserWeatherUI(data.current, isInside, isFlexible, dist);
+                    }
+                })
+                .catch(function() {
+                    var descEl = document.getElementById('weatherConditionDesc');
+                    if (descEl) descEl.textContent = 'Cuaca offline';
+                    updateUnifiedAdvisory('Kondisi Kerja Lapangan', 'Patuhi prosedur kerja dan tetap berhati-hati dalam bertugas.', 'info');
+                })
+                .finally(function() {
+                    stopRefreshAnimation();
+                });
+        }
+
+        function renderUserWeatherUI(current, isInside, isFlexible, dist) {
+            var temp = Math.round(current.temperature_2m);
+            var humidity = Math.round(current.relative_humidity_2m);
+            var wind = Math.round(current.wind_speed_10m);
+            var code = current.weather_code;
+
+            var tempEl = document.getElementById('weatherTemp');
+            var descEl = document.getElementById('weatherConditionDesc');
+            var envEl = document.getElementById('weatherEnvStats');
+            var mainIcon = document.getElementById('weatherMainIcon');
+
+            if (tempEl) tempEl.textContent = temp + '°C';
+            if (envEl) envEl.textContent = humidity + '% / ' + wind + ' km/j';
+
+            var weatherMeta = getWeatherInterpretation(code, temp);
+            if (descEl) descEl.textContent = weatherMeta.desc;
+            if (mainIcon) mainIcon.className = weatherMeta.icon + ' text-xs';
+
+            // Generate Combined Unified Advisory
+            var title = 'Rekomendasi Lapangan & Cuaca';
+            var msg = '';
+            var type = 'success';
+
+            if (weatherMeta.type === 'thunderstorm') {
+                title = 'Peringatan Badai Petir di Titik Anda';
+                msg = 'Waspada petir & angin kencang di sekitar posisi Anda. Hindari area terbuka saat badai.';
+                type = 'danger';
+            } else if (weatherMeta.type === 'rain' || weatherMeta.type === 'showers') {
+                title = 'Peringatan Hujan di Titik Anda';
+                msg = 'Hujan terdeteksi di lokasi Anda. Bawa payung/jas hujan & waspadai jalan licin saat perjalanan.';
+                type = 'warning';
+            } else if (weatherMeta.type === 'drizzle') {
+                title = 'Info Cuaca Lapangan (Gerimis)';
+                msg = 'Gerimis turun di sekitar titik Anda. Berhati-hati saat berkendara & amankan berkas kerja.';
+                type = 'warning';
+            } else if (temp >= 34) {
+                title = 'Suhu Udara Terik (' + temp + '°C)';
+                msg = 'Suhu lingkungan cukup panas. Pastikan cukup minum dan lindungi diri dari paparan panas terik.';
+                type = 'warning';
+            } else {
+                if (!isFlexible && !isInside) {
+                    title = 'Aktivitas Luar Radius Kantor';
+                    msg = 'Cuaca ' + weatherMeta.desc.toLowerCase() + ' (' + temp + '°C). Anda berada di luar radius kantor (~' + dist + 'm).';
+                    type = 'info';
+                } else {
+                    title = 'Lokasi Valid & Cuaca Mendukung';
+                    msg = 'Radius kantor valid & cuaca ' + weatherMeta.desc.toLowerCase() + ' (' + temp + '°C). Kondisi optimal untuk beraktivitas.';
+                    type = 'success';
+                }
+            }
+
+            updateUnifiedAdvisory(title, msg, type);
+        }
+
+        function getWeatherInterpretation(code, temp) {
+            if (code === 0) {
+                return { desc: 'Cerah Berawan', icon: 'fa-solid fa-sun text-amber-500', type: 'sunny' };
+            } else if (code === 1 || code === 2) {
+                return { desc: 'Cerah Berawan', icon: 'fa-solid fa-cloud-sun text-amber-400', type: 'partly_cloudy' };
+            } else if (code === 3) {
+                return { desc: 'Mendung Berawan', icon: 'fa-solid fa-cloud text-slate-400', type: 'cloudy' };
+            } else if (code === 45 || code === 48) {
+                return { desc: 'Udara Berkabut', icon: 'fa-solid fa-smog text-slate-400', type: 'fog' };
+            } else if (code >= 51 && code <= 55) {
+                return { desc: 'Gerimis Ringan', icon: 'fa-solid fa-cloud-rain text-sky-400', type: 'drizzle' };
+            } else if (code >= 61 && code <= 65) {
+                return { desc: 'Hujan Deras', icon: 'fa-solid fa-cloud-showers-heavy text-blue-500', type: 'rain' };
+            } else if (code >= 80 && code <= 82) {
+                return { desc: 'Hujan Lokal', icon: 'fa-solid fa-cloud-sun-rain text-blue-400', type: 'showers' };
+            } else if (code >= 95) {
+                return { desc: 'Badai Petir', icon: 'fa-solid fa-cloud-bolt text-purple-500', type: 'thunderstorm' };
+            } else {
+                return { desc: 'Berawan Normal', icon: 'fa-solid fa-cloud text-teal-500', type: 'normal' };
+            }
+        }
+
+        function updateUnifiedAdvisory(title, msg, type) {
+            var box = document.getElementById('weatherAdvisoryBox');
+            var icon = document.getElementById('weatherAdvisoryIcon');
+            var textEl = document.getElementById('weatherAdvisoryText');
+
+            if (!box || !icon || !textEl) return;
+
+            textEl.innerHTML = '<strong>' + title + ':</strong> ' + msg;
+
+            if (type === 'danger') {
+                box.className = 'mt-2 p-2 rounded-xl bg-red-50/90 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 flex items-start gap-2 transition-all';
+                icon.className = 'w-5 h-5 rounded-md bg-red-500 text-white flex items-center justify-center text-[9px] shrink-0 mt-0.5';
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                textEl.className = 'text-[10.5px] text-red-900 dark:text-red-200 font-medium leading-snug';
+            } else if (type === 'warning') {
+                box.className = 'mt-2 p-2 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-start gap-2 transition-all';
+                icon.className = 'w-5 h-5 rounded-md bg-amber-500 text-white flex items-center justify-center text-[9px] shrink-0 mt-0.5';
+                icon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+                textEl.className = 'text-[10.5px] text-amber-900 dark:text-amber-200 font-medium leading-snug';
+            } else if (type === 'info') {
+                box.className = 'mt-2 p-2 rounded-xl bg-sky-50/90 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 flex items-start gap-2 transition-all';
+                icon.className = 'w-5 h-5 rounded-md bg-sky-500 text-white flex items-center justify-center text-[9px] shrink-0 mt-0.5';
+                icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>';
+                textEl.className = 'text-[10.5px] text-sky-900 dark:text-sky-200 font-medium leading-snug';
+            } else {
+                box.className = 'mt-2 p-2 rounded-xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-start gap-2 transition-all';
+                icon.className = 'w-5 h-5 rounded-md bg-emerald-500 text-white flex items-center justify-center text-[9px] shrink-0 mt-0.5';
+                icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                textEl.className = 'text-[10.5px] text-emerald-900 dark:text-emerald-200 font-medium leading-snug';
+            }
+        }
+
+        function handleGpsError(errMsg) {
+            var iconBox = document.getElementById('gpsIconBox');
+            var locName = document.getElementById('userGpsLocationName');
+            var statusText = document.getElementById('gpsStatusText');
+            var badge = document.getElementById('gpsBadge');
+            var tempEl = document.getElementById('weatherTemp');
+            var descEl = document.getElementById('weatherConditionDesc');
+            var envEl = document.getElementById('weatherEnvStats');
+            var accEl = document.getElementById('gpsAccuracy');
+
+            if (locName) locName.textContent = '📍 GPS Tidak Aktif';
+            if (statusText) statusText.textContent = errMsg;
+            if (tempEl) tempEl.textContent = '--°C';
+            if (descEl) descEl.textContent = 'GPS Diperlukan';
+            if (envEl) envEl.textContent = '-- / --';
+            if (accEl) accEl.textContent = '-- m';
+
+            if (iconBox) {
+                iconBox.className = 'w-8 h-8 rounded-xl bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 flex items-center justify-center text-xs shrink-0 transition-all';
                 iconBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-                badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 shrink-0';
-                badge.textContent = 'Luar Radius';
+            }
+            if (badge) {
+                badge.className = 'text-[10px] font-bold px-2 py-1 rounded-xl bg-red-100 text-red-600 dark:bg-red-900/60 dark:text-red-300 shrink-0';
+                badge.textContent = 'GPS Off';
+            }
+
+            updateUnifiedAdvisory('Izin Lokasi (GPS) Diperlukan', 'Aktifkan GPS pada perangkat / browser agar sistem dapat memvalidasi radius kantor dan mendeteksi cuaca di titik Anda.', 'warning');
+            stopRefreshAnimation();
+        }
+
+        function stopRefreshAnimation() {
+            isGpsChecking = false;
+            var refreshIcon = document.getElementById('weatherRefreshIcon');
+            if (refreshIcon) {
+                setTimeout(function() {
+                    refreshIcon.classList.remove('animate-spin');
+                }, 400);
             }
         }
 
