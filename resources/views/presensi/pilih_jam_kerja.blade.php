@@ -21,11 +21,14 @@
 @push('mystyle')
     <script>
         (function() {
-            var savedTheme = localStorage.getItem('smatt_theme') || (localStorage.getItem('MobilekitDarkModeActive') === '1' ? 'dark' : null);
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark', 'dark-mode-active');
+            var savedTheme = localStorage.getItem('smatt_theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark', 'dark-mode-active');
                 if (document.body) {
-                    document.body.classList.add('dark', 'dark-mode-active');
+                    document.body.classList.remove('dark', 'dark-mode-active');
                 }
             }
         })();
@@ -39,46 +42,16 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            background-color: #f8fafc;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
         }
 
-        /* Dark Mode Support */
-        body.dark, body.dark-mode-active, html.dark body, html.dark-mode-active body {
-            background-color: #070b14 !important;
-            color: #f8fafc !important;
-        }
-
-        .dark .bg-white, body.dark-mode-active .bg-white {
-            background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-        }
-
-        .dark .text-slate-800, .dark .text-slate-900 {
-            color: #f8fafc !important;
-        }
-
-        .dark .text-slate-600, .dark .text-slate-700 {
-            color: #cbd5e1 !important;
-        }
-
-        .dark .text-slate-400, .dark .text-slate-500 {
-            color: #94a3b8 !important;
-        }
-
-        .dark .bg-slate-50 {
-            background-color: #182339 !important;
-        }
-
-        .dark .border-slate-100, .dark .border-slate-200 {
-            border-color: rgba(255, 255, 255, 0.08) !important;
-        }
-
-        /* Shift Card Bento Styling */
+        /* ===== Shift Card Bento Styling ===== */
         .shift-card {
-            background: #ffffff;
-            border-radius: 20px;
-            border: 1.5px solid #e2e8f0;
-            box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05);
+            background-color: #ffffff !important;
+            border-radius: 20px !important;
+            border: 1.5px solid #e2e8f0 !important;
+            box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.06) !important;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -87,8 +60,8 @@
 
         .shift-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.1);
-            border-color: {{ $t['primary'] ?? '#0f766e' }};
+            box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12) !important;
+            border-color: {{ $t['primary'] ?? '#0f766e' }} !important;
         }
 
         .shift-card:active {
@@ -97,18 +70,124 @@
 
         .shift-card.active-shift-recommended {
             border-color: #10b981 !important;
-            box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.2) !important;
+            box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.22) !important;
         }
 
-        .dark .shift-card {
+        .shift-title-text {
+            color: #0f172a !important;
+            font-weight: 800 !important;
+            font-size: 14.5px !important;
+            line-height: 1.25 !important;
+        }
+
+        .shift-time-card {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            padding: 10px 8px !important;
+            text-align: center !important;
+        }
+
+        .shift-time-label-text {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            display: block !important;
+        }
+
+        .shift-time-val-text {
+            font-size: 16.5px !important;
+            font-weight: 800 !important;
+            color: #0f172a !important;
+            letter-spacing: 0.03em !important;
+            display: block !important;
+            margin-top: 2px !important;
+        }
+
+        .shift-break-banner {
+            background-color: #fef3c7 !important;
+            border: 1px solid #fde68a !important;
+            border-radius: 12px !important;
+            padding: 6px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            font-size: 11px !important;
+            margin-top: 10px !important;
+        }
+
+        .shift-break-title {
+            color: #92400e !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+
+        .shift-break-time {
+            color: #78350f !important;
+            font-weight: 800 !important;
+        }
+
+        .shift-arrow-btn {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 9999px !important;
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 11px !important;
+        }
+
+        /* ===== Dark Mode Support ===== */
+        html.dark body, body.dark {
+            background-color: #070b14 !important;
+            color: #f8fafc !important;
+        }
+
+        html.dark .shift-card, body.dark .shift-card {
             background: linear-gradient(180deg, #131d31 0%, #0f172a 100%) !important;
             border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
             box-shadow: 0 8px 25px -4px rgba(0, 0, 0, 0.4) !important;
         }
 
-        .dark .shift-card:hover {
-            border-color: #10b981 !important;
-            box-shadow: 0 12px 30px -4px rgba(16, 185, 129, 0.25) !important;
+        html.dark .shift-title-text, body.dark .shift-title-text {
+            color: #f8fafc !important;
+        }
+
+        html.dark .shift-time-card, body.dark .shift-time-card {
+            background-color: #182339 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html.dark .shift-time-label-text, body.dark .shift-time-label-text {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .shift-time-val-text, body.dark .shift-time-val-text {
+            color: #f8fafc !important;
+        }
+
+        html.dark .shift-break-banner, body.dark .shift-break-banner {
+            background-color: rgba(217, 119, 6, 0.15) !important;
+            border-color: rgba(217, 119, 6, 0.3) !important;
+        }
+
+        html.dark .shift-break-title, body.dark .shift-break-title {
+            color: #fbbf24 !important;
+        }
+
+        html.dark .shift-break-time, body.dark .shift-break-time {
+            color: #fef3c7 !important;
+        }
+
+        html.dark .shift-arrow-btn, body.dark .shift-arrow-btn {
+            background-color: #1e293b !important;
+            color: #94a3b8 !important;
         }
 
         /* Staggered entrance animation */
@@ -143,10 +222,11 @@
                         {{ date('H:i:s') }}
                     </span>
                 </div>
-                <h2 class="text-lg font-extrabold text-white tracking-tight leading-snug">
+                
+                <h2 class="text-base font-extrabold tracking-tight mb-1 text-white">
                     Tentukan Jadwal Kerja Hari Ini
                 </h2>
-                <p class="text-xs text-white/80 mt-1 font-medium leading-relaxed">
+                <p class="text-xs text-emerald-100/90 leading-relaxed font-medium">
                     Pilih salah satu jam kerja yang sesuai dengan shift Anda sebelum melakukan foto presensi.
                 </p>
             </div>
@@ -158,10 +238,10 @@
 
         {{-- ===== SHIFT LIST SECTION ===== --}}
         <div class="flex items-center justify-between px-2 mb-3">
-            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                 Daftar Shift Tersedia ({{ count($jamkerja) }})
             </span>
-            <span class="text-[11px] text-slate-400 font-medium">Ketuk untuk memilih</span>
+            <span class="text-[11px] text-slate-500 font-medium">Ketuk untuk memilih</span>
         </div>
 
         <div class="space-y-3" id="shiftListContainer">
@@ -192,19 +272,19 @@
                     }
 
                     // Shift icon based on name
-                    $iconClass = 'fa-sun text-amber-500';
-                    $iconBg = 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/60 dark:border-amber-800/60';
+                    $iconClass = 'fa-sun text-amber-600';
+                    $iconBg = 'bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-800/60';
                     $nameLower = strtolower($item->nama_jam_kerja);
                     
                     if (str_contains($nameLower, 'malam') || $item->lintashari == 1) {
-                        $iconClass = 'fa-moon text-indigo-400';
-                        $iconBg = 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200/60 dark:border-indigo-800/60';
+                        $iconClass = 'fa-moon text-indigo-500';
+                        $iconBg = 'bg-indigo-100 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-800/60';
                     } elseif (str_contains($nameLower, 'siang') || str_contains($nameLower, 'sore')) {
-                        $iconClass = 'fa-cloud-sun text-orange-500';
-                        $iconBg = 'bg-orange-50 dark:bg-orange-950/60 border-orange-200/60 dark:border-orange-800/60';
+                        $iconClass = 'fa-cloud-sun text-orange-600';
+                        $iconBg = 'bg-orange-100 dark:bg-orange-950/60 border-orange-300 dark:border-orange-800/60';
                     } elseif (str_contains($nameLower, 'pagi') || str_contains($nameLower, 'non')) {
-                        $iconClass = 'fa-sun text-amber-500';
-                        $iconBg = 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/60 dark:border-amber-800/60';
+                        $iconClass = 'fa-sun text-amber-600';
+                        $iconBg = 'bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-800/60';
                     }
                 @endphp
 
@@ -219,19 +299,19 @@
                                 <i class="fa-solid {{ $iconClass }}"></i>
                             </div>
                             <div class="min-w-0">
-                                <h3 class="text-sm font-extrabold text-slate-800 dark:text-slate-100 truncate">
+                                <div class="shift-title-text truncate">
                                     {{ $item->nama_jam_kerja }}
-                                </h3>
-                                <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-wrap mt-1">
                                     @if ($item->lintashari == 1)
-                                        <span class="inline-flex items-center gap-1 text-[9.5px] font-bold px-1.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60">
+                                        <span class="inline-flex items-center gap-1 text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800/60">
                                             <i class="fa-solid fa-moon text-[8.5px]"></i>
                                             Lintas Hari
                                         </span>
                                     @endif
 
                                     @if (!empty($item->total_jam))
-                                        <span class="inline-flex items-center gap-1 text-[9.5px] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                        <span class="inline-flex items-center gap-1 text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                             <i class="fa-solid fa-hourglass-half text-[8.5px]"></i>
                                             {{ $item->total_jam }} Jam
                                         </span>
@@ -243,12 +323,12 @@
                         {{-- Recommended badge or arrow --}}
                         <div class="shrink-0 flex items-center gap-1.5">
                             @if ($isRecommended)
-                                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-700/80 flex items-center gap-1 animate-pulse">
+                                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 flex items-center gap-1 animate-pulse">
                                     <i class="fa-solid fa-star text-[8.5px]"></i>
                                     <span>Disarankan</span>
                                 </span>
                             @endif
-                            <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-400 flex items-center justify-center text-xs">
+                            <div class="shift-arrow-btn">
                                 <i class="fa-solid fa-chevron-right"></i>
                             </div>
                         </div>
@@ -256,16 +336,16 @@
 
                     {{-- Time Window Details (Masuk & Pulang) --}}
                     <div class="grid grid-cols-2 gap-2.5 mt-3">
-                        <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-800/80 text-center">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Jam Masuk</span>
-                            <span class="text-base font-black text-slate-800 dark:text-slate-100 tracking-wider block mt-0.5">
+                        <div class="shift-time-card">
+                            <span class="shift-time-label-text">Jam Masuk</span>
+                            <span class="shift-time-val-text">
                                 {{ $jamMasuk }}
                             </span>
                         </div>
 
-                        <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-800/80 text-center">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Jam Pulang</span>
-                            <span class="text-base font-black text-slate-800 dark:text-slate-100 tracking-wider block mt-0.5">
+                        <div class="shift-time-card">
+                            <span class="shift-time-label-text">Jam Pulang</span>
+                            <span class="shift-time-val-text">
                                 {{ $jamPulang }}
                             </span>
                         </div>
@@ -273,12 +353,12 @@
 
                     {{-- Istirahat Info (If applicable) --}}
                     @if ($item->istirahat == 1 && !empty($item->jam_awal_istirahat) && !empty($item->jam_akhir_istirahat))
-                        <div class="mt-2.5 px-3 py-1.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/50 dark:border-amber-800/50 flex items-center justify-between text-[10.5px]">
-                            <span class="font-medium text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
-                                <i class="fa-solid fa-mug-hot text-[10px] text-amber-600 dark:text-amber-400"></i>
+                        <div class="shift-break-banner">
+                            <span class="shift-break-title">
+                                <i class="fa-solid fa-mug-hot text-[10px] text-amber-700 dark:text-amber-400"></i>
                                 Istirahat Kerja:
                             </span>
-                            <span class="font-bold text-amber-900 dark:text-amber-200">
+                            <span class="shift-break-time">
                                 {{ date('H:i', strtotime($item->jam_awal_istirahat)) }} - {{ date('H:i', strtotime($item->jam_akhir_istirahat)) }}
                             </span>
                         </div>
@@ -308,9 +388,14 @@
         // Synchronize dark theme with localStorage
         (function() {
             var savedTheme = localStorage.getItem('smatt_theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.body.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark', 'dark-mode-active');
+                if (document.body) {
+                    document.body.classList.remove('dark', 'dark-mode-active');
+                }
             }
         })();
 
