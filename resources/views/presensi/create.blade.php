@@ -1,23 +1,77 @@
 @extends('layouts.mobile.app')
 @section('content')
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('smatt_theme') || (localStorage.getItem('MobilekitDarkModeActive') === '1' ? 'dark' : null);
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark', 'dark-mode-active');
+                if (document.body) {
+                    document.body.classList.add('dark', 'dark-mode-active');
+                }
+            }
+        })();
+    </script>
     <style>
+        :root {
+            --primary-color: {{ $t['primary'] ?? '#0f766e' }};
+            --primary-dark: #115e59;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Comprehensive Dark Mode Support */
+        body.dark, body.dark-mode-active, html.dark body, html.dark-mode-active body {
+            background-color: #0b1120 !important;
+            color: #f8fafc !important;
+        }
+
+        body.dark #appCapsule, body.dark-mode-active #appCapsule,
+        body.dark #content-section, body.dark-mode-active #content-section {
+            background-color: transparent !important;
+        }
+
+        body.dark .presensi-content-modern,
+        body.dark-mode-active .presensi-content-modern,
+        .dark .presensi-content-modern {
+            background: #0f172a !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        body.dark #liveness-status-section,
+        body.dark-mode-active #liveness-status-section,
+        .dark #liveness-status-section {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body.dark #liveness-status-text,
+        body.dark-mode-active #liveness-status-text,
+        .dark #liveness-status-text {
+            color: #38bdf8 !important;
+        }
+
         .webcam-capture {
             width: 100%;
             max-width: 98vw;
             height: 0;
-            /* Diperkecil dari 133.33% ke 100% agar rasio kotak (1:1) dan hemat ruang */
             padding-top: 100%; 
             margin: 0 auto;
             padding: 0;
-            border-radius: 24px;
+            border-radius: 28px;
             overflow: hidden;
-            background: #222;
+            background: #0f172a;
             position: relative;
-            box-shadow: 0 4px 24px rgba(44, 62, 80, 0.10);
+            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Batasi tinggi maksimal agar menu di bawah tetap muncul di layar kecil */
             max-height: 45vh; 
         }
 
@@ -29,7 +83,7 @@
             width: 100% !important;
             height: 100% !important;
             object-fit: cover;
-            border-radius: 24px !important;
+            border-radius: 28px !important;
             display: block;
         }
 
@@ -38,8 +92,8 @@
             width: 100%;
             margin-bottom: 10px;
             opacity: 0.8;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         canvas {
@@ -66,9 +120,11 @@
             transform: translate(-50%, -50%);
             z-index: 1000;
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 5px;
+            background-color: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
         }
 
         #header-section {
@@ -80,7 +136,7 @@
         }
 
         #content-section {
-            margin-top: 60px !important;
+            margin-top: 56px !important;
             padding: 0 !important;
             position: relative;
             z-index: 1;
@@ -98,8 +154,8 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 20px;
-            width: 92%;
+            bottom: 16px;
+            width: 90%;
             display: flex;
             justify-content: center;
             z-index: 20;
@@ -108,8 +164,8 @@
 
         #listcabang .select-wrapper {
             position: relative;
-            width: 90%;
-            animation: fadeIn 0.5s ease-in-out;
+            width: 100%;
+            animation: fadeIn 0.4s ease-in-out;
         }
 
         @keyframes fadeIn {
@@ -117,296 +173,200 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-            }
-        }
-
-        #listcabang .select-wrapper::before {
-            content: "";
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            pointer-events: none;
-        }
-
         #listcabang select {
             width: 100%;
-            height: 45px;
-            border-radius: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
+            height: 42px;
+            border-radius: 14px;
+            background-color: rgba(15, 23, 42, 0.75);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            padding: 0 15px 0 45px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 0 15px 0 38px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
         }
 
-        #listcabang select:hover {
-            background-color: rgba(0, 0, 0, 0.6);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
         #listcabang select:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-            background-color: rgba(0, 0, 0, 0.6);
-            animation: pulse 1.5s infinite;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
         }
 
         #listcabang select option {
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: #0f172a;
             color: white;
+        }
+
+        #listcabang .select-wrapper::before {
+            content: "📍";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 2;
         }
 
         #listcabang .select-wrapper::after {
-            content: "";
+            content: "▼";
             position: absolute;
-            right: 15px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
             pointer-events: none;
-        }
-
-        .scan-button {
-            height: 45px !important;
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            width: 42%;
-        }
-
-        .scan-button ion-icon {
-            margin-right: 5px;
-        }
-
-        .jam-digital-malasngoding {
-            background-color: rgba(39, 39, 39, 0.7);
-            position: absolute;
-            top: 65px;
-            right: 15px;
-            z-index: 20;
-            width: 150px;
-            border-radius: 10px;
-            padding: 5px;
-            backdrop-filter: blur(5px);
-        }
-
-        .jam-digital-malasngoding p {
-            color: #fff;
-            font-size: 16px;
-            text-align: left;
-            margin-top: 0;
-            margin-bottom: 0;
+            z-index: 2;
         }
 
         .face-detection-box {
-            border: 2px solid #4CAF50;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-            transition: all 0.3s ease;
+            border: 2.5px solid #10b981;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+            transition: all 0.25s ease;
         }
 
         .face-detection-box.unknown {
-            border-color: #F44336;
-            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
         }
 
         .face-detection-label {
-            background-color: rgba(76, 175, 80, 0.8);
+            background-color: rgba(16, 185, 129, 0.9);
             color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
         }
 
         .face-detection-label.unknown {
-            background-color: rgba(244, 67, 54, 0.8);
+            background-color: rgba(239, 68, 68, 0.9);
         }
 
         .presensi-content-modern {
-            background: linear-gradient(135deg, #e0f7fa 0%, #fff 100%);
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
-            /* Padding diperkecil agar hemat ruang */
-            padding: 10px 10px 15px 10px;
-            margin: 5px 0;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+            border: 1px solid #e2e8f0;
+            padding: 10px 10px 14px 10px;
+            margin: 6px 0;
             display: flex;
             flex-direction: column;
-        }
-
-        .presensi-content-modern,
-        .presensi-content-modern * {
-            font-family: 'Poppins', sans-serif !important;
         }
 
         .camera-section {
             padding: 2px;
             position: relative;
             flex-shrink: 0;
-            margin-bottom: 10px; /* Diperkecil dari 20px */
+            margin-bottom: 10px;
         }
 
         .info-section {
             background: transparent;
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 8px;
-            backdrop-filter: blur(6px);
-            color: #222;
-            font-size: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex-grow: 1;
-        }
-
-        .info-section p {
-            margin: 0;
-            font-size: 15px;
-        }
-
-        .location-section {
-            margin-bottom: 12px;
-        }
-
-        .map-section {
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
-            margin-bottom: 14px;
-        }
-
-        .action-section {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .action-section .scan-button {
-            flex: 1;
-            font-size: 18px;
-            border-radius: 24px;
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-
-        .action-section .scan-button:active {
-            transform: scale(0.97);
-            box-shadow: 1px 4px rgba(44, 62, 80, 0.12);
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 0;
+            color: #0f172a;
         }
 
         .jadwalkerja-row {
-            background: linear-gradient(90deg, #35796A 0%, #24584C 100%);
-            border-radius: 16px;
-            box-shadow: 0 4px 18px rgba(44, 62, 80, 0.13);
-            margin-bottom: 6px;
-            padding: 8px 0 4px 0;
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 50%, #042f2e 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px -4px rgba(15, 118, 110, 0.35);
+            margin: 0;
+            padding: 10px 6px;
             display: flex;
             justify-content: space-between;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             position: relative;
         }
 
         .jadwalkerja-col:not(:last-child) {
-            border-right: 1.5px solid rgba(255, 255, 255, 0.22);
+            border-right: 1px solid rgba(255, 255, 255, 0.18);
         }
 
         .jadwalkerja-col {
-            padding: 0 6px;
+            padding: 2px 6px;
+            flex: 1;
         }
 
         .jadwalkerja-icon {
-            font-size: 28px;
-            color: #ffffff;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 2px;
         }
 
         .jadwalkerja-label {
-            font-size: 13px;
-            color: #fff;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.75);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
             margin-bottom: 2px;
         }
 
         .jadwalkerja-value {
-            font-size: clamp(12px, 2.5vw, 18px);
-            font-weight: bold;
-            color: #fff;
-            letter-spacing: 0.5px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.02em;
             word-break: break-word;
             line-height: 1.2;
-            max-width: 100%;
-            overflow-wrap: break-word;
         }
 
+        /* Glassmorphic floating pills over camera */
         .abs-tanggal-modern {
             position: absolute;
-            top: 12px;
-            left: 30px;
-            background: rgba(255, 255, 255, 0.75);
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
-            border-radius: 10px;
-            padding: 4px 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #222;
+            top: 14px;
+            left: 14px;
+            background: rgba(15, 23, 42, 0.65);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            border-radius: 9999px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
             z-index: 10;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .abs-jam-modern {
             position: absolute;
-            top: 12px;
-            right: 30px;
-            background: rgba(255, 255, 255, 0.75);
-            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
-            border-radius: 10px;
-            padding: 4px 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #222;
+            top: 14px;
+            right: 14px;
+            background: rgba(15, 23, 42, 0.65);
+            color: #10b981;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            border-radius: 9999px;
+            padding: 4px 10px;
+            font-size: 11.5px;
+            font-weight: 800;
             z-index: 10;
-            letter-spacing: 1px;
-            backdrop-filter: blur(4px);
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .map-absolute-section {
@@ -420,35 +380,103 @@
         }
 
         .map-absolute-section #map {
-            /* Tinggi peta diperkecil agar tidak menutupi wajah saat liveness */
             height: 90px; 
-            width: 80%;
+            width: 84%;
             margin: 0 auto;
-            opacity: 0.45;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            opacity: 0.55;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
         }
 
         #liveness-status-section {
-            transition: all 0.3s ease;
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+            transition: all 0.25s ease;
         }
 
         #liveness-status-text {
-            font-family: 'Poppins', sans-serif !important;
-            font-weight: 500;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-weight: 700;
+            font-size: 12.5px;
+            color: #0f766e;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Modern SweetAlert Choice Modal */
+        .swal2-popup.swal2-modern-choice-popup {
+            border-radius: 24px !important;
+            padding: 24px 20px 20px !important;
+            max-width: 90% !important;
+            width: 360px !important;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+
+        body.dark .swal2-popup.swal2-modern-choice-popup,
+        body.dark-mode-active .swal2-popup.swal2-modern-choice-popup,
+        .dark .swal2-popup.swal2-modern-choice-popup {
+            background: #0f172a !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+        }
+
+        body.dark .swal-choice-title,
+        body.dark-mode-active .swal-choice-title,
+        .dark .swal-choice-title {
+            color: #f8fafc !important;
+        }
+
+        body.dark .swal-choice-desc,
+        body.dark-mode-active .swal-choice-desc,
+        .dark .swal-choice-desc {
+            color: #94a3b8 !important;
+        }
+
+        .btn-absen-choice {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-absen-choice:active {
+            transform: scale(0.97);
+        }
+        .swal2-modern-cancel-btn {
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            font-size: 12px !important;
+            padding: 8px 18px !important;
         }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
     <div id="header-section">
-        <div class="appHeader bg-primary text-light">
+        <div class="appHeader bg-primary text-light" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 100%) !important; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             <div class="left">
-                <a href="javascript:;" class="headerButton goBack">
+                <a href="{{ route('dashboard.index') }}" class="headerButton goBack" style="color:#ffffff;">
                     <ion-icon name="chevron-back-outline"></ion-icon>
                 </a>
             </div>
-            <div class="pageTitle">SM-Attendance</div>
+            <div class="pageTitle text-center" style="font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2;">
+                <div style="font-weight:800;font-size:15.5px;letter-spacing:-0.02em;color:#ffffff;">SM-Attendance</div>
+                <div style="font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.75);letter-spacing:0.04em;">by Zhansoft</div>
+            </div>
             <div class="right"></div>
         </div>
     </div>
@@ -457,7 +485,10 @@
             <div class="camera-section" style="position:relative;">
                 <div class="row" style="margin-top: 0;">
                     <div class="col" id="facedetection" style="position:relative;">
-                        <div class="abs-tanggal-modern">{{ DateToIndo(date('Y-m-d')) }}</div>
+                        <div class="abs-tanggal-modern">
+                            <span>📅</span>
+                            <span>{{ DateToIndo(date('Y-m-d')) }}</span>
+                        </div>
                         <div class="abs-jam-modern"><span id="jam"></span></div>
                         <div class="webcam-capture"></div>
                         <input type="hidden" id="server-time" value="{{ date('Y-m-d H:i:s') }}">
@@ -468,7 +499,7 @@
                                     <div class="spinner-border text-primary" role="status">
                                         <span class="sr-only">Loading...</span>
                                     </div>
-                                    <div class="mt-2" style="font-size:10px;">Memuat peta...</div>
+                                    <div class="mt-2" style="font-size:10px;">Memuat peta lokasi...</div>
                                 </div>
                             </div>
                         </div>
@@ -497,8 +528,11 @@
                     </div>
                 </div>
             </div>
-            <div id="liveness-status-section" style="background: linear-gradient(135deg, #f5f5f5 0%, #fff 100%); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: center; min-height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);">
-                <span id="liveness-status-text" style="font-size: 14px; font-weight: 500; color: #0c5460;">Menunggu pengenalan wajah...</span>
+            <div id="liveness-status-section">
+                <span id="liveness-status-text">
+                    <i class="fa-solid fa-face-smile"></i>
+                    <span>Menunggu pengenalan wajah...</span>
+                </span>
             </div>
             <div class="info-section">
                 <div class="row jadwalkerja-row">
@@ -657,25 +691,77 @@
         }
 
         $(function() {
+            var savedTheme = localStorage.getItem('smatt_theme') || (localStorage.getItem('MobilekitDarkModeActive') === '1' ? 'dark' : null);
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                $('html, body').addClass('dark dark-mode-active');
+            }
+
             Swal.fire({
-                title: 'Pilih Tipe Absensi',
-                text: "Silakan pilih apakah Anda ingin Absen Masuk atau Absen Pulang.",
-                icon: 'question',
+                title: '<div class="swal-choice-title" style="font-family:\'Plus Jakarta Sans\',sans-serif;font-weight:800;font-size:18px;letter-spacing:-0.02em;">Pilih Tipe Absensi</div>',
+                html: `
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:2px 0 6px;">
+                        <p class="swal-choice-desc" style="font-size:12.5px;margin-bottom:16px;line-height:1.45;">
+                            Silakan tentukan aktivitas kehadiran Anda untuk shift <b>{{ $jam_kerja->nama_jam_kerja }}</b>:
+                        </p>
+                        <div style="display:flex;flex-direction:column;gap:12px;">
+                            <button type="button" id="btn-pilih-masuk" class="btn-absen-choice" style="
+                                display:flex;align-items:center;gap:14px;padding:12px 14px;
+                                background:linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+                                color:#ffffff;border:none;border-radius:16px;cursor:pointer;
+                                text-align:left;box-shadow:0 6px 16px -2px rgba(15,118,110,0.35);
+                            ">
+                                <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">
+                                    📥
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-weight:800;font-size:14px;line-height:1.2;">Absen Masuk</div>
+                                    <div style="font-size:11px;opacity:0.9;margin-top:2px;">Mulai jam kerja & catat kehadiran</div>
+                                </div>
+                                <div style="font-size:16px;opacity:0.75;font-weight:700;">➔</div>
+                            </button>
+
+                            <button type="button" id="btn-pilih-pulang" class="btn-absen-choice" style="
+                                display:flex;align-items:center;gap:14px;padding:12px 14px;
+                                background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                                color:#ffffff;border:none;border-radius:16px;cursor:pointer;
+                                text-align:left;box-shadow:0 6px 16px -2px rgba(217,119,6,0.35);
+                            ">
+                                <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">
+                                    📤
+                                </div>
+                                <div style="flex:1;">
+                                    <div style="font-weight:800;font-size:14px;line-height:1.2;">Absen Pulang</div>
+                                    <div style="font-size:11px;opacity:0.9;margin-top:2px;">Selesai jam kerja & catat kepulangan</div>
+                                </div>
+                                <div style="font-size:16px;opacity:0.75;font-weight:700;">➔</div>
+                            </button>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
                 showCancelButton: true,
-                confirmButtonColor: '#28a745',
-                cancelButtonColor: '#dc3545',
-                confirmButtonText: 'Absen Masuk',
-                cancelButtonText: 'Absen Pulang',
+                cancelButtonText: 'Batal & Kembali',
+                cancelButtonColor: '#94a3b8',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
+                customClass: {
+                    popup: 'swal2-modern-choice-popup',
+                    cancelButton: 'swal2-modern-cancel-btn'
+                },
+                didOpen: () => {
+                    document.getElementById('btn-pilih-masuk')?.addEventListener('click', () => {
+                        selectedAbsenType = '1';
+                        Swal.close();
+                        checkAndProceedAbsen();
+                    });
+                    document.getElementById('btn-pilih-pulang')?.addEventListener('click', () => {
+                        selectedAbsenType = '2';
+                        Swal.close();
+                        checkAndProceedAbsen();
+                    });
+                }
             }).then((result) => {
-                if (result.isConfirmed) {
-                    selectedAbsenType = '1';
-                    checkAndProceedAbsen();
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    selectedAbsenType = '2';
-                    checkAndProceedAbsen();
-                } else {
+                if (result.dismiss === Swal.DismissReason.cancel) {
                     window.location.href = '/dashboard';
                 }
             });
