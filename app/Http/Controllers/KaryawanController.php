@@ -818,9 +818,11 @@ class KaryawanController extends Controller
     public function idcard($nik)
     {
         $nik = Crypt::decrypt($nik);
-        $karyawan = Karyawan::where('nik', $nik)
-            ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
-            ->join('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
+        $karyawan = Karyawan::where('karyawan.nik', $nik)
+            ->leftJoin('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
+            ->leftJoin('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
+            ->leftJoin('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
+            ->select('karyawan.*', 'departemen.nama_dept', 'jabatan.nama_jabatan', 'cabang.nama_cabang')
             ->first();
         $data['karyawan'] = $karyawan;
         $generalsetting = Pengaturanumum::where('id', 1)->first();
