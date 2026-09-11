@@ -96,6 +96,9 @@ Route::controller(App\Http\Controllers\PublicPresensiController::class)->group(f
     Route::post('/public/presensi/store', 'store')->name('public.presensi.store');
 });
 
+// Web Push Public Key Route
+Route::get('/webpush/vapid-public-key', [App\Http\Controllers\WebPushController::class, 'getPublicKey'])->name('webpush.key');
+
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -128,6 +131,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/shortcut/pinjaman', 'mypinjaman')->name('shortcut.mypinjaman');
         }
         );
+
+        Route::controller(App\Http\Controllers\WebPushController::class)->group(function () {
+            Route::post('/webpush/subscribe', 'subscribe')->name('webpush.subscribe');
+            Route::post('/webpush/unsubscribe', 'unsubscribe')->name('webpush.unsubscribe');
+            Route::post('/webpush/test', 'testPush')->name('webpush.test');
+        });
 
         Route::controller(KaryawanApprovalController::class)->group(function () {
             Route::get('/karyawan-approval', 'index')->name('karyawan-approval.index');

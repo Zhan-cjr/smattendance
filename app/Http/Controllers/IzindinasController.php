@@ -340,6 +340,23 @@ class IzindinasController extends Controller
                 ]);
             }
             DB::commit();
+
+            // Send Push Notification to Employee
+            try {
+                $statusTxt = isset($request->approve) ? 'DISETUJUI' : 'DITOLAK';
+                $iconStatus = isset($request->approve) ? '✅' : '❌';
+                $dariIndo = DateToIndo($izindinas->dari);
+                $sampaiIndo = DateToIndo($izindinas->sampai);
+                app(\App\Services\WebPushService::class)->sendToNik(
+                    $izindinas->nik,
+                    "{$iconStatus} Status Izin Dinas Luar",
+                    "Pengajuan Izin Dinas Luar Anda ({$dariIndo} s.d {$sampaiIndo}) telah {$statusTxt}.",
+                    url('/izindinas')
+                );
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush Izindinas error: ' . $pushEx->getMessage());
+            }
+
             return Redirect::back()->with(messageSuccess('Data Berhasil Disimpan'));
         } catch (\Exception $e) {
             DB::rollBack();

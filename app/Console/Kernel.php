@@ -21,6 +21,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('location:delete-old --days=7')
             ->dailyAt('02:00')
             ->withoutOverlapping();
+
+        // Web Push Presensi Reminders
+        $schedule->command('presensi:reminder --type=in')->dailyAt('07:30');
+        $schedule->command('presensi:reminder --type=out')->everyFifteenMinutes();
     }
 
     /**

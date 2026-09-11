@@ -430,6 +430,22 @@ class IzincutiController extends Controller
             
             // Commit transaction terlebih dahulu
             DB::commit();
+
+            // Send Push Notification to Employee
+            try {
+                $statusTxt = isset($request->approve) ? 'DISETUJUI' : 'DITOLAK';
+                $iconStatus = isset($request->approve) ? '✅' : '❌';
+                $dariIndo = DateToIndo($dari);
+                $sampaiIndo = DateToIndo($sampai);
+                app(\App\Services\WebPushService::class)->sendToNik(
+                    $nik,
+                    "{$iconStatus} Status Pengajuan Cuti",
+                    "Pengajuan Cuti Anda ({$dariIndo} s.d {$sampaiIndo}) telah {$statusTxt}.",
+                    url('/izincuti')
+                );
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush Izincuti error: ' . $pushEx->getMessage());
+            }
             
             // Return success - dengan warning jika ada jadwal kerja yang belum di-set
             if (!empty($error)) {

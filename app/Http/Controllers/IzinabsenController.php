@@ -393,6 +393,22 @@ class IzinabsenController extends Controller
             
             // Commit transaction terlebih dahulu
             DB::commit();
+
+            // Send Push Notification to Employee
+            try {
+                $statusTxt = isset($request->approve) ? 'DISETUJUI' : 'DITOLAK';
+                $iconStatus = isset($request->approve) ? '✅' : '❌';
+                $dariIndo = DateToIndo($dari);
+                $sampaiIndo = DateToIndo($sampai);
+                app(\App\Services\WebPushService::class)->sendToNik(
+                    $nik,
+                    "{$iconStatus} Status Izin Absen",
+                    "Pengajuan Izin Absen Anda ({$dariIndo} s.d {$sampaiIndo}) telah {$statusTxt}.",
+                    url('/izinabsen')
+                );
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush Izinabsen error: ' . $pushEx->getMessage());
+            }
             
             // Return success - dengan warning jika ada jadwal kerja yang belum di-set
             if (!empty($error)) {

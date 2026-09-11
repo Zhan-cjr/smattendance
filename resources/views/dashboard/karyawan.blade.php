@@ -1398,5 +1398,17 @@
             window.location.href = "{{ route('facerecognition.karyawan.create') }}";
         });
     </script>
+
+    <!-- WebPush Manager and Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('WebPush: Service Worker registered'))
+                .catch(err => console.error('WebPush: Service Worker registration failed', err));
+        }
+    </script>
+    <script src="{{ asset('assets/template/js/webpush.js') }}?v={{ time() }}"></script>
+
+    @include('components.push-notification-banner')
 </body>
 </html>

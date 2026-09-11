@@ -68,8 +68,18 @@ class PengumumanController extends Controller
             $users = \App\Models\User::all(); // Or filter active users
             \Illuminate\Support\Facades\Notification::send($users, new \App\Notifications\PengumumanNotification($pengumuman));
 
-            // Send OneSignal Push Notification
-            // $this->sendOneSignalNotification($pengumuman->judul, $pengumuman->isi);
+            // Send Web Push Notification to all subscribed devices
+            try {
+                $webPushService = app(\App\Services\WebPushService::class);
+                $bodyPreview = substr(strip_tags($pengumuman->isi), 0, 120) . (strlen(strip_tags($pengumuman->isi)) > 120 ? '...' : '');
+                $webPushService->sendToAll(
+                    '📢 ' . $pengumuman->judul,
+                    $bodyPreview,
+                    route('pengumuman.index')
+                );
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush Pengumuman Error: ' . $pushEx->getMessage());
+            }
 
             DB::commit();
             

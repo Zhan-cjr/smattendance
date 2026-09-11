@@ -592,6 +592,8 @@
         </div>
     </div>
 
+    @include('components.push-notification-banner')
+
 </body>
 
 </html>

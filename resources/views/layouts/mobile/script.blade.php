@@ -11,6 +11,8 @@
 <script src="{{ asset('assets/template/js/plugins/jquery-circle-progress/circle-progress.min.js') }}"></script>
 <!-- Base Js File - Required untuk layout -->
 <script src="{{ asset('assets/template/js/base.js') }}?v={{ time() }}"></script>
+<!-- WebPush Notifications Manager -->
+<script src="{{ asset('assets/template/js/webpush.js') }}?v={{ time() }}"></script>
 <!-- Toastr - jQuery dependent -->
 <script src="{{ asset('assets/vendor/libs/toastr/toastr.js') }}"></script>
 
