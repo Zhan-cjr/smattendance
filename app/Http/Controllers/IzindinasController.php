@@ -11,6 +11,7 @@ use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\Approval;
 use App\Models\ApprovalLayer;
@@ -222,6 +223,26 @@ class IzindinasController extends Controller
             ]);
             DB::commit();
 
+            // Send Push Notification to Approver(s) Level 1
+            try {
+                $karyawanData = Karyawan::where('nik', $nik)->first();
+                if ($karyawanData) {
+                    $dariIndo = DateToIndo($request->dari);
+                    $sampaiIndo = DateToIndo($request->sampai);
+                    $datesText = $request->dari === $request->sampai ? $dariIndo : "{$dariIndo} s.d {$sampaiIndo}";
+                    app(\App\Services\ApprovalService::class)->notifyApprovers(
+                        $karyawanData,
+                        'Izin Dinas Luar',
+                        $datesText,
+                        url('/izindinas'),
+                        1,
+                        'IZIN'
+                    );
+                }
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush notifyApprovers Izindinas error: ' . $pushEx->getMessage());
+            }
+
             if ($role == 'karyawan') {
                 return Redirect::route('pengajuanizin.index')->with(messageSuccess('Data Berhasil Disimpan'));
             } else {
@@ -317,6 +338,29 @@ class IzindinasController extends Controller
                  if ($nextRule && !$user->hasRole('super admin')) {
                     // Update to next step
                     Izindinas::where('kode_izin_dinas', $kode_izin_dinas)->update(['approval_step' => $nextLevel]);
+                    DB::commit();
+
+                    // Send push notification to Next Level Approver(s)
+                    try {
+                        $karyawanData = Karyawan::where('nik', $izindinas->nik)->first();
+                        if ($karyawanData) {
+                            $dariIndo = DateToIndo($izindinas->dari);
+                            $sampaiIndo = DateToIndo($izindinas->sampai);
+                            $datesText = $izindinas->dari === $izindinas->sampai ? $dariIndo : "{$dariIndo} s.d {$sampaiIndo}";
+                            $approvalService->notifyApprovers(
+                                $karyawanData,
+                                'Izin Dinas Luar',
+                                $datesText,
+                                url('/izindinas'),
+                                $nextLevel,
+                                'IZIN'
+                            );
+                        }
+                    } catch (\Exception $pushEx) {
+                        Log::warning('WebPush next level notifyApprovers Izindinas error: ' . $pushEx->getMessage());
+                    }
+
+                    return Redirect::back()->with(messageSuccess('Berhasil disetujui (Tahap ' . $currentStep . '). Menunggu approval tahap selanjutnya.'));
                 } else {
                      // Final Approval
                     Izindinas::where('kode_izin_dinas', $kode_izin_dinas)->update([

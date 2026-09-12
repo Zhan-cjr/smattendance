@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\PushSubscription;
 use App\Models\Pengaturanumum;
 use App\Models\Karyawan;
+use App\Models\Userkaryawan;
 use Illuminate\Support\Facades\Log;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
@@ -203,6 +204,27 @@ class WebPushService
     public function sendToUser(int $userId, string $title, string $body, ?string $url = null, array $options = []): array
     {
         $subs = PushSubscription::where('user_id', $userId)->get();
+        return $this->sendToSubscriptions($subs, $title, $body, $url, $options);
+    }
+
+    /**
+     * Send to multiple user IDs (including their linked NIK if any)
+     */
+    public function sendToUsers(array $userIds, string $title, string $body, ?string $url = null, array $options = []): array
+    {
+        if (empty($userIds)) {
+            return ['success' => true, 'sent' => 0, 'failed' => 0];
+        }
+
+        $niks = Userkaryawan::whereIn('id_user', $userIds)->pluck('nik')->filter()->toArray();
+
+        $subs = PushSubscription::where(function ($q) use ($userIds, $niks) {
+            $q->whereIn('user_id', $userIds);
+            if (!empty($niks)) {
+                $q->orWhereIn('nik', $niks);
+            }
+        })->get();
+
         return $this->sendToSubscriptions($subs, $title, $body, $url, $options);
     }
 

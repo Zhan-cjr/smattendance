@@ -18,6 +18,7 @@ use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use App\Services\ApprovalService;
@@ -258,7 +259,32 @@ class IzinsakitController extends Controller
                 }
             }
             DB::commit();
-            return Redirect::back()->with(messageSuccess('Data Berhasil Disimpan'));
+
+            // Send Push Notification to Approver(s) Level 1
+            try {
+                $karyawanData = Karyawan::where('nik', $nik)->first();
+                if ($karyawanData) {
+                    $dariIndo = DateToIndo($request->dari);
+                    $sampaiIndo = DateToIndo($request->sampai);
+                    $datesText = $request->dari === $request->sampai ? $dariIndo : "{$dariIndo} s.d {$sampaiIndo}";
+                    app(\App\Services\ApprovalService::class)->notifyApprovers(
+                        $karyawanData,
+                        'Izin Sakit',
+                        $datesText,
+                        url('/izinsakit'),
+                        1,
+                        'IZIN'
+                    );
+                }
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush notifyApprovers Izinsakit error: ' . $pushEx->getMessage());
+            }
+
+            if ($role == 'karyawan') {
+                return Redirect::route('pengajuanizin.index')->with(messageSuccess('Data Berhasil Disimpan'));
+            } else {
+                return Redirect::back()->with(messageSuccess('Data Berhasil Disimpan'));
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return Redirect::back()->with(messageError($e->getMessage()));
@@ -360,6 +386,27 @@ class IzinsakitController extends Controller
                         'approval_step' => $nextLevel
                     ]);
                     DB::commit();
+
+                    // Send push notification to Next Level Approver(s)
+                    try {
+                        $karyawanData = Karyawan::where('nik', $nik)->first();
+                        if ($karyawanData) {
+                            $dariIndo = DateToIndo($dari);
+                            $sampaiIndo = DateToIndo($sampai);
+                            $datesText = $dari === $sampai ? $dariIndo : "{$dariIndo} s.d {$sampaiIndo}";
+                            $approvalService->notifyApprovers(
+                                $karyawanData,
+                                'Izin Sakit',
+                                $datesText,
+                                url('/izinsakit'),
+                                $nextLevel,
+                                'IZIN'
+                            );
+                        }
+                    } catch (\Exception $pushEx) {
+                        Log::warning('WebPush next level notifyApprovers Izinsakit error: ' . $pushEx->getMessage());
+                    }
+
                     return Redirect::back()->with(messageSuccess('Berhasil disetujui (Tahap ' . $currentStep . '). Menunggu approval tahap selanjutnya.'));
                 }
 

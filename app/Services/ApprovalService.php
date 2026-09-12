@@ -7,6 +7,7 @@ use App\Models\ApprovalLayer;
 use App\Models\User;
 use App\Models\Userkaryawan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ApprovalService
 {
@@ -103,5 +104,128 @@ class ApprovalService
             }
         }
         return $user->id;
+    }
+
+    /**
+     * Get all User IDs who are authorized to approve for a given feature, level, and context.
+     *
+     * @param string $feature
+     * @param int $level
+     * @param string|null $kodeDept
+     * @param string|null $kodeJabatan
+     * @param string|null $kodeCabang
+     * @return array<int>
+     */
+    public function getApproverUserIds(string $feature, int $level, ?string $kodeDept = null, ?string $kodeJabatan = null, ?string $kodeCabang = null): array
+    {
+        $layer = $this->getLayer($feature, $level, $kodeDept, $kodeJabatan, $kodeCabang);
+        $approverUserIds = [];
+
+        if ($layer && !empty($layer->role_name)) {
+            $roleName = $layer->role_name;
+
+            // 1. Direct users with this role
+            $directUsers = User::role($roleName)->get();
+            foreach ($directUsers as $u) {
+                if ($this->userMatchesContext($u, $kodeCabang, $kodeDept)) {
+                    $approverUserIds[] = $u->id;
+                }
+            }
+
+            // 2. Delegated karyawan users whose linked admin has this role
+            $adminIds = $directUsers->pluck('id')->toArray();
+            if (!empty($adminIds)) {
+                $delegatedKaryawanUsers = Userkaryawan::whereIn('approval_admin_id', $adminIds)
+                    ->pluck('id_user')
+                    ->toArray();
+
+                foreach ($delegatedKaryawanUsers as $karyawanUserId) {
+                    $u = User::find($karyawanUserId);
+                    if ($u) {
+                        $admin = $u->getApprovalAdmin();
+                        if ($admin && $this->userMatchesContext($admin, $kodeCabang, $kodeDept)) {
+                            $approverUserIds[] = $u->id;
+                        }
+                    }
+                }
+            }
+        } else {
+            // Fallback: Super Admin + users who have approval role/permission for this context
+            $superAdmins = User::role('super admin')->get();
+            foreach ($superAdmins as $sa) {
+                $approverUserIds[] = $sa->id;
+            }
+
+            // Admin / HRD / administrator with matching branch & dept
+            $otherAdmins = User::whereHas('roles', function ($q) {
+                $q->whereIn('name', ['admin', 'hrd', 'administrator']);
+            })->get();
+
+            foreach ($otherAdmins as $oa) {
+                if ($this->userMatchesContext($oa, $kodeCabang, $kodeDept)) {
+                    $approverUserIds[] = $oa->id;
+                }
+            }
+        }
+
+        return array_values(array_unique($approverUserIds));
+    }
+
+    /**
+     * Check if a user's branch and department access matches the target context.
+     */
+    protected function userMatchesContext(User $user, ?string $kodeCabang, ?string $kodeDept): bool
+    {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        $userCabangs = $user->getCabangCodes();
+        if (!empty($userCabangs) && $kodeCabang !== null && !in_array($kodeCabang, $userCabangs)) {
+            return false;
+        }
+
+        $userDepts = $user->getDepartemenCodes();
+        if (!empty($userDepts) && $kodeDept !== null && !in_array($kodeDept, $userDepts)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Send push notification to all approvers for a new or escalated permission request.
+     *
+     * @param \App\Models\Karyawan|object $karyawan
+     * @param string $typeLabel (e.g. 'Izin Absen', 'Cuti', 'Izin Sakit', 'Izin Dinas')
+     * @param string $detailDates (e.g. '12 Sep 2026 s.d 14 Sep 2026')
+     * @param string $url
+     * @param int $level
+     * @param string $feature
+     */
+    public function notifyApprovers($karyawan, string $typeLabel, string $detailDates, string $url, int $level = 1, string $feature = 'IZIN'): void
+    {
+        try {
+            $approverIds = $this->getApproverUserIds(
+                $feature,
+                $level,
+                $karyawan->kode_dept ?? null,
+                $karyawan->kode_jabatan ?? null,
+                $karyawan->kode_cabang ?? null
+            );
+
+            if (empty($approverIds)) {
+                return;
+            }
+
+            $nama = $karyawan->nama_karyawan ?? 'Karyawan';
+            $levelText = $level > 1 ? " (Tahap {$level})" : "";
+            $title = "📋 Pengajuan {$typeLabel} Baru{$levelText}";
+            $body = "{$nama} mengajukan {$typeLabel} ({$detailDates}). Menunggu persetujuan Anda.";
+
+            app(WebPushService::class)->sendToUsers($approverIds, $title, $body, $url);
+        } catch (\Exception $e) {
+            Log::warning("ApprovalService notifyApprovers error: " . $e->getMessage());
+        }
     }
 }

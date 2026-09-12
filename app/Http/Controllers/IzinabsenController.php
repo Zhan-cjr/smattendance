@@ -19,6 +19,7 @@ use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Jenssegers\Agent\Agent;
 use App\Services\ApprovalService;
@@ -260,6 +261,26 @@ class IzinabsenController extends Controller
             $izin->save();
             DB::commit();
 
+            // Send Push Notification to Approver(s) Level 1
+            try {
+                $karyawanData = Karyawan::where('nik', $nik)->first();
+                if ($karyawanData) {
+                    $dariIndo = DateToIndo($request->dari);
+                    $sampaiIndo = DateToIndo($request->sampai);
+                    $datesText = $request->dari === $request->sampai ? $dariIndo : "{$dariIndo} s.d {$sampaiIndo}";
+                    app(\App\Services\ApprovalService::class)->notifyApprovers(
+                        $karyawanData,
+                        'Izin Absen',
+                        $datesText,
+                        url('/izinabsen'),
+                        1,
+                        'IZIN'
+                    );
+                }
+            } catch (\Exception $pushEx) {
+                Log::warning('WebPush notifyApprovers Izinabsen error: ' . $pushEx->getMessage());
+            }
+
             if ($role == 'karyawan') {
                 return Redirect::route('pengajuanizin.index')->with(messageSuccess('Data Berhasil Disimpan'));
             } else {
@@ -365,6 +386,27 @@ class IzinabsenController extends Controller
                         'approval_step' => $nextLevel
                     ]);
                     DB::commit();
+
+                    // Send push notification to Next Level Approver(s)
+                    try {
+                        $karyawanData = Karyawan::where('nik', $nik)->first();
+                        if ($karyawanData) {
+                            $dariIndo = DateToIndo($dari);
+                            $sampaiIndo = DateToIndo($sampai);
+                            $datesText = $dari === $sampai ? $dariIndo : "{$dariIndo} s.d {$sampaiIndo}";
+                            $approvalService->notifyApprovers(
+                                $karyawanData,
+                                'Izin Absen',
+                                $datesText,
+                                url('/izinabsen'),
+                                $nextLevel,
+                                'IZIN'
+                            );
+                        }
+                    } catch (\Exception $pushEx) {
+                        Log::warning('WebPush next level notifyApprovers Izinabsen error: ' . $pushEx->getMessage());
+                    }
+
                     return Redirect::back()->with(messageSuccess('Berhasil disetujui (Tahap ' . $currentStep . '). Menunggu approval tahap selanjutnya.'));
                 }
 
