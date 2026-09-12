@@ -70,30 +70,72 @@ const WebPushManager = {
         }
     },
 
+    // Helper to show visual messages safely
+    showFeedback(type, message) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: type,
+                title: type === 'success' ? 'Berhasil' : (type === 'warning' ? 'Perhatian' : 'Info'),
+                text: message,
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        } else if (typeof toastr !== 'undefined') {
+            toastr[type](message);
+        } else {
+            console.log(`[WebPush ${type}]`, message);
+        }
+    },
+
     // Subscribe user to push notifications
     async subscribeUser() {
-        if (!this.isSupported()) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire('Info', 'Browser ini tidak mendukung Push Notification.', 'info');
-            } else {
-                alert('Browser ini tidak mendukung Push Notification.');
-            }
-            return false;
+        const btn = document.querySelector('#pushNotificationBanner .btn-primary') || document.querySelector('.btn-toggle-push-notif');
+        const originalText = btn ? btn.innerHTML : '';
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Memproses...';
         }
 
-        const vapidKey = await this.getVapidPublicKey();
-        if (!vapidKey) {
-            console.error('WebPush: No VAPID public key available');
+        if (!this.isSupported()) {
+            this.showFeedback('warning', 'Browser atau perangkat ini tidak mendukung Web Push Notification.');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+            this.dismissPromptBanner();
             return false;
         }
 
         try {
+            // Ensure service worker is ready
+            if (!this.swRegistration) {
+                this.swRegistration = await navigator.serviceWorker.ready;
+            }
+
+            const vapidKey = await this.getVapidPublicKey();
+            if (!vapidKey) {
+                console.warn('WebPush: No VAPID public key returned from server.');
+                this.showFeedback('warning', 'Kunci Web Push (VAPID) belum aktif di server. Silakan hubungi admin.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+                this.dismissPromptBanner();
+                return false;
+            }
+
             const permission = await Notification.requestPermission();
             if (permission !== 'granted') {
-                console.warn('WebPush: Notification permission denied by user.');
-                if (typeof toastr !== 'undefined') {
-                    toastr.warning('Izin notifikasi ditolak. Anda dapat mengaktifkannya di pengaturan browser.');
+                console.warn('WebPush: Notification permission denied or dismissed by user.');
+                this.showFeedback('warning', 'Izin notifikasi tidak diaktifkan. Anda dapat mengaktifkannya di pengaturan browser/situs.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
                 }
+                this.dismissPromptBanner();
                 return false;
             }
 
@@ -108,16 +150,17 @@ const WebPushManager = {
             this.isSubscribed = true;
             this.updateUI(true);
 
-            if (typeof toastr !== 'undefined') {
-                toastr.success('Notifikasi push berhasil diaktifkan!');
-            }
+            this.showFeedback('success', 'Notifikasi push berhasil diaktifkan di perangkat Anda!');
             this.hidePromptBanner();
             return true;
         } catch (error) {
             console.error('WebPush: Failed to subscribe user:', error);
-            if (typeof toastr !== 'undefined') {
-                toastr.error('Gagal mengaktifkan notifikasi: ' + error.message);
+            this.showFeedback('error', 'Gagal mengaktifkan notifikasi: ' + (error.message || error));
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
+            this.dismissPromptBanner();
             return false;
         }
     },
