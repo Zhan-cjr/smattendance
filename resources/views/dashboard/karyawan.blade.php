@@ -651,6 +651,30 @@
             </div>
         </div>
 
+        {{-- ===== RETAIL OPENING & CLOSING CHECKLIST BANNER ===== --}}
+        <div class="px-4 mt-4">
+            <a href="{{ route('checklist.index') }}" class="block p-3.5 rounded-2xl bg-gradient-to-r from-teal-800 via-teal-900 to-slate-900 text-white shadow-sm border border-teal-700/50 hover:brightness-105 active:scale-[0.99] transition-all text-decoration-none relative overflow-hidden">
+                <div class="absolute -right-3 -bottom-4 text-white/5 text-6xl pointer-events-none">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center text-lg font-bold shrink-0 shadow-sm">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xs font-extrabold text-white">Checklist Buka / Tutup Toko</h5>
+                            <p class="text-[10.5px] text-white/75 mt-0.5">Checklist report keadaan Kantor/Toko</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 text-teal-300 font-bold text-xs">
+                        <span>Buka</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+
         {{-- ===== QUICK APP GRID (8 APPS) ===== --}}
         <div class="px-4 mt-4">
             <div class="grid grid-cols-4 gap-2.5">

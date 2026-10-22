@@ -906,6 +906,26 @@ Route::group(['middleware' => ['auth']], function () { // Removed userAkses:admi
         );
 
         Route::get('/kpi/myscore', [KpiEmployeeController::class , 'myScore'])->name('kpi.transactions.myscore');
+
+        // ==================== CHECKLIST OPENING & CLOSING ====================
+        Route::controller(\App\Http\Controllers\ChecklistController::class)->group(function () {
+            Route::get('/checklist', 'index')->name('checklist.index');
+            Route::get('/checklist/create/{tipe}', 'create')->name('checklist.create');
+            Route::post('/checklist/store', 'store')->name('checklist.store');
+            Route::get('/checklist/{id}/show', 'show')->name('checklist.show');
+        });
+
+        Route::controller(\App\Http\Controllers\Admin\ChecklistAdminController::class)->group(function () {
+            Route::get('/admin/checklist/checkpoints', 'indexCheckpoints')->name('admin.checklist.checkpoints.index');
+            Route::post('/admin/checklist/checkpoints', 'storeCheckpoint')->name('admin.checklist.checkpoints.store');
+            Route::get('/admin/checklist/checkpoints/{id}/edit', 'editCheckpoint')->name('admin.checklist.checkpoints.edit');
+            Route::put('/admin/checklist/checkpoints/{id}', 'updateCheckpoint')->name('admin.checklist.checkpoints.update');
+            Route::delete('/admin/checklist/checkpoints/{id}', 'destroyCheckpoint')->name('admin.checklist.checkpoints.delete');
+
+            Route::get('/admin/checklist/monitoring', 'indexMonitoring')->name('admin.checklist.monitoring.index');
+            Route::get('/admin/checklist/monitoring/{id}', 'showMonitoring')->name('admin.checklist.monitoring.show');
+            Route::delete('/admin/checklist/monitoring/{id}', 'destroyLaporan')->name('admin.checklist.monitoring.delete');
+        });
     });
 // Ajuan Jadwal Routes
 Route::group(['middleware' => ['permission:ajuanjadwal.index']], function () {

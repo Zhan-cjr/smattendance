@@ -143,6 +143,24 @@
                 </div>
             </a>
             
+            {{-- Operasional Toko --}}
+            <div class="text-[11px] font-bold text-slate-400 tracking-wider uppercase px-2 pt-3 pb-1 fade-up" style="animation-delay: 0.33s">Operasional Toko</div>
+
+            <a href="{{ route('checklist.index') }}" class="card press fade-up" style="animation-delay: 0.34s">
+                <div class="card-body p-1.5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: #fef3c7; color: #b45309;">
+                            <ion-icon name="checkbox-outline" class="text-2xl"></ion-icon>
+                        </div>
+                        <div class="flex flex-col">
+                            <h3 class="text-[14px] font-bold text-slate-800 leading-tight">Buka / Tutup Toko</h3>
+                            <span class="text-[11px] text-slate-500 font-medium">Checklist report keadaan Kantor/Toko</span>
+                        </div>
+                    </div>
+                    <ion-icon name="chevron-forward-outline" class="text-slate-300 text-lg mr-2"></ion-icon>
+                </div>
+            </a>
+            
             {{-- Presensi & Daily --}}
             <div class="text-[11px] font-bold text-slate-400 tracking-wider uppercase px-2 pt-3 pb-1 fade-up" style="animation-delay: 0.35s">Absensi & Harian</div>
 

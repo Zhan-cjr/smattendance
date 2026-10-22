@@ -352,6 +352,28 @@
                  </ul>
              </li>
          @endcan
+
+        <!-- Checklist Toko (Monitoring & Master Data) -->
+        @can('checklist.admin')
+            <li class="menu-item {{ request()->is(['admin/checklist/*']) ? 'open active' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-clipboard-check"></i>
+                    <div>Checklist Toko</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ request()->is(['admin/checklist/monitoring', 'admin/checklist/monitoring/*']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.checklist.monitoring.index') }}" class="menu-link">
+                            <div>Monitoring Laporan</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ request()->is(['admin/checklist/checkpoints', 'admin/checklist/checkpoints/*']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.checklist.checkpoints.index') }}" class="menu-link">
+                            <div>Master Checkpoint</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
         
 
         
