@@ -119,18 +119,33 @@
 
         <div class="space-y-4">
             @foreach($laporan->collages as $col)
+                @php
+                    $colExists = $col->foto_collage && Storage::disk('public')->exists($col->foto_collage);
+                @endphp
                 <div class="grid-img-card shadow-sm">
                     <div class="p-2.5 bg-slate-800 text-white flex items-center justify-between text-xs">
                         <span class="font-bold flex items-center gap-1.5">
                             <i class="fa-solid fa-layer-group text-amber-400"></i>
                             <span>Grid Bagian #{{ $col->batch_no }} ({{ $col->total_items }} Titik)</span>
                         </span>
-                        <a href="{{ asset('storage/' . $col->foto_collage) }}" download="Grid_{{ $laporan->tipe }}_b{{ $col->batch_no }}.jpg" class="px-2.5 py-1 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-[10.5px] font-bold flex items-center gap-1 active:scale-95 transition-all text-decoration-none">
-                            <i class="fa-solid fa-download"></i>
-                            <span>Simpan ke HP</span>
-                        </a>
+                        @if($colExists)
+                            <a href="{{ asset('storage/' . $col->foto_collage) }}" download="Grid_{{ $laporan->tipe }}_b{{ $col->batch_no }}.jpg" class="px-2.5 py-1 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-[10.5px] font-bold flex items-center gap-1 active:scale-95 transition-all text-decoration-none">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Simpan ke HP</span>
+                            </a>
+                        @else
+                            <span class="text-[10px] text-amber-400 font-semibold">Foto Kedaluwarsa (>60 hr)</span>
+                        @endif
                     </div>
-                    <img src="{{ asset('storage/' . $col->foto_collage) }}" alt="Collage Grid" class="w-full h-auto object-cover">
+                    @if($colExists)
+                        <img src="{{ asset('storage/' . $col->foto_collage) }}" alt="Collage Grid" class="w-full h-auto object-cover">
+                    @else
+                        <div class="p-6 bg-slate-900 text-slate-400 text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-clock-rotate-left text-2xl text-slate-500 mb-1"></i>
+                            <span class="text-xs font-semibold">Foto grid telah dibersihkan (>60 hari)</span>
+                            <span class="text-[10px] text-slate-500">File fisik dibersihkan otomatis sesuai kebijakan retensi</span>
+                        </div>
+                    @endif
                 </div>
             @endforeach
         </div>
@@ -146,6 +161,9 @@
 
         <div class="space-y-3">
             @foreach($laporan->details as $idx => $det)
+                @php
+                    $detExists = $det->foto && Storage::disk('public')->exists($det->foto);
+                @endphp
                 <div class="item-card p-3 rounded-2xl shadow-2xs">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2">
@@ -162,7 +180,15 @@
                     </div>
 
                     <div class="aspect-video rounded-xl overflow-hidden bg-slate-900 mb-2 border border-slate-200 dark:border-slate-700">
-                        <img src="{{ asset('storage/' . $det->foto) }}" alt="{{ $det->nama_checkpoint }}" class="w-full h-full object-cover">
+                        @if($detExists)
+                            <img src="{{ asset('storage/' . $det->foto) }}" alt="{{ $det->nama_checkpoint }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-slate-900 text-slate-400">
+                                <i class="fa-solid fa-clock-rotate-left text-xl text-slate-500 mb-1"></i>
+                                <span class="text-xs font-semibold">Foto telah dibersihkan (>60 hari)</span>
+                                <span class="text-[10px] text-slate-500">File fisik dibersihkan otomatis sesuai kebijakan retensi</span>
+                            </div>
+                        @endif
                     </div>
 
                     @if($det->catatan)

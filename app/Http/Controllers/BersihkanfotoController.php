@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use App\Models\Presensi;
 use App\Models\Kunjungan;
 use App\Models\AktivitasKaryawan;
+use App\Models\ChecklistLaporan;
+use App\Models\Pengaturanumum;
 
 class BersihkanfotoController extends Controller
 {
@@ -15,7 +18,49 @@ class BersihkanfotoController extends Controller
      */
     public function index(Request $request)
     {
-        return view('utilities.bersihkanfoto.index');
+        $setting = Pengaturanumum::first();
+        $defaultDays = $setting->auto_hapus_foto_hari ?? 60;
+        $cutoffDate = Carbon::now()->subDays($defaultDays)->format('Y-m-d');
+
+        return view('utilities.bersihkanfoto.index', compact('setting', 'defaultDays', 'cutoffDate'));
+    }
+
+    /**
+     * Toggle auto-clean photos setting (Cron Job toggle)
+     */
+    public function toggleAutoClean(Request $request)
+    {
+        try {
+            $setting = Pengaturanumum::first();
+            if (!$setting) {
+                $setting = new Pengaturanumum();
+            }
+
+            $isActive = $request->boolean('auto_hapus_foto');
+            $days = $request->input('auto_hapus_foto_hari', 60);
+
+            if ($days < 1 || $days > 365) {
+                $days = 60;
+            }
+
+            $setting->auto_hapus_foto = $isActive;
+            $setting->auto_hapus_foto_hari = $days;
+            $setting->save();
+
+            $statusText = $isActive ? 'Diaktifkan' : 'Dinonaktifkan';
+
+            return response()->json([
+                'success' => true,
+                'status' => $isActive,
+                'days' => $days,
+                'message' => "Pembersihan foto otomatis berhasil {$statusText} (Batas retensi: {$days} hari)."
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal mengubah pengaturan otomatis: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -36,8 +81,9 @@ class BersihkanfotoController extends Controller
 
             $totalDeleted = 0;
             $details = [];
+            $disk = Storage::disk('public');
 
-            // Hapus semua foto presensi dalam periode
+            // 1. Hapus semua foto presensi dalam periode
             if (in_array('presensi', $jenis)) {
                 $query = Presensi::where(function ($q) {
                     $q->whereNotNull('foto_in')->where('foto_in', '!=', '')
@@ -68,6 +114,7 @@ class BersihkanfotoController extends Controller
                 if ($deletedCount > 0) $details[] = "{$deletedCount} Presensi";
             }
 
+            // 2. Kunjungan
             if (in_array('kunjungan', $jenis)) {
                 $kunjungans = Kunjungan::whereNotNull('foto')->where('foto', '!=', '')
                     ->whereBetween('tanggal_kunjungan', [$request->tanggal_awal, $request->tanggal_akhir])
@@ -75,8 +122,8 @@ class BersihkanfotoController extends Controller
                 
                 $deletedCount = 0;
                 foreach ($kunjungans as $kunjungan) {
-                    if (Storage::disk('public')->exists('uploads/kunjungan/' . $kunjungan->foto)) {
-                        Storage::disk('public')->delete('uploads/kunjungan/' . $kunjungan->foto);
+                    if ($disk->exists('uploads/kunjungan/' . $kunjungan->foto)) {
+                        $disk->delete('uploads/kunjungan/' . $kunjungan->foto);
                         $deletedCount++;
                     }
                 }
@@ -84,6 +131,7 @@ class BersihkanfotoController extends Controller
                 if ($deletedCount > 0) $details[] = "{$deletedCount} Kunjungan";
             }
 
+            // 3. Aktivitas Karyawan
             if (in_array('aktivitas', $jenis)) {
                 $aktivitas = AktivitasKaryawan::whereNotNull('foto')->where('foto', '!=', '')
                     ->whereDate('created_at', '>=', $request->tanggal_awal)
@@ -92,8 +140,8 @@ class BersihkanfotoController extends Controller
                 
                 $deletedCount = 0;
                 foreach ($aktivitas as $akt) {
-                    if (Storage::disk('public')->exists('uploads/aktivitas/' . $akt->foto)) {
-                        Storage::disk('public')->delete('uploads/aktivitas/' . $akt->foto);
+                    if ($disk->exists('uploads/aktivitas/' . $akt->foto)) {
+                        $disk->delete('uploads/aktivitas/' . $akt->foto);
                         $deletedCount++;
                     }
                 }
@@ -101,10 +149,44 @@ class BersihkanfotoController extends Controller
                 if ($deletedCount > 0) $details[] = "{$deletedCount} Aktivitas Karyawan";
             }
 
+            // 4. Checklist & Kolase Grid 4-in-1
+            if (in_array('checklist', $jenis)) {
+                $checklistLaporans = ChecklistLaporan::with(['details', 'collages'])
+                    ->whereBetween('tanggal', [$request->tanggal_awal, $request->tanggal_akhir])
+                    ->get();
+
+                $deletedChecklistCount = 0;
+                foreach ($checklistLaporans as $lap) {
+                    // Checkpoint detail photos
+                    foreach ($lap->details as $det) {
+                        if ($det->foto) {
+                            $path = str_starts_with($det->foto, 'checklist/') ? $det->foto : 'checklist/photos/' . $det->foto;
+                            if ($disk->exists($path)) {
+                                $disk->delete($path);
+                                $deletedChecklistCount++;
+                            }
+                        }
+                    }
+
+                    // Collages 4-in-1
+                    foreach ($lap->collages as $col) {
+                        if ($col->foto_collage) {
+                            $colPath = str_starts_with($col->foto_collage, 'checklist/') ? $col->foto_collage : 'checklist/collages/' . $col->foto_collage;
+                            if ($disk->exists($colPath)) {
+                                $disk->delete($colPath);
+                                $deletedChecklistCount++;
+                            }
+                        }
+                    }
+                }
+                $totalDeleted += $deletedChecklistCount;
+                if ($deletedChecklistCount > 0) $details[] = "{$deletedChecklistCount} Checklist & Grid";
+            }
+
             $detailStr = !empty($details) ? implode(', ', $details) : '0';
 
             return response()->json([
-                'success' => "Berhasil menghapus total {$totalDeleted} file foto ({$detailStr}) dalam periode {$request->tanggal_awal} sampai {$request->tanggal_akhir} (data presensi/record tetap tersimpan)"
+                'success' => "Berhasil menghapus total {$totalDeleted} file foto ({$detailStr}) dalam periode {$request->tanggal_awal} sampai {$request->tanggal_akhir} (data record & rekapitulasi tetap tersimpan 100%)"
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
@@ -117,28 +199,29 @@ class BersihkanfotoController extends Controller
     private function deletePresensiPhotos($presensi)
     {
         $deletedCount = 0;
+        $disk = Storage::disk('public');
 
         // Delete foto_in file only
-        if ($presensi->foto_in && Storage::disk('public')->exists('uploads/absensi/' . $presensi->foto_in)) {
-            Storage::disk('public')->delete('uploads/absensi/' . $presensi->foto_in);
+        if ($presensi->foto_in && $disk->exists('uploads/absensi/' . $presensi->foto_in)) {
+            $disk->delete('uploads/absensi/' . $presensi->foto_in);
             $deletedCount++;
         }
 
         // Delete foto_out file only
-        if ($presensi->foto_out && Storage::disk('public')->exists('uploads/absensi/' . $presensi->foto_out)) {
-            Storage::disk('public')->delete('uploads/absensi/' . $presensi->foto_out);
+        if ($presensi->foto_out && $disk->exists('uploads/absensi/' . $presensi->foto_out)) {
+            $disk->delete('uploads/absensi/' . $presensi->foto_out);
             $deletedCount++;
         }
 
         // Delete foto_istirahat_in file only
-        if ($presensi->foto_istirahat_in && Storage::disk('public')->exists('uploads/absensi/' . $presensi->foto_istirahat_in)) {
-            Storage::disk('public')->delete('uploads/absensi/' . $presensi->foto_istirahat_in);
+        if ($presensi->foto_istirahat_in && $disk->exists('uploads/absensi/' . $presensi->foto_istirahat_in)) {
+            $disk->delete('uploads/absensi/' . $presensi->foto_istirahat_in);
             $deletedCount++;
         }
 
         // Delete foto_istirahat_out file only
-        if ($presensi->foto_istirahat_out && Storage::disk('public')->exists('uploads/absensi/' . $presensi->foto_istirahat_out)) {
-            Storage::disk('public')->delete('uploads/absensi/' . $presensi->foto_istirahat_out);
+        if ($presensi->foto_istirahat_out && $disk->exists('uploads/absensi/' . $presensi->foto_istirahat_out)) {
+            $disk->delete('uploads/absensi/' . $presensi->foto_istirahat_out);
             $deletedCount++;
         }
 

@@ -725,8 +725,8 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:super admin')->controller(BersihkanfotoController::class)->group(function () {
             Route::get('/bersihkanfoto', 'index')->name('bersihkanfoto.index')->can('bersihkanfoto.index');
             Route::post('/bersihkanfoto', 'destroy')->name('bersihkanfoto.destroy')->can('bersihkanfoto.delete');
-        }
-        );
+            Route::post('/bersihkanfoto/toggle-auto', 'toggleAutoClean')->name('bersihkanfoto.toggle-auto')->can('bersihkanfoto.delete');
+        });
 
         // User Login Log Routes
         Route::middleware('role:super admin')->controller(UserloginlogController::class)->group(function () {

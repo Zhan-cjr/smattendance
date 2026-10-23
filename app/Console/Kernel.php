@@ -22,6 +22,11 @@ class Kernel extends ConsoleKernel
             ->dailyAt('02:00')
             ->withoutOverlapping();
 
+        // Auto bersihkan foto > 60 hari setiap hari pukul 02:30 (jika toggle aktif)
+        $schedule->command('photos:prune')
+            ->dailyAt('02:30')
+            ->withoutOverlapping();
+
         // Web Push Presensi Reminders
         $schedule->command('presensi:reminder --type=in')->dailyAt('07:30');
         $schedule->command('presensi:reminder --type=out')->everyFifteenMinutes();
