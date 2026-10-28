@@ -27,6 +27,11 @@ class ChecklistLaporan extends Model
         return $this->belongsTo(Cabang::class, 'kode_cabang', 'kode_cabang');
     }
 
+    public function departemen()
+    {
+        return $this->belongsTo(Departemen::class, 'kode_dept', 'kode_dept');
+    }
+
     public function details()
     {
         return $this->hasMany(ChecklistLaporanDetail::class, 'laporan_id', 'id');

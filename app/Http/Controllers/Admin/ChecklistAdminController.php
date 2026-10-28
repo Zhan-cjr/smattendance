@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cabang;
 use App\Models\ChecklistCheckpoint;
 use App\Models\ChecklistLaporan;
+use App\Models\Departemen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,7 @@ class ChecklistAdminController extends Controller
      */
     public function indexCheckpoints(Request $request)
     {
-        $query = ChecklistCheckpoint::with('cabangs');
+        $query = ChecklistCheckpoint::with(['departemens', 'cabangs']);
 
         if ($request->filled('tipe')) {
             $query->where('tipe', $request->tipe);
@@ -25,6 +26,16 @@ class ChecklistAdminController extends Controller
 
         if ($request->filled('is_active')) {
             $query->where('is_active', $request->is_active);
+        }
+
+        if ($request->filled('kode_dept')) {
+            $kodeDept = $request->kode_dept;
+            $query->where(function ($q) use ($kodeDept) {
+                $q->where('all_dept', true)
+                  ->orWhereHas('departemens', function ($sub) use ($kodeDept) {
+                      $sub->where('departemen.kode_dept', $kodeDept);
+                  });
+            });
         }
 
         if ($request->filled('kode_cabang')) {
@@ -42,9 +53,10 @@ class ChecklistAdminController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
+        $departemens = Departemen::orderBy('nama_dept', 'asc')->get();
         $cabangs = Cabang::orderBy('nama_cabang', 'asc')->get();
 
-        return view('admin.checklist.checkpoints.index', compact('checkpoints', 'cabangs'));
+        return view('admin.checklist.checkpoints.index', compact('checkpoints', 'departemens', 'cabangs'));
     }
 
     /**
@@ -57,13 +69,20 @@ class ChecklistAdminController extends Controller
             'tipe' => 'required|in:opening,closing,both',
             'deskripsi' => 'nullable|string',
             'urutan' => 'nullable|integer',
+            'all_dept' => 'nullable|boolean',
+            'dept_ids' => 'nullable|array',
             'all_cabang' => 'nullable|boolean',
             'cabang_ids' => 'nullable|array',
         ]);
 
+        $allDept = $request->boolean('all_dept', false);
+        if (!$request->has('all_dept') && empty($request->input('dept_ids'))) {
+            $allDept = true; // default all departments if none selected
+        }
+
         $allCabang = $request->boolean('all_cabang', false);
         if (!$request->has('all_cabang') && empty($request->input('cabang_ids'))) {
-            $allCabang = true; // default all branches if none selected
+            $allCabang = true; // default all branches
         }
 
         $checkpoint = ChecklistCheckpoint::create([
@@ -72,8 +91,13 @@ class ChecklistAdminController extends Controller
             'deskripsi' => $request->deskripsi,
             'urutan' => $request->input('urutan', 0),
             'is_active' => true,
+            'all_dept' => $allDept,
             'all_cabang' => $allCabang,
         ]);
+
+        if (!$allDept && $request->filled('dept_ids')) {
+            $checkpoint->departemens()->sync($request->dept_ids);
+        }
 
         if (!$allCabang && $request->filled('cabang_ids')) {
             $checkpoint->cabangs()->sync($request->cabang_ids);
@@ -88,11 +112,13 @@ class ChecklistAdminController extends Controller
      */
     public function editCheckpoint($id)
     {
-        $checkpoint = ChecklistCheckpoint::with('cabangs')->findOrFail($id);
+        $checkpoint = ChecklistCheckpoint::with(['departemens', 'cabangs'])->findOrFail($id);
+        $selectedDepts = $checkpoint->departemens->pluck('kode_dept')->toArray();
         $selectedCabangs = $checkpoint->cabangs->pluck('kode_cabang')->toArray();
 
         return response()->json([
             'checkpoint' => $checkpoint,
+            'selected_depts' => $selectedDepts,
             'selected_cabangs' => $selectedCabangs,
         ]);
     }
@@ -110,9 +136,16 @@ class ChecklistAdminController extends Controller
             'deskripsi' => 'nullable|string',
             'urutan' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'all_dept' => 'nullable|boolean',
+            'dept_ids' => 'nullable|array',
             'all_cabang' => 'nullable|boolean',
             'cabang_ids' => 'nullable|array',
         ]);
+
+        $allDept = $request->boolean('all_dept', false);
+        if (!$request->has('all_dept') && empty($request->input('dept_ids'))) {
+            $allDept = true;
+        }
 
         $allCabang = $request->boolean('all_cabang', false);
         if (!$request->has('all_cabang') && empty($request->input('cabang_ids'))) {
@@ -125,8 +158,15 @@ class ChecklistAdminController extends Controller
             'deskripsi' => $request->deskripsi,
             'urutan' => $request->input('urutan', 0),
             'is_active' => $request->boolean('is_active', true),
+            'all_dept' => $allDept,
             'all_cabang' => $allCabang,
         ]);
+
+        if ($allDept) {
+            $checkpoint->departemens()->detach();
+        } else {
+            $checkpoint->departemens()->sync($request->input('dept_ids', []));
+        }
 
         if ($allCabang) {
             $checkpoint->cabangs()->detach();
@@ -144,6 +184,7 @@ class ChecklistAdminController extends Controller
     public function destroyCheckpoint($id)
     {
         $checkpoint = ChecklistCheckpoint::findOrFail($id);
+        $checkpoint->departemens()->detach();
         $checkpoint->cabangs()->detach();
         $checkpoint->delete();
 
@@ -156,7 +197,7 @@ class ChecklistAdminController extends Controller
      */
     public function indexMonitoring(Request $request)
     {
-        $query = ChecklistLaporan::with(['karyawan', 'cabang', 'collages', 'details']);
+        $query = ChecklistLaporan::with(['karyawan', 'cabang', 'departemen', 'collages', 'details']);
 
         if ($request->filled('tanggal_mulai')) {
             $query->whereDate('tanggal', '>=', $request->tanggal_mulai);
@@ -168,6 +209,10 @@ class ChecklistAdminController extends Controller
 
         if ($request->filled('kode_cabang')) {
             $query->where('kode_cabang', $request->kode_cabang);
+        }
+
+        if ($request->filled('kode_dept')) {
+            $query->where('kode_dept', $request->kode_dept);
         }
 
         if ($request->filled('tipe')) {
@@ -191,8 +236,9 @@ class ChecklistAdminController extends Controller
             ->withQueryString();
 
         $cabangs = Cabang::orderBy('nama_cabang', 'asc')->get();
+        $departemens = Departemen::orderBy('nama_dept', 'asc')->get();
 
-        return view('admin.checklist.monitoring.index', compact('laporans', 'cabangs'));
+        return view('admin.checklist.monitoring.index', compact('laporans', 'cabangs', 'departemens'));
     }
 
     /**
@@ -200,7 +246,7 @@ class ChecklistAdminController extends Controller
      */
     public function showMonitoring($id)
     {
-        $laporan = ChecklistLaporan::with(['karyawan', 'cabang', 'collages', 'details'])
+        $laporan = ChecklistLaporan::with(['karyawan', 'cabang', 'departemen', 'collages', 'details'])
             ->findOrFail($id);
 
         return view('admin.checklist.monitoring.show', compact('laporan'));
@@ -232,3 +278,4 @@ class ChecklistAdminController extends Controller
             ->with('success', 'Laporan checklist berhasil dihapus.');
     }
 }
+

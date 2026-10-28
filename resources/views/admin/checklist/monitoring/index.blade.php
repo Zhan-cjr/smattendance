@@ -31,12 +31,22 @@
                         <div class="col-md-2">
                             <input type="date" name="tanggal_akhir" class="form-control form-control-sm" value="{{ request('tanggal_akhir') }}" placeholder="Tanggal Akhir">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <select name="kode_cabang" class="form-select form-select-sm">
                                 <option value="">Semua Cabang</option>
                                 @foreach($cabangs as $cb)
                                     <option value="{{ $cb->kode_cabang }}" {{ request('kode_cabang') == $cb->kode_cabang ? 'selected' : '' }}>
                                         {{ $cb->nama_cabang }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select name="kode_dept" class="form-select form-select-sm">
+                                <option value="">Semua Departemen</option>
+                                @foreach($departemens as $dp)
+                                    <option value="{{ $dp->kode_dept }}" {{ request('kode_dept') == $dp->kode_dept ? 'selected' : '' }}>
+                                        {{ $dp->nama_dept }} ({{ $dp->kode_dept }})
                                     </option>
                                 @endforeach
                             </select>
@@ -49,12 +59,12 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <input type="text" name="q" class="form-control form-control-sm" placeholder="Cari Petugas / Kode" value="{{ request('q') }}">
-                        </div>
-                        <div class="col-md-1">
-                            <button type="submit" class="btn btn-sm btn-primary w-100">
-                                <i class="ti ti-search"></i>
-                            </button>
+                            <div class="d-flex gap-1">
+                                <input type="text" name="q" class="form-control form-control-sm" placeholder="Cari Petugas/Kode" value="{{ request('q') }}">
+                                <button type="submit" class="btn btn-sm btn-primary">
+                                    <i class="ti ti-search"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -66,7 +76,7 @@
                             <tr>
                                 <th style="width: 50px;">No</th>
                                 <th>Kode & Waktu Submit</th>
-                                <th>Cabang</th>
+                                <th>Cabang & Departemen</th>
                                 <th>Petugas</th>
                                 <th style="width: 110px;">Sesi</th>
                                 <th style="width: 140px;">Pemeriksaan</th>
@@ -85,9 +95,12 @@
                                         </small>
                                     </td>
                                     <td>
-                                        <span class="fw-semibold text-dark">{{ $lap->cabang->nama_cabang ?? $lap->kode_cabang }}</span>
+                                        <div class="fw-semibold text-dark">{{ $lap->cabang->nama_cabang ?? $lap->kode_cabang }}</div>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-0.5 text-xs">
+                                            <i class="ti ti-tag me-0.5"></i>{{ $lap->departemen->nama_dept ?? $lap->kode_dept ?? 'Umum' }}
+                                        </span>
                                         @if($lap->lokasi_nama)
-                                            <small class="text-muted d-block">{{ $lap->lokasi_nama }}</small>
+                                            <small class="text-muted d-block mt-0.5">{{ $lap->lokasi_nama }}</small>
                                         @endif
                                     </td>
                                     <td>

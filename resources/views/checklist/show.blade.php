@@ -50,9 +50,9 @@
                 <span>Terverifikasi</span>
             </span>
         </div>
-        <h3 class="text-base font-extrabold text-white">{{ $laporan->cabang->nama_cabang ?? $laporan->kode_cabang }}</h3>
+        <h3 class="text-base font-extrabold text-white">{{ $laporan->cabang->nama_cabang ?? $laporan->kode_cabang }} &bull; {{ $laporan->departemen->nama_dept ?? $laporan->kode_dept }}</h3>
         <p class="text-xs text-white/80 mt-0.5">
-            Petugas: <strong>{{ $laporan->karyawan->nama_karyawan ?? $laporan->nik }}</strong>
+            Petugas: <strong>{{ $laporan->karyawan->nama_karyawan ?? $laporan->nik }}</strong> (Dept: {{ $laporan->departemen->nama_dept ?? $laporan->kode_dept }})
         </p>
 
         <div class="mt-3 pt-2.5 border-t border-white/15 grid grid-cols-2 gap-2 text-[11px]">

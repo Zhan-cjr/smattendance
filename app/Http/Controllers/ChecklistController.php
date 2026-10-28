@@ -35,17 +35,19 @@ class ChecklistController extends Controller
 
         $userKaryawan = Userkaryawan::where('id_user', $user->id)->first();
         if ($userKaryawan) {
-            return Karyawan::where('nik', $userKaryawan->nik)
+            return Karyawan::where('karyawan.nik', $userKaryawan->nik)
                 ->leftJoin('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
+                ->leftJoin('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
                 ->leftJoin('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
-                ->select('karyawan.*', 'cabang.nama_cabang', 'cabang.lokasi_cabang', 'cabang.alamat_cabang', 'jabatan.nama_jabatan')
+                ->select('karyawan.*', 'cabang.nama_cabang', 'cabang.lokasi_cabang', 'cabang.alamat_cabang', 'departemen.nama_dept', 'jabatan.nama_jabatan')
                 ->first();
         }
 
         // Fallback for admin or testing: pick first employee or create a mock
         $karyawan = Karyawan::leftJoin('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
+            ->leftJoin('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
             ->leftJoin('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
-            ->select('karyawan.*', 'cabang.nama_cabang', 'cabang.lokasi_cabang', 'cabang.alamat_cabang', 'jabatan.nama_jabatan')
+            ->select('karyawan.*', 'cabang.nama_cabang', 'cabang.lokasi_cabang', 'cabang.alamat_cabang', 'departemen.nama_dept', 'jabatan.nama_jabatan')
             ->first();
 
         return $karyawan;
@@ -68,25 +70,29 @@ class ChecklistController extends Controller
 
         $today = date('Y-m-d');
         $kodeCabang = $karyawan->kode_cabang;
+        $kodeDept = $karyawan->kode_dept;
 
-        // Today's status for this branch
+        // Today's status for this branch & department
         $openingToday = ChecklistLaporan::where('kode_cabang', $kodeCabang)
+            ->where('kode_dept', $kodeDept)
             ->where('tipe', 'opening')
             ->where('tanggal', $today)
-            ->with(['karyawan', 'collages'])
+            ->with(['karyawan', 'departemen', 'collages'])
             ->latest()
             ->first();
 
         $closingToday = ChecklistLaporan::where('kode_cabang', $kodeCabang)
+            ->where('kode_dept', $kodeDept)
             ->where('tipe', 'closing')
             ->where('tanggal', $today)
-            ->with(['karyawan', 'collages'])
+            ->with(['karyawan', 'departemen', 'collages'])
             ->latest()
             ->first();
 
-        // History of reports
+        // History of reports for this branch & department
         $recentReports = ChecklistLaporan::where('kode_cabang', $kodeCabang)
-            ->with(['karyawan', 'collages'])
+            ->where('kode_dept', $kodeDept)
+            ->with(['karyawan', 'departemen', 'collages'])
             ->latest('tanggal')
             ->latest('jam')
             ->paginate(10);
@@ -114,10 +120,10 @@ class ChecklistController extends Controller
             return redirect()->route('checklist.index')->with('error', 'Data karyawan tidak ditemukan.');
         }
 
-        $kodeCabang = $karyawan->kode_cabang;
+        $kodeDept = $karyawan->kode_dept;
 
-        // Fetch checkpoints dynamic per branch and type
-        $checkpoints = ChecklistCheckpoint::forBranchAndType($kodeCabang, $tipe)->get();
+        // Fetch checkpoints dynamic per department and type
+        $checkpoints = ChecklistCheckpoint::forDepartmentAndType($kodeDept, $tipe)->get();
 
         if ($checkpoints->isEmpty()) {
             // Fallback: get all active for this type
@@ -157,12 +163,13 @@ class ChecklistController extends Controller
 
         $tipe = $request->input('tipe');
         $kodeCabang = $karyawan->kode_cabang;
+        $kodeDept = $karyawan->kode_dept;
         $now = Carbon::now();
         $dateStr = $now->format('Y-m-d');
         $timeStr = $now->format('H:i:s');
 
-        // Checkpoints applicable
-        $checkpoints = ChecklistCheckpoint::forBranchAndType($kodeCabang, $tipe)->get();
+        // Checkpoints applicable for this department and type
+        $checkpoints = ChecklistCheckpoint::forDepartmentAndType($kodeDept, $tipe)->get();
         if ($checkpoints->isEmpty()) {
             $checkpoints = ChecklistCheckpoint::where('is_active', true)
                 ->where(function ($q) use ($tipe) {
@@ -192,16 +199,18 @@ class ChecklistController extends Controller
         DB::beginTransaction();
         try {
             // 1. Create Header
+            $defaultLokasi = ($karyawan->nama_cabang ?? 'Outlet') . ' - ' . ($karyawan->nama_dept ?? '');
             $laporan = ChecklistLaporan::create([
                 'kode_laporan' => $kodeLaporan,
                 'nik' => $karyawan->nik,
                 'kode_cabang' => $kodeCabang,
+                'kode_dept' => $kodeDept,
                 'tipe' => $tipe,
                 'tanggal' => $dateStr,
                 'jam' => $timeStr,
                 'latitude' => $request->input('latitude'),
                 'longitude' => $request->input('longitude'),
-                'lokasi_nama' => $request->input('lokasi_nama') ?: ($karyawan->nama_cabang ?? 'Outlet'),
+                'lokasi_nama' => $request->input('lokasi_nama') ?: $defaultLokasi,
                 'disclaimer_agreed' => true,
                 'catatan' => $request->input('catatan'),
                 'total_checkpoint' => $checkpoints->count(),
@@ -217,7 +226,7 @@ class ChecklistController extends Controller
                     'nama_karyawan' => $karyawan->nama_karyawan,
                     'waktu' => $now->format('H:i'),
                     'tanggal' => $now->translatedFormat('d M Y'),
-                    'lokasi' => $request->input('lokasi_nama') ?: ($karyawan->nama_cabang ?? 'Cabang'),
+                    'lokasi' => ($karyawan->nama_cabang ?? 'Cabang') . ' - ' . ($karyawan->nama_dept ?? 'Dept'),
                     'nama_checkpoint' => $cp->nama_checkpoint,
                 ];
 
@@ -266,7 +275,7 @@ class ChecklistController extends Controller
      */
     public function show($id)
     {
-        $laporan = ChecklistLaporan::with(['karyawan', 'cabang', 'details.checkpoint', 'collages'])
+        $laporan = ChecklistLaporan::with(['karyawan', 'cabang', 'departemen', 'details.checkpoint', 'collages'])
             ->findOrFail($id);
 
         $karyawan = $this->getKaryawan();
@@ -276,14 +285,16 @@ class ChecklistController extends Controller
         $tglStr = Carbon::parse($laporan->tanggal)->translatedFormat('l, d F Y');
         $jamStr = date('H:i', strtotime($laporan->jam)) . ' WIB';
         $cabangNama = $laporan->cabang->nama_cabang ?? $laporan->kode_cabang;
+        $deptNama = $laporan->departemen->nama_dept ?? $laporan->kode_dept ?? 'Umum';
         $petugasNama = $laporan->karyawan->nama_karyawan ?? $laporan->nik;
 
         $waLines = [];
         $waLines[] = "*LAPORAN {$tipeLabel} TOKO - {$cabangNama}*";
+        $waLines[] = "*DEPARTEMEN : {$deptNama}*";
         $waLines[] = "-----------------------------------------";
         $waLines[] = "Petugas : {$petugasNama}";
         $waLines[] = "Waktu   : {$tglStr} - {$jamStr}";
-        $waLines[] = "Lokasi  : " . ($laporan->lokasi_nama ?: $cabangNama);
+        $waLines[] = "Lokasi  : " . ($laporan->lokasi_nama ?: "{$cabangNama} ({$deptNama})");
         $waLines[] = "Status  : {$laporan->total_checkpoint}/{$laporan->total_checkpoint} Checkpoint Terverifikasi Aman";
         if (!empty($laporan->catatan)) {
             $waLines[] = "Catatan : {$laporan->catatan}";

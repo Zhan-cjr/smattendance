@@ -18,4 +18,9 @@ class Departemen extends Model
     {
         return $this->belongsToMany(User::class, 'user_departemen_access', 'kode_dept', 'user_id', 'kode_dept', 'id');
     }
+
+    public function checkpoints()
+    {
+        return $this->belongsToMany(ChecklistCheckpoint::class, 'checklist_checkpoint_departemen', 'kode_dept', 'checkpoint_id', 'kode_dept', 'id');
+    }
 }

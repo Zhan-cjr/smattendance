@@ -25,6 +25,10 @@
                         <strong class="text-dark">{{ $laporan->karyawan->nama_karyawan ?? $laporan->nik }}</strong>
                     </li>
                     <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Departemen</span>
+                        <span class="badge bg-primary">{{ $laporan->departemen->nama_dept ?? $laporan->kode_dept ?? 'Umum' }}</span>
+                    </li>
+                    <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
                         <span class="text-muted">NIK</span>
                         <span class="font-monospace">{{ $laporan->nik }}</span>
                     </li>

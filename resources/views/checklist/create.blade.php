@@ -80,15 +80,15 @@
     <div class="mb-3 rounded-3xl p-4 text-white shadow-md {{ $tipe == 'opening' ? 'bg-gradient-to-r from-amber-600 to-amber-800' : 'bg-gradient-to-r from-indigo-700 via-indigo-800 to-slate-900' }}">
         <div class="flex items-center justify-between mb-1.5">
             <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-white/20 text-white border border-white/20">
-                {{ strtoupper($tipe) }} CHECKLIST
+                {{ strtoupper($tipe) }} CHECKLIST &bull; {{ $karyawan->nama_dept ?? 'TOKO' }}
             </span>
             <span class="text-[11px] font-semibold text-white/90" id="liveClockText">
                 {{ date('H:i') }} WIB
             </span>
         </div>
-        <h3 class="text-base font-extrabold text-white">{{ $karyawan->nama_cabang ?? 'Kantor / Toko' }}</h3>
+        <h3 class="text-base font-extrabold text-white">{{ $karyawan->nama_cabang ?? 'Kantor / Toko' }} &bull; {{ $karyawan->nama_dept ?? $karyawan->kode_dept }}</h3>
         <p class="text-xs text-white/80 mt-0.5">
-            Petugas: <strong>{{ $karyawan->nama_karyawan }}</strong>
+            Petugas: <strong>{{ $karyawan->nama_karyawan }}</strong> (Dept: {{ $karyawan->nama_dept ?? $karyawan->kode_dept }})
         </p>
 
         <!-- Live GPS Radius Status -->
@@ -149,7 +149,7 @@
         <input type="hidden" name="tipe" value="{{ $tipe }}">
         <input type="hidden" name="latitude" id="inputLat">
         <input type="hidden" name="longitude" id="inputLng">
-        <input type="hidden" name="lokasi_nama" id="inputLokasi" value="{{ $karyawan->nama_cabang }}">
+        <input type="hidden" name="lokasi_nama" id="inputLokasi" value="{{ $karyawan->nama_cabang }} - {{ $karyawan->nama_dept ?? $karyawan->kode_dept }}">
 
         <div class="space-y-4">
             @foreach($checkpoints as $index => $cp)
@@ -241,7 +241,8 @@
     const totalCheckpoints = {{ $checkpoints->count() }};
     const employeeName = @json($karyawan->nama_karyawan);
     const branchName = @json($karyawan->nama_cabang ?? 'Kantor / Toko');
-    const draftKey = 'smatt3_chk_draft_{{ $tipe }}_{{ $karyawan->nik }}_{{ date("Y-m-d") }}';
+    const deptName = @json($karyawan->nama_dept ?? $karyawan->kode_dept ?? 'Toko');
+    const draftKey = 'smatt3_chk_draft_{{ $tipe }}_{{ $karyawan->nik }}_{{ $karyawan->kode_dept }}_{{ date("Y-m-d") }}';
     const photoBlobs = {}; // In-memory compressed binary blobs for instant upload
     let userLat = null;
     let userLng = null;
@@ -556,7 +557,7 @@
         ctx.fillText(' • ' + dateStr, botPadX + timeW + 4, bannerY + 28);
 
         // Row 2: Lokasi & GPS
-        const locText = userLat ? `${branchName} (GPS: ${userLat}, ${userLng})` : branchName;
+        const locText = userLat ? `${branchName} - ${deptName} (GPS: ${userLat}, ${userLng})` : `${branchName} - ${deptName}`;
         ctx.font = '500 12px sans-serif';
         ctx.fillStyle = '#67e8f9'; // Cyan
         ctx.fillText('📍 ' + locText, botPadX, bannerY + 50);
@@ -564,7 +565,7 @@
         // Row 3: Petugas / PIC
         ctx.font = '600 12.5px sans-serif';
         ctx.fillStyle = '#fde68a'; // Light Yellow
-        ctx.fillText('👤 Petugas: ' + employeeName, botPadX, bannerY + 72);
+        ctx.fillText('👤 Petugas: ' + employeeName + ' (' + deptName + ')', botPadX, bannerY + 72);
 
         // Row 4: Verifikasi Footer (Persis baris 1700 di Absensi)
         ctx.font = 'italic 11px sans-serif';

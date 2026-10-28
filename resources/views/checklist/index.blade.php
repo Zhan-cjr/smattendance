@@ -102,18 +102,24 @@
             <i class="fa-solid fa-store"></i>
         </div>
         <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-white/15 text-emerald-200 border border-white/20 flex items-center gap-1.5 backdrop-blur-md">
-                <i class="fa-solid fa-location-dot text-[10px] text-emerald-300"></i>
-                <span>{{ $karyawan->nama_cabang ?? 'Kantor / Toko' }}</span>
-            </span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-white/15 text-emerald-200 border border-white/20 flex items-center gap-1.5 backdrop-blur-md">
+                    <i class="fa-solid fa-location-dot text-[10px] text-emerald-300"></i>
+                    <span>{{ $karyawan->nama_cabang ?? 'Kantor / Toko' }}</span>
+                </span>
+                <span class="text-[11px] font-extrabold px-3 py-1 rounded-full bg-amber-400/25 text-amber-200 border border-amber-300/30 flex items-center gap-1 backdrop-blur-md">
+                    <i class="fa-solid fa-tags text-[10px] text-amber-300"></i>
+                    <span>Dept: {{ $karyawan->nama_dept ?? $karyawan->kode_dept }}</span>
+                </span>
+            </div>
             <span class="text-[11px] text-white/90 font-medium flex items-center gap-1">
                 <i class="fa-regular fa-calendar text-[10px]"></i>
                 <span>{{ \Carbon\Carbon::parse($today)->translatedFormat('d M Y') }}</span>
             </span>
         </div>
-        <h2 class="text-xl font-black text-white tracking-tight">Inspeksi Buka & Tutup</h2>
+        <h2 class="text-xl font-black text-white tracking-tight">Inspeksi Buka & Tutup &bull; {{ $karyawan->nama_dept ?? 'Toko' }}</h2>
         <p class="text-xs text-white/80 mt-1 leading-relaxed">
-            Verifikasi fisik keamanan, pencegahan penyusup di area persembunyian, aset kasir, dan kesiapan operasional.
+            Verifikasi fisik keamanan dan kesiapan operasional khusus departemen <strong>{{ $karyawan->nama_dept ?? $karyawan->kode_dept }}</strong> cabang {{ $karyawan->nama_cabang }}.
         </p>
     </div>
 
@@ -141,9 +147,9 @@
                     </div>
                     <div>
                         <span class="text-[10px] font-extrabold uppercase tracking-wider block" style="color: #d97706;">
-                            SOP Pagi &bull; Buka Toko
+                            SOP Pagi &bull; Buka Dept {{ $karyawan->nama_dept ?? 'Toko' }}
                         </span>
-                        <h4 class="card-title-text leading-tight mt-0.5">Opening Toko</h4>
+                        <h4 class="card-title-text leading-tight mt-0.5">Opening {{ $karyawan->nama_dept ?? 'Toko' }}</h4>
                         <span class="card-desc-text block mt-0.5">Pemeriksaan fisik saat buka toko</span>
                     </div>
                 </div>
@@ -190,9 +196,9 @@
                     </div>
                     <div>
                         <span class="text-[10px] font-extrabold uppercase tracking-wider block" style="color: #4f46e5;">
-                            SOP Malam &bull; Tutup Toko
+                            SOP Malam &bull; Tutup Dept {{ $karyawan->nama_dept ?? 'Toko' }}
                         </span>
-                        <h4 class="card-title-text leading-tight mt-0.5">Closing Toko</h4>
+                        <h4 class="card-title-text leading-tight mt-0.5">Closing {{ $karyawan->nama_dept ?? 'Toko' }}</h4>
                         <span class="card-desc-text block mt-0.5">Pemeriksaan anti-penyusup & gembok</span>
                     </div>
                 </div>
@@ -237,7 +243,7 @@
             <h4 class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
                 Riwayat Laporan Terakhir
             </h4>
-            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{{ $karyawan->nama_cabang }}</span>
+            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{{ $karyawan->nama_cabang }} &bull; {{ $karyawan->nama_dept ?? $karyawan->kode_dept }}</span>
         </div>
 
         @if($recentReports->isEmpty())

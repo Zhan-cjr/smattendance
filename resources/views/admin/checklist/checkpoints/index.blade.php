@@ -12,7 +12,7 @@
             <div class="card-header d-flex justify-content-between align-items-center pb-2">
                 <div>
                     <h5 class="mb-0 fw-bold"><i class="ti ti-checkbox me-2 text-primary"></i>Daftar Checkpoint Opening & Closing</h5>
-                    <small class="text-muted">Kelola titik inspeksi fisik, area rawan penyusup, dan inventaris toko per cabang</small>
+                    <small class="text-muted">Kelola titik inspeksi fisik, area rawan penyusup, dan inventaris toko per departemen (Market, Fashion, dll.)</small>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('admin.checklist.monitoring.index') }}" class="btn btn-outline-primary">
@@ -28,7 +28,7 @@
                 <!-- Filter Section -->
                 <form action="{{ route('admin.checklist.checkpoints.index') }}" method="GET" class="mb-3">
                     <div class="row g-2">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <select name="tipe" class="form-select form-select-sm" onchange="this.form.submit()">
                                 <option value="">Semua Tipe (Opening & Closing)</option>
                                 <option value="opening" {{ request('tipe') == 'opening' ? 'selected' : '' }}>Khusus Opening</option>
@@ -36,12 +36,12 @@
                                 <option value="both" {{ request('tipe') == 'both' ? 'selected' : '' }}>Keduanya (Opening & Closing)</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <select name="kode_cabang" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="">Semua Cabang / Berlaku Global</option>
-                                @foreach($cabangs as $cb)
-                                    <option value="{{ $cb->kode_cabang }}" {{ request('kode_cabang') == $cb->kode_cabang ? 'selected' : '' }}>
-                                        {{ $cb->nama_cabang }}
+                        <div class="col-md-5">
+                            <select name="kode_dept" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <option value="">Semua Departemen / Berlaku Global</option>
+                                @foreach($departemens as $dp)
+                                    <option value="{{ $dp->kode_dept }}" {{ request('kode_dept') == $dp->kode_dept ? 'selected' : '' }}>
+                                        {{ $dp->nama_dept }} ({{ $dp->kode_dept }})
                                     </option>
                                 @endforeach
                             </select>
@@ -60,7 +60,7 @@
                                 <th style="width: 50px;">No</th>
                                 <th>Nama Checkpoint & Instruksi</th>
                                 <th style="width: 120px;">Tipe</th>
-                                <th style="width: 220px;">Berlaku Untuk Cabang</th>
+                                <th style="width: 240px;">Berlaku Untuk Departemen</th>
                                 <th style="width: 90px;" class="text-center">Urutan</th>
                                 <th style="width: 90px;" class="text-center">Status</th>
                                 <th style="width: 120px;" class="text-center">Aksi</th>
@@ -86,14 +86,14 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($cp->all_cabang)
+                                        @if($cp->all_dept)
                                             <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                <i class="ti ti-world me-1"></i>Semua Cabang
+                                                <i class="ti ti-world me-1"></i>Semua Departemen
                                             </span>
                                         @else
                                             <div class="d-flex flex-wrap gap-1">
-                                                @foreach($cp->cabangs as $cab)
-                                                    <span class="badge bg-secondary">{{ $cab->nama_cabang }}</span>
+                                                @foreach($cp->departemens as $dp)
+                                                    <span class="badge bg-info text-white">{{ $dp->nama_dept }}</span>
                                                 @endforeach
                                             </div>
                                         @endif
@@ -150,7 +150,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Checkpoint <span class="text-danger">*</span></label>
-                        <input type="text" name="nama_checkpoint" class="form-control" placeholder="Contoh: Toilet & Kamar Mandi" required>
+                        <input type="text" name="nama_checkpoint" class="form-control" placeholder="Contoh: Area Display & Gondola" required>
                     </div>
 
                     <div class="row g-2 mb-3">
@@ -170,22 +170,22 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Instruksi Pemeriksaan Foto</label>
-                        <textarea name="deskripsi" class="form-control" rows="2" placeholder="Contoh: Periksa belakang pintu, kolong meja, pastikan steril dari penyusup lalu kunci."></textarea>
+                        <textarea name="deskripsi" class="form-control" rows="2" placeholder="Contoh: Periksa kerapian display produk, lorong bersih, steril dari barang mencurigakan."></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Penerapan Cabang</label>
+                        <label class="form-label fw-bold">Penerapan Departemen</label>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="all_cabang" id="allCabangToggle" value="1" checked onchange="toggleCabangList(this, 'cabangSelectionTambah')">
-                            <label class="form-check-label fw-semibold" for="allCabangToggle">Berlaku untuk SEMUA Cabang</label>
+                            <input class="form-check-input" type="checkbox" name="all_dept" id="allDeptToggle" value="1" checked onchange="toggleDeptList(this, 'deptSelectionTambah')">
+                            <label class="form-check-label fw-semibold" for="allDeptToggle">Berlaku untuk SEMUA Departemen</label>
                         </div>
-                        <div id="cabangSelectionTambah" class="d-none border rounded p-2" style="max-height: 150px; overflow-y: auto;">
-                            <small class="text-muted d-block mb-1">Centang cabang yang wajib:</small>
-                            @foreach($cabangs as $cb)
+                        <div id="deptSelectionTambah" class="d-none border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <small class="text-muted d-block mb-1">Centang departemen yang wajib (misal: Market, Fashion):</small>
+                            @foreach($departemens as $dp)
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="cabang_ids[]" value="{{ $cb->kode_cabang }}" id="cbTambah_{{ $cb->kode_cabang }}">
-                                    <label class="form-check-label" for="cbTambah_{{ $cb->kode_cabang }}">
-                                        {{ $cb->nama_cabang }} ({{ $cb->kode_cabang }})
+                                    <input class="form-check-input" type="checkbox" name="dept_ids[]" value="{{ $dp->kode_dept }}" id="dpTambah_{{ $dp->kode_dept }}">
+                                    <label class="form-check-label" for="dpTambah_{{ $dp->kode_dept }}">
+                                        {{ $dp->nama_dept }} ({{ $dp->kode_dept }})
                                     </label>
                                 </div>
                             @endforeach
@@ -249,18 +249,18 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Penerapan Cabang</label>
+                        <label class="form-label fw-bold">Penerapan Departemen</label>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="all_cabang" id="editAllCabangToggle" value="1" onchange="toggleCabangList(this, 'cabangSelectionEdit')">
-                            <label class="form-check-label fw-semibold" for="editAllCabangToggle">Berlaku untuk SEMUA Cabang</label>
+                            <input class="form-check-input" type="checkbox" name="all_dept" id="editAllDeptToggle" value="1" onchange="toggleDeptList(this, 'deptSelectionEdit')">
+                            <label class="form-check-label fw-semibold" for="editAllDeptToggle">Berlaku untuk SEMUA Departemen</label>
                         </div>
-                        <div id="cabangSelectionEdit" class="d-none border rounded p-2" style="max-height: 150px; overflow-y: auto;">
-                            <small class="text-muted d-block mb-1">Centang cabang yang wajib:</small>
-                            @foreach($cabangs as $cb)
+                        <div id="deptSelectionEdit" class="d-none border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <small class="text-muted d-block mb-1">Centang departemen yang wajib:</small>
+                            @foreach($departemens as $dp)
                                 <div class="form-check">
-                                    <input class="form-check-input check-edit-cabang" type="checkbox" name="cabang_ids[]" value="{{ $cb->kode_cabang }}" id="cbEdit_{{ $cb->kode_cabang }}">
-                                    <label class="form-check-label" for="cbEdit_{{ $cb->kode_cabang }}">
-                                        {{ $cb->nama_cabang }} ({{ $cb->kode_cabang }})
+                                    <input class="form-check-input check-edit-dept" type="checkbox" name="dept_ids[]" value="{{ $dp->kode_dept }}" id="dpEdit_{{ $dp->kode_dept }}">
+                                    <label class="form-check-label" for="dpEdit_{{ $dp->kode_dept }}">
+                                        {{ $dp->nama_dept }} ({{ $dp->kode_dept }})
                                     </label>
                                 </div>
                             @endforeach
@@ -279,7 +279,7 @@
 
 @push('myscript')
 <script>
-    function toggleCabangList(el, containerId) {
+    function toggleDeptList(el, containerId) {
         const container = document.getElementById(containerId);
         if (el.checked) {
             container.classList.add('d-none');
@@ -300,13 +300,13 @@
                 document.getElementById('editDeskripsi').value = cp.deskripsi || '';
                 document.getElementById('editIsActive').value = cp.is_active ? 1 : 0;
 
-                const allToggle = document.getElementById('editAllCabangToggle');
-                allToggle.checked = cp.all_cabang;
-                toggleCabangList(allToggle, 'cabangSelectionEdit');
+                const allToggle = document.getElementById('editAllDeptToggle');
+                allToggle.checked = cp.all_dept;
+                toggleDeptList(allToggle, 'deptSelectionEdit');
 
-                // Check branches
-                document.querySelectorAll('.check-edit-cabang').forEach(ch => {
-                    ch.checked = data.selected_cabangs.includes(ch.value);
+                // Check departments
+                document.querySelectorAll('.check-edit-dept').forEach(ch => {
+                    ch.checked = data.selected_depts ? data.selected_depts.includes(ch.value) : false;
                 });
 
                 new bootstrap.Modal(document.getElementById('modalEditCheckpoint')).show();
