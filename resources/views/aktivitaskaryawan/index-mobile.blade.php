@@ -109,10 +109,10 @@
         }
 
         .transactions .item .detail .info .timestamp {
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             font-weight: 700;
             font-size: 11px;
-            background: rgba(50, 116, 94, 0.05);
+            background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.05);
             padding: 2px 6px;
             border-radius: 6px;
         }
@@ -121,7 +121,7 @@
         .filter-modern {
             background: #ffffff;
             padding: 15px;
-            border-bottom: 1px solid rgba(50, 116, 94, 0.1);
+            border-bottom: 1px solid rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -137,9 +137,9 @@
         }
 
         .form-label-group:focus-within {
-            border-color: #32745e;
+            border-color: {{ $t['primary'] ?? '#32745e' }};
             background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(50, 116, 94, 0.1);
+            box-shadow: 0 0 0 3px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1);
         }
 
         .form-label-group .input-icon {
@@ -167,7 +167,7 @@
         .btn-search-modern {
             height: 44px;
             border-radius: 12px;
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: #ffffff;
             border: none;
             font-weight: 700;
@@ -175,7 +175,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(50, 116, 94, 0.2);
+            box-shadow: 0 4px 12px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.2);
             transition: all 0.2s;
         }
 
@@ -269,7 +269,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             font-size: 16px;
             border: none;
         }
@@ -305,8 +305,8 @@
         .info-icon-box {
             width: 34px;
             height: 34px;
-            background: rgba(50, 116, 94, 0.08);
-            color: #32745e;
+            background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.08);
+            color: {{ $t['primary'] ?? '#32745e' }};
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -361,14 +361,14 @@
             right: 20px;
             width: 60px;
             height: 60px;
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 30px;
             color: #ffffff;
-            box-shadow: 0 10px 25px rgba(50, 116, 94, 0.4);
+            box-shadow: 0 10px 25px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.4);
             z-index: 1000;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }

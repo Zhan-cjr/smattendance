@@ -71,10 +71,11 @@ use Spatie\Permission\Models\Role;
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
             $agent = new \Jenssegers\Agent\Agent();
+            $isV2 = function_exists('get_admin_theme') && get_admin_theme() === 'v2';
             if ($agent->isMobile()) {
-                return view('auth.loginusermobile');
+                return $isV2 ? view('v2.auth.loginusermobile') : view('auth.loginusermobile');
             }
-            return view('auth.loginuser');
+            return $isV2 ? view('v2.auth.login') : view('auth.loginuser');
         }
         )->name('loginuser');
     });
@@ -122,6 +123,13 @@ Route::middleware('auth')->group(function () {
         Route::controller(DashboardController::class)->group(function () {
             Route::get('/dashboard', 'index')->name('dashboard.index');
             Route::post('/dashboard/kirim-ucapan-birthday', 'kirimUcapanBirthday')->name('dashboard.kirim.ucapan.birthday');
+            Route::post('/dashboard/get-karyawan-presensi', 'getKaryawanPresensi')->name('dashboard.get.karyawan.presensi');
+            Route::get('/dashboard/switch-theme/{theme}', function($theme) {
+                if (in_array($theme, ['v2', 'classic'])) {
+                    session(['admin_theme' => $theme]);
+                }
+                return redirect()->back();
+            })->name('dashboard.switch-theme');
         }
         );
 
@@ -608,6 +616,7 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(PengajuanizinController::class)->group(function () {
             Route::get('/pengajuanizin', 'index')->name('pengajuanizin.index');
+            Route::get('/hitung-hari-kerja', 'getHitungHariKerja')->name('hitung-hari-kerja');
         }
         );
 
@@ -635,12 +644,12 @@ Route::middleware('auth')->group(function () {
         }
         );
 
-        // Route::controller(PresensispcController::class)->group(function () {
-        //     Route::get('/presensispc/create', 'create')->name('presensispc.create');
-        //     Route::post('/presensispc/unlock', 'unlock')->name('presensispc.unlock');
-        //     Route::post('/presensispc/getKaryawanName', 'getKaryawanName')->name('presensispc.getKaryawanName');
-        //     Route::post('/presensispc', 'store')->name('presensispc.store');
-        // });
+        Route::controller(PresensispcController::class)->group(function () {
+            Route::get('/presensispc/create', 'create')->name('presensispc.create');
+            Route::post('/presensispc/unlock', 'unlock')->name('presensispc.unlock');
+            Route::post('/presensispc/getKaryawanName', 'getKaryawanName')->name('presensispc.getKaryawanName');
+            Route::post('/presensispc', 'store')->name('presensispc.store');
+        });
 
 
         Route::middleware('role:super admin')->controller(GeneralsettingController::class)->group(function () {

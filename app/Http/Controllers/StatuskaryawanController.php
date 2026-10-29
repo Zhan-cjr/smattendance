@@ -16,12 +16,12 @@ class StatuskaryawanController extends Controller
             $query->where('nama_status_karyawan', 'like', '%' . $request->nama_status_karyawan . '%');
         }
         $data['statuskaryawan'] = $query->orderBy('kode_status_karyawan')->get();
-        return view('datamaster.status_karyawan.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.status_karyawan.index' : 'datamaster.status_karyawan.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.status_karyawan.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.status_karyawan.create' : 'datamaster.status_karyawan.create');
     }
 
     public function store(Request $request)
@@ -53,7 +53,7 @@ class StatuskaryawanController extends Controller
     {
         $kode_status_karyawan = Crypt::decrypt($kode_status_karyawan);
         $data['statuskaryawan'] = Statuskaryawan::where('kode_status_karyawan', $kode_status_karyawan)->first();
-        return view('datamaster.status_karyawan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.status_karyawan.edit' : 'datamaster.status_karyawan.edit', $data);
     }
 
     public function update($kode_status_karyawan, Request $request)

@@ -94,7 +94,7 @@
                             @else
                                 <img src="{{ asset('assets/login/images/logoweb-1.png') }}" alt="easyclass" />
                             @endif
-                            <h4>SMATT V3</h4>
+                            <h4>SMATT_V4</h4>
                         </div>
 
                         <div class="heading">

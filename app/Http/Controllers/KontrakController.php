@@ -84,19 +84,35 @@ class KontrakController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('datamaster.kontrak.index', [
+        $statsBaseQuery = Kontrak::query();
+        if (!$user->isSuperAdmin()) {
+            $userCabangs = $user->getCabangCodes();
+            $userDepartemens = $user->getDepartemenCodes();
+            if (!empty($userCabangs)) $statsBaseQuery->whereIn('kode_cabang', $userCabangs);
+            if (!empty($userDepartemens)) $statsBaseQuery->whereIn('kode_dept', $userDepartemens);
+        }
+        $stats = [
+            'total' => (clone $statsBaseQuery)->count(),
+            'aktif' => (clone $statsBaseQuery)->where('status_kontrak', '1')->count(),
+            'nonaktif' => (clone $statsBaseQuery)->where('status_kontrak', '0')->count(),
+            'pkwt' => (clone $statsBaseQuery)->where('jenis_kontrak', 'K')->count(),
+            'pkwtt' => (clone $statsBaseQuery)->where('jenis_kontrak', 'T')->count(),
+        ];
+
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.kontrak.index' : 'datamaster.kontrak.index', [
             'kontraks' => $kontraks,
             'filterNama' => $request->nama_karyawan,
             'filterCabang' => $request->kode_cabang,
             'filterDept' => $request->kode_dept,
             'cabangs' => $user->getCabang(),
             'departemens' => $user->getDepartemen(),
+            'stats' => $stats,
         ]);
     }
 
     public function create()
     {
-        return view('datamaster.kontrak.create', $this->formDependencies());
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.kontrak.create' : 'datamaster.kontrak.create', $this->formDependencies());
     }
 
     public function store(Request $request)
@@ -199,7 +215,7 @@ class KontrakController extends Controller
                 ->toArray();
         }
 
-        return view('datamaster.kontrak.edit', array_merge(
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.kontrak.edit' : 'datamaster.kontrak.edit', array_merge(
             [
                 'kontrak' => $kontrak,
                 'tunjanganValues' => $tunjanganValues,
@@ -319,20 +335,21 @@ class KontrakController extends Controller
         return view('datamaster.kontrak.show_mobile', compact('kontrak', 'tunjanganItems', 'pengaturan'));
     }
 
-    public function template()
+    public function template(\Illuminate\Http\Request $request)
     {
-        $template = \App\Models\KonfigurasiDokumen::where('kode_dokumen', 'PKWT')->first();
+        $type = $request->get('type', 'PKWT');
+        $template = \App\Models\KonfigurasiDokumen::where('kode_dokumen', $type)->first();
         if (!$template) {
             // Default template if not exists
             $konten = view('datamaster.kontrak.default_template')->render();
             // Create initial record
             $template = \App\Models\KonfigurasiDokumen::create([
-                'kode_dokumen' => 'PKWT',
-                'nama_dokumen' => 'Perjanjian Kerja Waktu Tertentu',
+                'kode_dokumen' => $type,
+                'nama_dokumen' => $type == 'PKWTT' ? 'Perjanjian Kerja Waktu Tidak Tertentu' : 'Perjanjian Kerja Waktu Tertentu',
                 'konten' => $konten
             ]);
         }
-        return view('datamaster.kontrak.template', compact('template'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.kontrak.template' : 'datamaster.kontrak.template', compact('template', 'type'));
     }
 
     public function updateTemplate(Request $request)

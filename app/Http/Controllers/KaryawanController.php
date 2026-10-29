@@ -86,19 +86,48 @@ class KaryawanController extends Controller
         if (!empty($request->kode_group)) {
             $query->where('karyawan.kode_group', $request->kode_group);
         }
+        if (!empty($request->kode_jabatan)) {
+            $query->where('karyawan.kode_jabatan', $request->kode_jabatan);
+        }
 
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
         }
-        $query->orderBy('nama_karyawan', 'asc');
+        if (session('admin_theme', 'v2') === 'v2') {
+            $statsQuery = (clone $query)->reorder();
+            $statsQuery->getQuery()->columns = null;
+            $statsData = $statsQuery->selectRaw("
+                COUNT(*) as total_karyawan,
+                SUM(CASE WHEN karyawan.status_aktif_karyawan = '1' THEN 1 ELSE 0 END) as aktif,
+                SUM(CASE WHEN karyawan.status_aktif_karyawan = '0' THEN 1 ELSE 0 END) as nonaktif,
+                SUM(CASE WHEN karyawan.status_karyawan = 'T' THEN 1 ELSE 0 END) as tetap,
+                SUM(CASE WHEN karyawan.status_karyawan = 'K' THEN 1 ELSE 0 END) as kontrak
+            ")->first();
+
+            $data['stats'] = [
+                'total_karyawan' => (int) ($statsData->total_karyawan ?? 0),
+                'aktif'          => (int) ($statsData->aktif ?? 0),
+                'nonaktif'       => (int) ($statsData->nonaktif ?? 0),
+                'tetap'          => (int) ($statsData->tetap ?? 0),
+                'kontrak'        => (int) ($statsData->kontrak ?? 0),
+            ];
+        }
+
+        $sortBy = $request->get('sort_by', 'nama_karyawan');
+        if ($sortBy === 'nik_show') {
+            $query->orderBy('karyawan.nik_show', 'asc');
+        } else {
+            $query->orderBy('karyawan.nama_karyawan', 'asc');
+        }
         $karyawan = $query->paginate(15);
         $karyawan->appends($request->all());
 
         $data['karyawan'] = $karyawan;
         $data['cabang'] = $user->getCabang();
         $data['departemen'] = $user->getDepartemen();
+        $data['jabatan'] = Jabatan::orderBy('nama_jabatan')->get();
 
-        return view('datamaster.karyawan.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.index' : 'datamaster.karyawan.index', $data);
     }
 
 
@@ -127,7 +156,7 @@ class KaryawanController extends Controller
         $data['departemen'] = $user->getDepartemen();
         $data['jabatan'] = Jabatan::orderBy('kode_jabatan')->get();
         $data['status_karyawan'] = Statuskaryawan::orderBy('kode_status_karyawan')->get();
-        return view('datamaster.karyawan.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.create' : 'datamaster.karyawan.create', $data);
     }
 
 
@@ -264,7 +293,7 @@ class KaryawanController extends Controller
         $data['departemen'] = $user->getDepartemen();
         $data['jabatan'] = Jabatan::orderBy('kode_jabatan')->get();
         $data['status_karyawan'] = Statuskaryawan::orderBy('kode_status_karyawan')->get();
-        return view('datamaster.karyawan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.edit' : 'datamaster.karyawan.edit', $data);
     }
 
 
@@ -451,7 +480,7 @@ class KaryawanController extends Controller
         $data['user'] = $user;
         $data['karyawan_wajah'] = $karyawan_wajah;
         $data['mutasi'] = $mutasi;
-        return view('datamaster.karyawan.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.show' : 'datamaster.karyawan.show', $data);
     }
 
 
@@ -500,7 +529,7 @@ class KaryawanController extends Controller
         $data['jamkerja'] = Jamkerja::orderBy('kode_jam_kerja')->get();
         $data['jamkerjabyday'] = Setjamkerjabyday::where('nik', $nik)->pluck('kode_jam_kerja', 'hari')->toArray();
         // dd($data['jamkerjabyday']);
-        return view('datamaster.karyawan.setjamkerja', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.setjamkerja' : 'datamaster.karyawan.setjamkerja', $data);
     }
 
     public function setcabang($nik)
@@ -513,7 +542,7 @@ class KaryawanController extends Controller
         // Exclude cabang utama dari pilihan
         $data['cabang'] = Cabang::where('kode_cabang', '!=', $data['karyawan']->kode_cabang)->orderBy('kode_cabang')->get();
         $data['kode_cabang_array'] = $data['karyawan']->kode_cabang_array ?? [];
-        return view('datamaster.karyawan.setcabang', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.setcabang' : 'datamaster.karyawan.setcabang', $data);
     }
 
     public function storecabang(Request $request, $nik)
@@ -735,7 +764,7 @@ class KaryawanController extends Controller
     public function import()
     {
         $status_kawin = Statuskawin::orderBy('kode_status_kawin')->get();
-        return view('datamaster.karyawan.import_modal', compact('status_kawin'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.import_modal' : 'datamaster.karyawan.import_modal', compact('status_kawin'));
     }
 
     public function download_template()
@@ -841,6 +870,6 @@ class KaryawanController extends Controller
             });
         }
         $karyawan = $query->orderBy('nama_karyawan')->limit(20)->get();
-        return view('datamaster.karyawan.getkaryawantable', compact('karyawan'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.karyawan.getkaryawantable' : 'datamaster.karyawan.getkaryawantable', compact('karyawan'));
     }
 }

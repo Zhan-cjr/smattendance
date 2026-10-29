@@ -25,7 +25,7 @@ class PermissionController extends Controller
         $permissions = $query->paginate(10);
 
         $permission_groups = Permission_group::orderBy('id')->get();
-        return view('settings.permissions.index', compact('permissions', 'permission_groups'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.permissions.index' : 'settings.permissions.index', compact('permissions', 'permission_groups'));
     }
 
     /**
@@ -35,7 +35,7 @@ class PermissionController extends Controller
     {
 
         $permission_groups = Permission_group::orderBy('id')->get();
-        return view('settings.permissions.create', compact('permission_groups'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.permissions.create' : 'settings.permissions.create', compact('permission_groups'));
     }
 
     /**
@@ -75,7 +75,7 @@ class PermissionController extends Controller
         $id = Crypt::decrypt($id);
         $permission = Permission::where('id', $id)->first();
         $permission_groups = Permission_group::orderBy('id')->get();
-        return view('settings.permissions.edit', compact('permission_groups', 'permission'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.permissions.edit' : 'settings.permissions.edit', compact('permission_groups', 'permission'));
     }
 
     /**

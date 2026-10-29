@@ -81,7 +81,7 @@
             <a href="{{ route('slipgaji.index') }}" class="card press fade-up" style="animation-delay: 0.2s">
                 <div class="card-body p-1.5 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: #2a635020; color: #2a6350;">
+                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: {{ $t['primary_dark'] ?? '#2a6350' }}20; color: {{ $t['primary_dark'] ?? '#2a6350' }};">
                             <ion-icon name="cash-outline" class="text-2xl"></ion-icon>
                         </div>
                         <div class="flex flex-col">
@@ -131,7 +131,7 @@
             <a href="{{ route('shortcut.mypinjaman') }}" class="card press fade-up" style="animation-delay: 0.32s">
                 <div class="card-body p-1.5 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: #f0fdfa; color: #0d9488;">
+                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: #f0fdfa; color: {{ $t['primary'] ?? '#0d9488' }};">
                             <ion-icon name="wallet-outline" class="text-2xl"></ion-icon>
                         </div>
                         <div class="flex flex-col">
@@ -315,7 +315,7 @@
             <a href="{{ route('karyawan-approval.index') }}" class="card press fade-up" style="animation-delay: 0.8s">
                 <div class="card-body p-1.5 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: #ccfbf1; color: #0f766e;">
+                        <div class="flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center rounded-[10px]" style="background: #ccfbf1; color: {{ $t['primary'] ?? '#0f766e' }};">
                             <ion-icon name="checkmark-done-circle-outline" class="text-2xl"></ion-icon>
                         </div>
                         <div class="flex flex-col">

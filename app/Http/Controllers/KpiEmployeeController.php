@@ -73,8 +73,10 @@ class KpiEmployeeController extends Controller
 
         $karyawan = $query->paginate(10);
         $departemen = Departemen::orderBy('nama_dept')->get();
+        $cabang = \App\Models\Cabang::orderBy('nama_cabang')->get();
+        $jabatan = \App\Models\Jabatan::orderBy('nama_jabatan')->get();
 
-        return view('kpi.transactions.index', compact('karyawan', 'departemen', 'active_period'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.transactions.index' : 'kpi.transactions.index', compact('karyawan', 'departemen', 'cabang', 'jabatan', 'active_period'));
     }
 
     /**
@@ -123,7 +125,7 @@ class KpiEmployeeController extends Controller
             $indicators = $indicators->merge($global_details);
         }
 
-        return view('kpi.transactions.settarget', compact('karyawan', 'period', 'indicators'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.transactions.settarget' : 'kpi.transactions.settarget', compact('karyawan', 'period', 'indicators'));
     }
 
     /**
@@ -200,7 +202,7 @@ class KpiEmployeeController extends Controller
          // Refresh untuk mendapatkan skor terbaru jika ada
          // $kpi_employee->refresh();
          
-         return view('kpi.transactions.show', compact('kpi_employee'));
+         return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.transactions.show' : 'kpi.transactions.show', compact('kpi_employee'));
     }
 
     /**

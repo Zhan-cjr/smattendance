@@ -11,14 +11,22 @@ class JabatanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Jabatan::query();
-        $data['jabatan'] = $query->get();
-        return view('datamaster.jabatan.index', $data);
+        $query = Jabatan::query()
+            ->leftJoin('karyawan', 'jabatan.kode_jabatan', '=', 'karyawan.kode_jabatan')
+            ->select('jabatan.kode_jabatan', 'jabatan.nama_jabatan')
+            ->selectRaw('count(karyawan.nik) as karyawan_count')
+            ->groupBy('jabatan.kode_jabatan', 'jabatan.nama_jabatan');
+        if (!empty($request->nama_jabatan)) {
+            $query->where('jabatan.nama_jabatan', 'like', '%' . $request->nama_jabatan . '%');
+        }
+        $data['jabatan'] = $query->orderBy('jabatan.kode_jabatan')->get();
+        $data['total_jabatan'] = Jabatan::count();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jabatan.index' : 'datamaster.jabatan.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.jabatan.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jabatan.create' : 'datamaster.jabatan.create');
     }
 
     public function store(Request $request)
@@ -106,7 +114,7 @@ class JabatanController extends Controller
     {
         $kode_jabatan = Crypt::decrypt($kode_jabatan);
         $data['jabatan'] = Jabatan::where('kode_jabatan', $kode_jabatan)->first();
-        return view('datamaster.jabatan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jabatan.edit' : 'datamaster.jabatan.edit', $data);
     }
 
     public function update($kode_jabatan, Request $request)

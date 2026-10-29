@@ -34,7 +34,7 @@ class LaporanController extends Controller
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
         $data['departemen'] = Departemen::orderBy('kode_dept')->get();
         $data['cuti'] = \App\Models\Cuti::orderBy('kode_cuti')->get();
-        return view('laporan.cuti', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.cuti' : 'laporan.cuti', $data);
     }
 
     public function cetakcuti(Request $request)
@@ -163,7 +163,7 @@ class LaporanController extends Controller
              // Future export
         }
         
-        return view('laporan.cetak_cuti', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.cetak_cuti' : 'laporan.cetak_cuti', $data);
 
     }
 
@@ -175,7 +175,8 @@ class LaporanController extends Controller
         $departemen = Departemen::orderBy('kode_dept')->get();
         $data['cabang'] = $cabang;
         $data['departemen'] = $departemen;
-        return view('laporan.presensi', $data);
+        $data['periode_gaji'] = collect();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.presensi' : 'laporan.presensi', $data);
     }
 
 
@@ -716,7 +717,7 @@ class LaporanController extends Controller
             if ($request->has('exportButton')) {
                 return Excel::download(new PresensiKaryawanExport($data), 'Laporan Presensi Karyawan ' . $periode_dari . ' - ' . $periode_sampai . '.xlsx');
             }
-            return view('laporan.presensi_karyawan_cetak', $data);
+            return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.presensi_karyawan_cetak' : 'laporan.presensi_karyawan_cetak', $data);
         } else {
             $laporan_presensi = $presensi->groupBy('nik')->map(function ($rows) use ($jenis_tunjangan) {
                 $data = [
@@ -774,17 +775,18 @@ class LaporanController extends Controller
             $data['jenis_tunjangan'] = $jenis_tunjangan;
 
 
+            $viewPrefix = session('admin_theme', 'v2') === 'v2' ? 'v2.' : '';
             if ($user->hasRole('karyawan')) {
                 $first_row = $laporan_presensi->first();
                 $jenis_upah = ($first_row && isset($first_row['jenis_upah'])) ? $first_row['jenis_upah'] : 'Bulanan';
-                $view = ($jenis_upah == 'Harian') ? 'laporan.slip_karyawan_harian_cetak' : 'laporan.slip_karyawan_cetak';
+                $view = ($jenis_upah == 'Harian') ? $viewPrefix . 'laporan.slip_karyawan_harian_cetak' : $viewPrefix . 'laporan.slip_karyawan_cetak';
                 return view($view, $data);
             } else {
                 if ($request->format_laporan == 1) {
                     if ($request->has('exportButton')) {
                         return Excel::download(new PresensiExport($data), 'Rekap Presensi ' . $periode_dari . ' - ' . $periode_sampai . '.xlsx');
                     }
-                    $view = $request->format_rekap == 2 ? 'laporan.presensi_cetak_v2' : 'laporan.presensi_cetak';
+                    $view = $request->format_rekap == 2 ? $viewPrefix . 'laporan.presensi_cetak_v2' : $viewPrefix . 'laporan.presensi_cetak';
                     return view($view, $data);
                 } else if ($request->format_laporan == 2) {
                     if ($request->has('exportButton')) {
@@ -793,19 +795,19 @@ class LaporanController extends Controller
                     }
 
                     if ($request->jenis_upah == 'Harian') {
-                        return view('laporan.gaji_harian_cetak', $data);
+                        return view($viewPrefix . 'laporan.gaji_harian_cetak', $data);
                     }
 
-                    return view('laporan.gaji_cetak', $data);
+                    return view($viewPrefix . 'laporan.gaji_cetak', $data);
                 } else if ($request->format_laporan == 3) {
                     $first_row = $laporan_presensi->first();
                     $jenis_upah = $request->jenis_upah ?: (($first_row && isset($first_row['jenis_upah'])) ? $first_row['jenis_upah'] : 'Bulanan');
                     
                     if ($user->hasRole('karyawan')) {
-                        $view = $jenis_upah == 'Harian' ? 'laporan.slip_karyawan_harian_cetak' : 'laporan.slip_karyawan_cetak';
+                        $view = $jenis_upah == 'Harian' ? $viewPrefix . 'laporan.slip_karyawan_harian_cetak' : $viewPrefix . 'laporan.slip_karyawan_cetak';
                         return view($view, $data);
                     }
-                    $view = $jenis_upah == 'Harian' ? 'laporan.slip_harian_cetak' : 'laporan.slip_cetak';
+                    $view = $jenis_upah == 'Harian' ? $viewPrefix . 'laporan.slip_harian_cetak' : $viewPrefix . 'laporan.slip_cetak';
                     return view($view, $data);
                 }
             }
@@ -1275,7 +1277,7 @@ class LaporanController extends Controller
         $departemen = Departemen::orderBy('kode_dept')->get();
         $data['cabang'] = $cabang;
         $data['departemen'] = $departemen;
-        return view('laporan.jadwal', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.jadwal' : 'laporan.jadwal', $data);
     }
 
     public function cetakjadwal(Request $request)
@@ -1424,7 +1426,7 @@ class LaporanController extends Controller
         $data['jadwal_bydept'] = $jadwal_bydept;
         $data['karyawan'] = $karyawan;
 
-        return view('laporan.jadwal_cetak', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.jadwal_cetak' : 'laporan.jadwal_cetak', $data);
     }
 
     public function lemburdetail($nik, $dari, $sampai)
@@ -1665,7 +1667,7 @@ class LaporanController extends Controller
         $data['mode'] = $mode;
         $data['rekapPresensis'] = $mode === 'rekap' ? $this->generateRekapPresensi($presensis_filtered) : collect();
         
-        return view('laporan.kehadiran', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.kehadiran' : 'laporan.kehadiran', $data);
     }
 
     /**

@@ -13,13 +13,14 @@ class LemburaturanController extends Controller
     {
         $data['aturan_kerja'] = LemburAturan::where('tipe_hari', '1')->orderBy('jam_dari')->get();
         $data['aturan_libur'] = LemburAturan::where('tipe_hari', '2')->orderBy('jam_dari')->get();
-        return view('konfigurasi.lembur_aturan.index', $data);
+        $data['lembur_khusus'] = collect();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.konfigurasi.lembur_aturan.index' : 'konfigurasi.lembur_aturan.index', $data);
     }
 
     public function create(Request $request)
     {
         $data['tipe_hari'] = $request->tipe_hari;
-        return view('konfigurasi.lembur_aturan.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.konfigurasi.lembur_aturan.create' : 'konfigurasi.lembur_aturan.create', $data);
     }
 
     public function store(Request $request)
@@ -48,7 +49,7 @@ class LemburaturanController extends Controller
     {
         $id = $request->id;
         $data['aturan'] = LemburAturan::find($id);
-        return view('konfigurasi.lembur_aturan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.konfigurasi.lembur_aturan.edit' : 'konfigurasi.lembur_aturan.edit', $data);
     }
 
     public function update(Request $request, $id)

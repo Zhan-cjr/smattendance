@@ -36,20 +36,24 @@ class Globalprovider extends ServiceProvider
             // Modern theme variables (shared globally for modern layout)
             $scheme = $settings->mobile_theme_scheme ?? 'green';
             $themeColors = [
-                'green' => ['primary' => '#32745e', 'primary_light' => '#58907D', 'bg_body' => '#f0fdf9'],
-                'blue' => ['primary' => '#0d47a1', 'primary_light' => '#1976d2', 'bg_body' => '#eff6ff'],
-                'red' => ['primary' => '#b71c1c', 'primary_light' => '#d32f2f', 'bg_body' => '#fef2f2'],
-                'purple' => ['primary' => '#4a148c', 'primary_light' => '#7b1fa2', 'bg_body' => '#faf5ff'],
-                'orange' => ['primary' => '#e65100', 'primary_light' => '#f57c00', 'bg_body' => '#fff8f1'],
+                'green' => ['primary' => '#32745e', 'primary_light' => '#58907D', 'primary_dark' => '#1e4b3d', 'primary_rgb' => '50, 116, 94', 'bg_body' => '#f0fdf9'],
+                'blue' => ['primary' => '#0d47a1', 'primary_light' => '#1976d2', 'primary_dark' => '#072a60', 'primary_rgb' => '13, 71, 161', 'bg_body' => '#eff6ff'],
+                'red' => ['primary' => '#b71c1c', 'primary_light' => '#d32f2f', 'primary_dark' => '#7f1212', 'primary_rgb' => '183, 28, 28', 'bg_body' => '#fef2f2'],
+                'purple' => ['primary' => '#4a148c', 'primary_light' => '#7b1fa2', 'primary_dark' => '#2c0b54', 'primary_rgb' => '74, 20, 140', 'bg_body' => '#faf5ff'],
+                'orange' => ['primary' => '#e65100', 'primary_light' => '#f57c00', 'primary_dark' => '#993600', 'primary_rgb' => '230, 81, 0', 'bg_body' => '#fff8f1'],
+                'rose' => ['primary' => '#be185d', 'primary_light' => '#ec4899', 'primary_dark' => '#831843', 'primary_rgb' => '190, 24, 93', 'bg_body' => '#fff5f7'],
+                'dark' => ['primary' => '#0f172a', 'primary_light' => '#334155', 'primary_dark' => '#020617', 'primary_rgb' => '15, 23, 42', 'bg_body' => '#070b14'],
             ];
             $t = $themeColors[$scheme] ?? $themeColors['green'];
-            $isDark = false;
+            $isDark = ($scheme === 'dark');
             View::share('t', $t);
             View::share('isDark', $isDark);
+            View::share('scheme', $scheme);
         } catch (\Exception $e) {
             View::share('general_setting', null);
-            View::share('t', ['primary' => '#32745e', 'primary_light' => '#58907D', 'bg_body' => '#f0fdf9']);
+            View::share('t', ['primary' => '#32745e', 'primary_light' => '#58907D', 'primary_dark' => '#1e4b3d', 'primary_rgb' => '50, 116, 94', 'bg_body' => '#f0fdf9']);
             View::share('isDark', false);
+            View::share('scheme', 'green');
         }
 
 
@@ -159,7 +163,10 @@ class Globalprovider extends ServiceProvider
                     'notifikasi_izin_dinas' => $notifikasi_izin_dinas,
                     'notifikasi_ajuan_absen' => $notifikasi_ajuan_absen,
                     'notifikasi_ajuan_jadwal' => $notifikasi_ajuan_jadwal,
+                    'notifikasi_koreksi' => 0,
+                    'notifikasi_reimbursement' => 0,
                     'data_izin' => $data_izin,
+                    'data_reimbursement_pending' => collect([]),
                 ];
                 View::share($shareddata);
             }

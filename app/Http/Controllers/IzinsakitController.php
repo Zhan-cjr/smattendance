@@ -72,6 +72,22 @@ class IzinsakitController extends Controller
             $qizin->where('karyawan.kode_dept', $request->kode_dept);
         }
 
+        $qizin->addSelect('karyawan.foto');
+        $statusCounts = (clone $qizin)->reorder()
+            ->select('presensi_izinsakit.status', DB::raw('count(*) as total'))
+            ->groupBy('presensi_izinsakit.status')
+            ->pluck('total', 'status')
+            ->toArray();
+        $data['stats'] = [
+            'pending' => $statusCounts[0] ?? 0,
+            'disetujui' => $statusCounts[1] ?? 0,
+            'ditolak' => $statusCounts[2] ?? 0,
+        ];
+        $data['tahun'] = $request->get('tahun', date('Y'));
+        $data['labelPeriode'] = (!empty($request->dari) && !empty($request->sampai))
+            ? $request->dari . ' s/d ' . $request->sampai
+            : ($data['tahun'] === 'all' ? 'Semua Tahun' : 'Tahun ' . $data['tahun']);
+
         if (!empty($request->status) || $request->status === '0') {
             $qizin->where('presensi_izinsakit.status', $request->status);
         }
@@ -84,7 +100,7 @@ class IzinsakitController extends Controller
         $data['cabang'] = $user->getCabang();
         $data['departemen'] = $user->getDepartemen();
         $data['izinsakit'] = $izinsakit;
-        return view('izinsakit.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinsakit.index' : 'izinsakit.index', $data);
     }
 
     public function create()
@@ -121,7 +137,7 @@ class IzinsakitController extends Controller
             return view('izinsakit.create-mobile', $data);
         }
 
-        return view('izinsakit.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinsakit.create' : 'izinsakit.create', $data);
     }
 
     public function edit($kode_izin_sakit)
@@ -169,7 +185,7 @@ class IzinsakitController extends Controller
         $data['karyawan'] = $karyawan;
         $data['izinsakit'] = $izinsakit;
 
-        return view('izinsakit.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinsakit.edit' : 'izinsakit.edit', $data);
     }
 
     public function store(Request $request)
@@ -315,7 +331,7 @@ class IzinsakitController extends Controller
         }
 
         $data['izinsakit'] = $izinabsen;
-        return view('izinsakit.approve', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinsakit.approve' : 'izinsakit.approve', $data);
     }
 
     public function storeapprove(Request $request, $kode_izin_sakit)
@@ -675,7 +691,7 @@ class IzinsakitController extends Controller
         }
 
         $data['izinsakit'] = $izinabsen;
-        return view('izinsakit.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinsakit.show' : 'izinsakit.show', $data);
     }
 
     /**

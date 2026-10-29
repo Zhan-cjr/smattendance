@@ -16,6 +16,9 @@ class GeneralsettingController extends Controller
     public function index()
     {
         $data['setting'] = Pengaturanumum::where('id', 1)->first();
+        if (($data['setting']->admin_theme ?? 'v2') === 'v2') {
+            return view('v2.generalsettings.index', $data);
+        }
         return view('generalsettings.index', $data);
     }
 
@@ -23,6 +26,7 @@ class GeneralsettingController extends Controller
     {
         $id = Crypt::decrypt($id);
         $request->validate([
+            'nama_aplikasi' => 'nullable|string|max:255',
             'nama_perusahaan' => 'required',
             'alamat' => 'required',
             'telepon' => 'required',
@@ -37,12 +41,14 @@ class GeneralsettingController extends Controller
             'timezone' => 'required|string|max:50',
             'nama_hrd' => 'nullable|string',
             'theme_color_1' => 'nullable|string|max:20',
+            'theme_color_2' => 'nullable|string|max:20',
             'mobile_theme_scheme' => 'nullable|string|max:20',
+            'admin_theme' => 'nullable|in:v2,classic',
             'session_time' => 'nullable|integer|min:1',
             'absen_istirahat' => 'nullable',
             'potongan_istirahat' => 'nullable',
             'sistem_hari_kerja' => 'required|in:5,6',
-            'monitoring_live_location_mode' => 'required|in:0,1',
+            'monitoring_live_location_mode' => 'nullable|in:0,1',
             'enable_live_location_monitoring' => 'nullable',
         ]);
 
@@ -52,6 +58,7 @@ class GeneralsettingController extends Controller
             $setting = Pengaturanumum::findOrFail($id);
 
             $data = [
+                'nama_aplikasi' => $request->nama_aplikasi ?? $setting->nama_aplikasi,
                 'nama_perusahaan' => $request->nama_perusahaan,
                 'alamat' => $request->alamat,
                 'telepon' => $request->telepon,
@@ -62,7 +69,7 @@ class GeneralsettingController extends Controller
                 'face_recognition' => $request->has('face_recognition') ? true : false,
                 'periode_laporan_dari' => $request->periode_laporan_dari,
                 'periode_laporan_sampai' => $request->periode_laporan_sampai,
-                'periode_laporan_next_bulan' => $request->has('periode_laporan_next_bulan') ? true : false,
+                'periode_laporan_next_bulan' => $request->has('periode_laporan_next_bulan') ? ($request->periode_laporan_next_bulan ? true : false) : false,
                 'batasi_absen' => $request->has('batasi_absen') ? true : false,
                 'multi_lokasi' => $request->has('multi_lokasi') ? true : false,
                 'batas_jam_absen' => $request->batas_jam_absen,
@@ -83,13 +90,16 @@ class GeneralsettingController extends Controller
                 'theme_color_1' => $request->theme_color_1,
                 'theme_color_2' => $request->theme_color_2,
                 'mobile_theme_scheme' => $request->mobile_theme_scheme,
+                'admin_theme' => $request->admin_theme ?? 'v2',
                 'session_time' => $request->session_time,
                 'absen_istirahat' => $request->has('absen_istirahat') ? 1 : 0,
                 'potongan_istirahat' => $request->has('potongan_istirahat') ? 1 : 0,
                 'sistem_hari_kerja' => $request->sistem_hari_kerja,
-                'monitoring_live_location_mode' => $request->monitoring_live_location_mode,
+                'monitoring_live_location_mode' => $request->monitoring_live_location_mode ?? ($setting->monitoring_live_location_mode ?? 0),
                 'enable_live_location_monitoring' => $request->has('enable_live_location_monitoring') ? true : false,
             ];
+
+            session(['admin_theme' => $request->admin_theme ?? 'v2']);
 
             if ($request->hasFile('logo')) {
                 $logo = $request->file('logo');

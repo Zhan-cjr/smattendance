@@ -32,12 +32,14 @@ class MesinFingerprintController extends Controller
         $mesinfinger = $query->orderBy('nama_mesin')->paginate(10);
         $mesinfinger->appends($request->all());
 
-        return view('mesinfingerprint.index', compact('mesinfinger'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.mesinfingerprint.index' : 'mesinfingerprint.index';
+        return view($view, compact('mesinfinger'));
     }
 
     public function create()
     {
-        return view('mesinfingerprint.create');
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.mesinfingerprint.create' : 'mesinfingerprint.create';
+        return view($view);
     }
 
     public function store(Request $request)
@@ -70,7 +72,8 @@ class MesinFingerprintController extends Controller
     {
         $id = Crypt::decrypt($request->id);
         $mesinfinger = MesinFingerprint::findOrFail($id);
-        return view('mesinfingerprint.edit', compact('mesinfinger'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.mesinfingerprint.edit' : 'mesinfingerprint.edit';
+        return view($view, compact('mesinfinger'));
     }
 
     public function update(Request $request, $id)

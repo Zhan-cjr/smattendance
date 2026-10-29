@@ -22,10 +22,16 @@
 @push('mystyle')
     <script>
         (function() {
-            var savedTheme = localStorage.getItem('smatt_theme');
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var lastServerScheme = localStorage.getItem('smatt_server_scheme');
+            if (lastServerScheme !== serverScheme) {
+                localStorage.setItem('smatt_server_scheme', serverScheme);
+                localStorage.setItem('smatt_theme', serverScheme === 'dark' ? 'dark' : 'light');
+            }
+            var savedTheme = localStorage.getItem('smatt_theme') || (serverScheme === 'dark' ? 'dark' : 'light');
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
-                document.body.classList.add('dark');
+                if (document.body) document.body.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark', 'dark-mode-active');
                 if (document.body) {
@@ -40,7 +46,7 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            background-color: #f8fafc !important;
+            background-color: {{ $t['bg_body'] ?? '#f8fafc' }} !important;
             color: #0f172a !important;
         }
 
@@ -177,11 +183,11 @@
             white-space: nowrap !important;
         }
         .tab-btn.active {
-            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%) !important;
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%) !important;
             color: #ffffff !important;
             border-color: transparent !important;
             font-weight: 800 !important;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
+            box-shadow: 0 4px 12px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.3) !important;
         }
 
         /* Modern Floating Action Button */
@@ -192,13 +198,13 @@
             width: 52px;
             height: 52px;
             border-radius: 18px;
-            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%);
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%);
             color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            box-shadow: 0 8px 24px rgba(15, 118, 110, 0.45);
+            box-shadow: 0 8px 24px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.45);
             z-index: 50;
             border: 2.5px solid #ffffff;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -288,7 +294,7 @@
             border-color: rgba(255, 255, 255, 0.08) !important;
         }
         html.dark .tab-btn.active, body.dark .tab-btn.active {
-            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%) !important;
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%) !important;
             color: #ffffff !important;
         }
 
@@ -471,7 +477,7 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto">
                         Anda belum memiliki riwayat pengajuan izin, sakit, cuti, atau dinas.
                     </p>
-                    <button type="button" onclick="showAjukanIzinModal()" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md active:scale-95 transition-all" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%);">
+                    <button type="button" onclick="showAjukanIzinModal()" class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-md active:scale-95 transition-all" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%);">
                         <i class="fa-solid fa-plus text-xs"></i>
                         Buat Pengajuan Baru
                     </button>

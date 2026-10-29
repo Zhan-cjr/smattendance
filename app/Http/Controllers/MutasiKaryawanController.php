@@ -36,7 +36,7 @@ class MutasiKaryawanController extends Controller
         $jabatan = Jabatan::orderBy('nama_jabatan')->get();
         $status_karyawan = Statuskaryawan::orderBy('kode_status_karyawan')->get();
 
-        return view('mutasi.index', compact('mutasi', 'karyawan', 'cabang', 'departemen', 'jabatan', 'status_karyawan'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.mutasi.index' : 'mutasi.index', compact('mutasi', 'karyawan', 'cabang', 'departemen', 'jabatan', 'status_karyawan'));
     }
 
     public function create()
@@ -47,7 +47,7 @@ class MutasiKaryawanController extends Controller
         $jabatan = Jabatan::orderBy('nama_jabatan')->get();
         $status_karyawan = Statuskaryawan::orderBy('kode_status_karyawan')->get();
         
-        return view('mutasi.create', compact('karyawan', 'cabang', 'departemen', 'jabatan', 'status_karyawan'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.mutasi.create' : 'mutasi.create', compact('karyawan', 'cabang', 'departemen', 'jabatan', 'status_karyawan'));
     }
 
     public function store(Request $request)

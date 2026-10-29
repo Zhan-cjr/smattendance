@@ -45,7 +45,8 @@ class LaporanKehadiranController extends Controller
             ->orderBy('p.tanggal')
             ->paginate(20);
 
-        return view('laporan.kehadiran', compact('presensis', 'tanggal_mulai', 'tanggal_akhir'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.kehadiran' : 'laporan.kehadiran';
+        return view($view, compact('presensis', 'tanggal_mulai', 'tanggal_akhir'));
     }
 
     public function cetak(Request $request)

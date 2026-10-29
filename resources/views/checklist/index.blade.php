@@ -10,9 +10,9 @@
 @push('mystyle')
 <style>
     .checklist-hero {
-        background: linear-gradient(145deg, #0f766e 0%, #115e59 50%, #042f2e 100%);
+        background: linear-gradient(145deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary_dark'] ?? '#115e59' }} 50%, #042f2e 100%);
         border-radius: 24px;
-        box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.3);
+        box-shadow: 0 10px 25px -5px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.3);
     }
     .dark .checklist-hero {
         background: linear-gradient(145deg, #022c22 0%, #064e3b 50%, #031a15 100%);

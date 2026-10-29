@@ -72,7 +72,22 @@ class IzincutiController extends Controller
             $qcuti->where('karyawan.kode_dept', $request->kode_dept);
         }
         
-        $qcuti->addSelect('karyawan.kode_dept');
+        $qcuti->addSelect('karyawan.kode_dept', 'karyawan.foto');
+
+        $statusCounts = (clone $qcuti)->reorder()
+            ->select('presensi_izincuti.status', DB::raw('count(*) as total'))
+            ->groupBy('presensi_izincuti.status')
+            ->pluck('total', 'status')
+            ->toArray();
+        $data['stats'] = [
+            'pending' => $statusCounts[0] ?? 0,
+            'disetujui' => $statusCounts[1] ?? 0,
+            'ditolak' => $statusCounts[2] ?? 0,
+        ];
+        $data['tahun'] = $request->get('tahun', date('Y'));
+        $data['labelPeriode'] = (!empty($request->dari) && !empty($request->sampai))
+            ? $request->dari . ' s/d ' . $request->sampai
+            : ($data['tahun'] === 'all' ? 'Semua Tahun' : 'Tahun ' . $data['tahun']);
 
         if (!empty($request->status) || $request->status === '0') {
             $qcuti->where('presensi_izincuti.status', $request->status);
@@ -85,7 +100,7 @@ class IzincutiController extends Controller
         $data['izincuti'] = $cuti;
         $data['cabang'] = $user->getCabang();
         $data['departemen'] = $user->getDepartemen();
-        return view('izincuti.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izincuti.index' : 'izincuti.index', $data);
     }
 
 
@@ -122,7 +137,7 @@ class IzincutiController extends Controller
         if ($user->hasRole('karyawan')) {
             return view('izincuti.create-mobile', $data);
         }
-        return view('izincuti.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izincuti.create' : 'izincuti.create', $data);
     }
 
     public function store(Request $request)
@@ -299,7 +314,7 @@ class IzincutiController extends Controller
         $data['karyawan'] = $karyawan;
         $data['izincuti'] = $izincuti;
         $data['jenis_cuti'] = Cuti::orderBy('kode_cuti')->get();
-        return view('izincuti.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izincuti.edit' : 'izincuti.edit', $data);
     }
 
 
@@ -356,7 +371,7 @@ class IzincutiController extends Controller
         }
 
         $data['izincuti'] = $izincuti;
-        return view('izincuti.approve', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izincuti.approve' : 'izincuti.approve', $data);
     }
 
 
@@ -650,7 +665,7 @@ class IzincutiController extends Controller
         }
 
         $data['izincuti'] = $izincuti;
-        return view('izincuti.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izincuti.show' : 'izincuti.show', $data);
     }
 
     public function getsisaharicuti(Request $request)

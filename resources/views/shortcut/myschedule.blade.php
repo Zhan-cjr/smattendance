@@ -10,12 +10,12 @@
 @push('mystyle')
     <style>
         body {
-            background-color: #f8fafc;
+            background-color: {{ $t['bg_body'] ?? '#f8fafc' }};
         }
 
         .schedule-card {
-            border: 1px solid #32745e; /* Matching primary color theme */
-            border-radius: 10px;
+            border: 1px solid rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.35);
+            border-radius: 12px;
             background: #ffffff;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
             margin-bottom: 4px;

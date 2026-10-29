@@ -23,7 +23,8 @@ class MonitoringMasterController extends Controller
             ->orderBy('nama_karyawan')
             ->get();
 
-        return view('datamaster.monitoring-master.index', compact('spyEmployees'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.monitoring-master.index' : 'datamaster.monitoring-master.index';
+        return view($view, compact('spyEmployees'));
     }
 
     /**

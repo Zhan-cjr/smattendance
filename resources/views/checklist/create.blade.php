@@ -223,7 +223,7 @@
             </label>
 
             <!-- Submit Button -->
-            <button type="submit" id="btnSubmit" disabled class="w-full py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg transition-all opacity-50 cursor-not-allowed" style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);">
+            <button type="submit" id="btnSubmit" disabled class="w-full py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg transition-all opacity-50 cursor-not-allowed" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #14b8a6 100%);">
                 <i class="fa-solid fa-paper-plane" id="submitIcon"></i>
                 <span id="submitText">Kirim Laporan & Generate Grid WA</span>
             </button>

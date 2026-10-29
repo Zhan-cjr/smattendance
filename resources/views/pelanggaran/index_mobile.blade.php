@@ -10,7 +10,7 @@
 @push('mystyle')
     <style>
         body {
-            background: #e6fcf5 !important;
+            background: {{ $t['bg_body'] ?? '#e6fcf5' }} !important;
         }
 
         /* Animations */
@@ -27,14 +27,14 @@
         /* Slip Card Styling Adapted for Pelanggaran */
         .slip-card-modern {
             background: #fff;
-            border: 1px solid #32745e20;
+            border: 1px solid {{ $t['primary'] ?? '#32745e' }}20;
             border-radius: 16px;
             padding: 12px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 15px rgba(50, 116, 94, 0.05);
+            box-shadow: 0 4px 15px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.05);
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
@@ -70,7 +70,7 @@
         .slip-title {
             font-size: 14px;
             font-weight: 700;
-            color: #2a6350;
+            color: {{ $t['primary_dark'] ?? '#2a6350' }};
             margin-bottom: 3px;
             line-height: 1.2;
             display: flex;
@@ -91,7 +91,7 @@
         }
 
         .chevron-icon {
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             font-size: 20px;
             opacity: 0.5;
             flex-shrink: 0;
@@ -131,7 +131,7 @@
 
     <div id="data-container" style="display: none; padding-bottom: 100px;">
         <div class="px-1 mt-2">
-            <h2 class="text-[13px] font-bold text-[#32745e] uppercase tracking-wider mb-3 ml-2">Riwayat Pelanggaran</h2>
+            <h2 class="text-[13px] font-bold text-[{{ $t['primary'] ?? '#32745e' }}] uppercase tracking-wider mb-3 ml-2">Riwayat Pelanggaran</h2>
 
             @if (count($pelanggaran))
                 @foreach ($pelanggaran as $index => $d)
@@ -168,7 +168,7 @@
             @else
                 <div class="empty-state fade-up" style="animation-delay: 0.1s">
                     <ion-icon name="document-text-outline" class="text-5xl mb-3 opacity-50"></ion-icon>
-                    <p class="font-bold text-lg text-[#2a6350] mb-1">Tidak Ada Pelanggaran</p>
+                    <p class="font-bold text-lg text-[{{ $t['primary_dark'] ?? '#2a6350' }}] mb-1">Tidak Ada Pelanggaran</p>
                     <p class="text-sm opacity-80">Anda memiliki catatan yang bersih.</p>
                 </div>
             @endif

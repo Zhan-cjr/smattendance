@@ -25,6 +25,7 @@ class UserloginlogController extends Controller
         $logs = $query->orderBy('login_at', 'desc')->paginate(20);
         $logs->appends($request->all());
 
-        return view('utilities.user_login_log.index', compact('logs'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.utilities.user_login_log.index' : 'utilities.user_login_log.index';
+        return view($view, compact('logs'));
     }
 }

@@ -129,6 +129,28 @@ class PresensiController extends Controller
             $query->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
         }
 
+        $statsQuery = (clone $query)->reorder();
+        $statsQuery->getQuery()->columns = null;
+        $statsData = $statsQuery->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN presensi.status = 'h' THEN 1 ELSE 0 END) as hadir,
+            SUM(CASE WHEN presensi.status = 'i' THEN 1 ELSE 0 END) as izin,
+            SUM(CASE WHEN presensi.status = 's' THEN 1 ELSE 0 END) as sakit,
+            SUM(CASE WHEN presensi.status = 'c' THEN 1 ELSE 0 END) as cuti,
+            SUM(CASE WHEN presensi.status = 'a' THEN 1 ELSE 0 END) as alpa,
+            SUM(CASE WHEN presensi.status IS NULL THEN 1 ELSE 0 END) as belum_absen
+        ")->first();
+
+        $data['stats'] = [
+            'total'       => (int) ($statsData->total ?? 0),
+            'hadir'       => (int) ($statsData->hadir ?? 0),
+            'izin'        => (int) ($statsData->izin ?? 0),
+            'sakit'       => (int) ($statsData->sakit ?? 0),
+            'cuti'        => (int) ($statsData->cuti ?? 0),
+            'alpa'        => (int) ($statsData->alpa ?? 0),
+            'belum_absen' => (int) ($statsData->belum_absen ?? 0),
+        ];
+
         $karyawan = $query->paginate(10);
         $karyawan->appends(request()->all());
         $data['karyawan'] = $karyawan;
@@ -154,7 +176,7 @@ class PresensiController extends Controller
         
         $data['departemen'] = $departemen;
         $data['denda_list'] = Denda::all()->toArray();
-        return view('presensi.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.presensi.index' : 'presensi.index', $data);
     }
     public function create(Request $request)
     {
@@ -759,7 +781,7 @@ class PresensiController extends Controller
         $data['jam_kerja'] = $jam_kerja;
         $data['tanggal'] = $tanggal;
 
-        return view('presensi.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.presensi.edit' : 'presensi.edit', $data);
     }
 
     public function update(Request $request)
@@ -835,7 +857,7 @@ class PresensiController extends Controller
         $data['status'] = $status;
         $data['cabang'] = $cabang;
 
-        return view('presensi.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.presensi.show' : 'presensi.show', $data);
     }
 
 
@@ -918,7 +940,7 @@ class PresensiController extends Controller
             ->orderBy('jam_absen', 'desc')
             ->get();
 
-        return view('presensi.getdatamesin', compact('filtered_array', 'is_locked', 'log_lokal'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.presensi.getdatamesin' : 'presensi.getdatamesin', compact('filtered_array', 'is_locked', 'log_lokal'));
     }
 
 

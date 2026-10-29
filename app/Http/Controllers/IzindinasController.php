@@ -64,6 +64,22 @@ class IzindinasController extends Controller
             $qizin->where('karyawan.kode_dept', $request->kode_dept);
         }
 
+        $qizin->addSelect('karyawan.foto');
+        $statusCounts = (clone $qizin)->reorder()
+            ->select('presensi_izindinas.status', DB::raw('count(*) as total'))
+            ->groupBy('presensi_izindinas.status')
+            ->pluck('total', 'status')
+            ->toArray();
+        $data['stats'] = [
+            'pending' => $statusCounts[0] ?? 0,
+            'disetujui' => $statusCounts[1] ?? 0,
+            'ditolak' => $statusCounts[2] ?? 0,
+        ];
+        $data['tahun'] = $request->get('tahun', date('Y'));
+        $data['labelPeriode'] = (!empty($request->dari) && !empty($request->sampai))
+            ? $request->dari . ' s/d ' . $request->sampai
+            : ($data['tahun'] === 'all' ? 'Semua Tahun' : 'Tahun ' . $data['tahun']);
+
         if (!empty($request->status) || $request->status === '0') {
             $qizin->where('presensi_izindinas.status', $request->status);
         }
@@ -75,7 +91,7 @@ class IzindinasController extends Controller
         $data['izindinas'] = $izindinas;
         $data['cabang'] = $user->getCabang();
         $data['departemen'] = $user->getDepartemen();
-        return view('izindinas.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izindinas.index' : 'izindinas.index', $data);
     }
 
     public function create()
@@ -112,7 +128,7 @@ class IzindinasController extends Controller
 
         $data['karyawan'] = $karyawan;
 
-        return view('izindinas.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izindinas.create' : 'izindinas.create', $data);
     }
 
     public function edit($kode_izin_dinas)
@@ -162,7 +178,7 @@ class IzindinasController extends Controller
         $data['karyawan'] = $karyawan;
         $data['izindinas'] = $izindinas;
 
-        return view('izindinas.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izindinas.edit' : 'izindinas.edit', $data);
     }
 
     public function store(Request $request)
@@ -278,7 +294,7 @@ class IzindinasController extends Controller
         }
 
         $data['izindinas'] = $izindinas;
-        return view('izindinas.approve', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izindinas.approve' : 'izindinas.approve', $data);
     }
 
     public function storeapprove(Request $request, $kode_izin_dinas)
@@ -575,6 +591,6 @@ class IzindinasController extends Controller
         }
 
         $data['izindinas'] = $izindinas;
-        return view('izindinas.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izindinas.show' : 'izindinas.show', $data);
     }
 }

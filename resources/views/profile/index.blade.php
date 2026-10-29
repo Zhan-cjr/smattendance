@@ -22,10 +22,16 @@
 @push('mystyle')
     <script>
         (function() {
-            var savedTheme = localStorage.getItem('smatt_theme');
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var lastServerScheme = localStorage.getItem('smatt_server_scheme');
+            if (lastServerScheme !== serverScheme) {
+                localStorage.setItem('smatt_server_scheme', serverScheme);
+                localStorage.setItem('smatt_theme', serverScheme === 'dark' ? 'dark' : 'light');
+            }
+            var savedTheme = localStorage.getItem('smatt_theme') || (serverScheme === 'dark' ? 'dark' : 'light');
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
-                document.body.classList.add('dark');
+                if (document.body) document.body.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark', 'dark-mode-active');
                 if (document.body) {
@@ -40,15 +46,15 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            background-color: #f8fafc !important;
+            background-color: {{ $t['bg_body'] ?? '#f8fafc' }} !important;
             color: #0f172a !important;
         }
 
         /* Bento Cards */
         .profile-hero-card {
-            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 50%, #042f2e 100%);
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary_dark'] ?? '#115e59' }} 50%, #042f2e 100%);
             border-radius: 24px;
-            box-shadow: 0 8px 24px -4px rgba(15, 118, 110, 0.35);
+            box-shadow: 0 8px 24px -4px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.35);
         }
 
         .form-card {
@@ -76,7 +82,7 @@
         .input-group-modern:focus-within {
             border-color: {{ $t['primary'] ?? '#0f766e' }} !important;
             background-color: #ffffff !important;
-            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15) !important;
+            box-shadow: 0 0 0 3px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.15) !important;
         }
 
         .input-group-modern input,
@@ -129,7 +135,7 @@
 
         .upload-drop-zone:hover, .upload-drop-zone:active {
             border-color: {{ $t['primary'] ?? '#0f766e' }} !important;
-            background-color: rgba(15, 118, 110, 0.04) !important;
+            background-color: rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.04) !important;
         }
 
         .upload-drop-title {
@@ -326,7 +332,7 @@
             </div>
 
             {{-- ===== SUBMIT BUTTON ===== --}}
-            <button type="submit" id="btnSimpan" class="w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%);">
+            <button type="submit" id="btnSimpan" class="w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%);">
                 <i class="fa-solid fa-floppy-disk"></i>
                 <span>Simpan Perubahan</span>
             </button>
@@ -370,7 +376,7 @@
                         title: "Bidang Belum Lengkap",
                         text: 'Silakan isi seluruh formulir profil dengan lengkap!',
                         icon: "warning",
-                        confirmButtonColor: '#0f766e',
+                        confirmButtonColor: '{{ $t['primary'] ?? '#0f766e' }}',
                         customClass: {
                             popup: 'swal2-modern-choice-popup'
                         }

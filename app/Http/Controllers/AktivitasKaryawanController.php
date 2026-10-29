@@ -75,7 +75,7 @@ class AktivitasKaryawanController extends Controller
             return view('aktivitaskaryawan.index-mobile', compact('aktivitas', 'karyawans'));
         }
 
-        return view('aktivitaskaryawan.index', compact('aktivitas', 'karyawans'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'aktivitaskaryawan.index', compact('aktivitas', 'karyawans'));
     }
 
     /**
@@ -120,7 +120,7 @@ class AktivitasKaryawanController extends Controller
             return view('aktivitaskaryawan.create-mobile', compact('karyawan'));
         } else {
             $karyawans = $this->getKaryawansByAccess($user);
-            return view('aktivitaskaryawan.create', compact('karyawans'));
+            return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'aktivitaskaryawan.create', compact('karyawans'));
         }
     }
 
@@ -250,7 +250,7 @@ class AktivitasKaryawanController extends Controller
             ->where('aktivitas_karyawan.id', $aktivitaskaryawan->id)
             ->first();
 
-        return view('aktivitaskaryawan.show', compact('aktivitaskaryawan'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'aktivitaskaryawan.show', compact('aktivitaskaryawan'));
     }
 
     /**
@@ -287,7 +287,7 @@ class AktivitasKaryawanController extends Controller
             return view('aktivitaskaryawan.edit-mobile', compact('aktivitaskaryawan', 'karyawan'));
         } else {
             $karyawans = $this->getKaryawansByAccess($user);
-            return view('aktivitaskaryawan.edit', compact('aktivitaskaryawan', 'karyawans'));
+            return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'aktivitaskaryawan.edit', compact('aktivitaskaryawan', 'karyawans'));
         }
     }
 

@@ -11,7 +11,7 @@
 @push('mystyle')
     <style>
         body {
-            background: #e6fcf5 !important;
+            background: {{ $t['bg_body'] ?? '#e6fcf5' }} !important;
         }
 
         /* Premium Camera UI (No outer card) */
@@ -27,7 +27,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 12px 30px rgba(50, 116, 94, 0.12);
+            box-shadow: 0 12px 30px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.12);
             margin-bottom: 25px;
             border: 2px solid #ffffff;
             flex-direction: column;
@@ -100,14 +100,14 @@
         }
 
         .btn-capture {
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: white;
             flex: 1;
         }
 
         .btn-switch {
             background: #ffffff;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             width: 50px;
             flex-shrink: 0;
         }
@@ -149,7 +149,7 @@
             position: relative;
             margin-bottom: 15px;
             background: #ffffff;
-            border: 1px solid #32745e;
+            border: 1px solid {{ $t['primary'] ?? '#32745e' }};
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
@@ -160,7 +160,7 @@
             left: 15px;
             top: 15px;
             font-size: 24px;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             z-index: 10;
             pointer-events: none;
         }
@@ -171,7 +171,7 @@
             padding: 30px 15px 5px 52px !important;
             font-size: 16px;
             font-weight: 500;
-            color: #2a6350;
+            color: {{ $t['primary_dark'] ?? '#2a6350' }};
             background: transparent !important;
             border: none !important;
             outline: none !important;
@@ -186,7 +186,7 @@
             top: 15px;
             left: 52px;
             font-size: 16px;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             opacity: 0.8;
             pointer-events: none;
             transition: all 0.2s ease-in-out;
@@ -200,14 +200,14 @@
             left: 52px;
             font-size: 11px;
             font-weight: 600;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
         }
 
         /* Modern Submit Button */
         .btn-submit-premium {
             width: 100%;
             height: 54px;
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: #ffffff;
             border: none;
             border-radius: 18px;
@@ -217,14 +217,14 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 10px 25px rgba(50, 116, 94, 0.25);
+            box-shadow: 0 10px 25px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.25);
             transition: all 0.3s;
             margin-top: 10px;
         }
 
         .btn-submit-premium:active {
             transform: scale(0.97);
-            background: #2a6350;
+            background: {{ $t['primary_dark'] ?? '#2a6350' }};
         }
 
         .error-hint {
@@ -249,17 +249,17 @@
         /* Custom activity input styling */
         #custom_activity {
             font-weight: 500;
-            color: #2a6350;
+            color: {{ $t['primary_dark'] ?? '#2a6350' }};
         }
 
         #custom_activity:focus {
             outline: none !important;
-            border-color: #32745e !important;
-            box-shadow: 0 0 0 3px rgba(50, 116, 94, 0.1) !important;
+            border-color: {{ $t['primary'] ?? '#32745e' }} !important;
+            box-shadow: 0 0 0 3px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1) !important;
         }
 
         #custom_activity::placeholder {
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             opacity: 0.5;
         }
     </style>
@@ -311,14 +311,14 @@
             <!-- Jenis Aktivitas Dropdown -->
             <div class="form-label-group shadow-sm">
                 <ion-icon name="list-outline" class="input-icon"></ion-icon>
-                <select name="jenis_aktivitas" id="jenis_aktivitas" required style="appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 15px 5px 5px 52px !important; font-size: 16px; font-weight: 500; color: #2a6350; background: transparent !important; border: none !important; outline: none !important; box-shadow: none !important; width: 100%; height: 50px; display: block;">
+                <select name="jenis_aktivitas" id="jenis_aktivitas" required style="appearance: none; -webkit-appearance: none; -moz-appearance: none; padding: 15px 5px 5px 52px !important; font-size: 16px; font-weight: 500; color: {{ $t['primary_dark'] ?? '#2a6350' }}; background: transparent !important; border: none !important; outline: none !important; box-shadow: none !important; width: 100%; height: 50px; display: block;">
                     <option value="" disabled selected>Pilih jenis aktivitas</option>
                     <option value="Pengajian Rutin Mingguan">Pengajian Rutin Mingguan</option>
                     <option value="Pengajian Tahsin AlQur'an">Pengajian Tahsin AlQur'an</option>
                     <option value="Lainnya">Lainnya (Tuliskan Manual)</option>
                 </select>
                 <div id="custom_activity_wrapper" style="display: none; margin-top: 15px;">
-                    <input type="text" id="custom_activity" placeholder="Masukkan jenis aktivitas lainnya" style="width: 100%; padding: 15px; border: 1px solid #32745e; border-radius: 12px; font-size: 16px; color: #2a6350;">
+                    <input type="text" id="custom_activity" placeholder="Masukkan jenis aktivitas lainnya" style="width: 100%; padding: 15px; border: 1px solid {{ $t['primary'] ?? '#32745e' }}; border-radius: 12px; font-size: 16px; color: {{ $t['primary_dark'] ?? '#2a6350' }};">
                 </div>
             </div>
             @error('jenis_aktivitas')

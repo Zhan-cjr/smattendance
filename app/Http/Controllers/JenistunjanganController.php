@@ -12,12 +12,12 @@ class JenistunjanganController extends Controller
     public function index()
     {
         $data['jenistunjangan'] = Jenistunjangan::all();
-        return view('datamaster.jenistunjangan.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jenistunjangan.index' : 'datamaster.jenistunjangan.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.jenistunjangan.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jenistunjangan.create' : 'datamaster.jenistunjangan.create');
     }
 
     public function store(Request $request)
@@ -104,7 +104,7 @@ class JenistunjanganController extends Controller
     {
         $kode_jenis_tunjangan = Crypt::decrypt($kode_jenis_tunjangan);
         $data['jenistunjangan'] = Jenistunjangan::where('kode_jenis_tunjangan', $kode_jenis_tunjangan)->first();
-        return view('datamaster.jenistunjangan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jenistunjangan.edit' : 'datamaster.jenistunjangan.edit', $data);
     }
 
 

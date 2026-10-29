@@ -166,6 +166,7 @@
                         <h6 class="mb-0">Informasi Perusahaan</h6>
                     </div>
                     <div class="card-body">
+                        <x-input-with-icon-label label="Nama Aplikasi" name="nama_aplikasi" icon="ti ti-apps" :value="$setting->nama_aplikasi ?? ''" />
                         <x-input-with-icon-label label="Nama Perusahaan" name="nama_perusahaan" icon="ti ti-home" :value="$setting->nama_perusahaan ?? ''" />
                         <x-textarea-label label="Alamat Perusahaan" name="alamat" icon="ti ti-map-pin" :value="$setting->alamat ?? ''" />
                         <x-input-with-icon-label label="Telepon" name="telepon" icon="ti ti-phone" :value="$setting->telepon ?? ''" />
@@ -256,6 +257,14 @@
                         <h6 class="mb-0">Pengaturan Tema Aplikasi</h6>
                     </div>
                     <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label for="admin_theme" style="font-weight: 600" class="form-label">Tema Tampilan Dashboard Admin</label>
+                            <select class="form-select" name="admin_theme" id="admin_theme">
+                                <option value="v2" @selected(($setting->admin_theme ?? 'v2') == 'v2')>✨ Dashboard Modern V2 (Tailwind - Rekomendasi)</option>
+                                <option value="classic" @selected(($setting->admin_theme ?? 'v2') == 'classic')>🏛️ Dashboard Klasik / Legacy (Tabler Bootstrap)</option>
+                            </select>
+                            <small class="text-muted">Menentukan tampilan layout panel administrator yang digunakan oleh seluruh admin.</small>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
@@ -282,6 +291,7 @@
                                         <option value="red" @selected(($setting->mobile_theme_scheme ?? 'green') == 'red')>Red (Passion)</option>
                                         <option value="orange" @selected(($setting->mobile_theme_scheme ?? 'green') == 'orange')>Orange (Sunset)</option>
                                         <option value="purple" @selected(($setting->mobile_theme_scheme ?? 'green') == 'purple')>Purple (Royal)</option>
+                                        <option value="rose" @selected(($setting->mobile_theme_scheme ?? 'green') == 'rose')>Rose (Blossom)</option>
                                         <option value="dark" @selected(($setting->mobile_theme_scheme ?? 'green') == 'dark')>Dark (Night)</option>
                                     </select>
                                 </div>

@@ -4,9 +4,9 @@
         :root {
             --bg-body: #dff9fb;
             --bg-nav: #ffffff;
-            --color-nav: #32745e;
-            --color-nav-active: #58907D;
-            --bg-indicator: #32745e;
+            --color-nav: {{ $t['primary'] ?? '#32745e' }};
+            --color-nav-active: {{ $t['primary_light'] ?? '#58907D' }};
+            --bg-indicator: {{ $t['primary'] ?? '#32745e' }};
             --color-nav-hover: #3ab58c;
         }
 
@@ -30,7 +30,7 @@
         }
 
         .header-info h2 {
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             margin: 0 0 10px 0;
             font-size: 24px;
             font-weight: 600;
@@ -44,7 +44,7 @@
 
         .info-badge {
             display: inline-block;
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: white;
             padding: 5px 12px;
             border-radius: 12px;
@@ -117,14 +117,14 @@
         }
 
         .btn-rekam {
-            background: linear-gradient(135deg, #32745e 0%, #58907D 100%);
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#32745e' }} 0%, {{ $t['primary_light'] ?? '#58907D' }} 100%);
             color: white;
         }
 
         .btn-rekam:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(50, 116, 94, 0.4);
-            background: linear-gradient(135deg, #3ab58c 0%, #58907D 100%);
+            box-shadow: 0 6px 20px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.4);
+            background: linear-gradient(135deg, #3ab58c 0%, {{ $t['primary_light'] ?? '#58907D' }} 100%);
         }
 
         .empty-state {
@@ -223,7 +223,7 @@
                 text: 'Data wajah yang sudah tersimpan akan dihapus secara permanen, kemudian Anda akan diarahkan ke halaman perekaman baru.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#32745e',
+                confirmButtonColor: '{{ $t['primary'] ?? '#32745e' }}',
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: 'Ya, Mulai Perekaman',
                 cancelButtonText: 'Batal',

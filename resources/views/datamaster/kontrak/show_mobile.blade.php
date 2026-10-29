@@ -35,7 +35,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #32745e, #4b9b82); /* Green theme for contract */
+            background: linear-gradient(90deg, {{ $t['primary'] ?? '#32745e' }}, #4b9b82); /* Green theme for contract */
         }
 
         .contract-header {
@@ -224,7 +224,7 @@
                     <td colspan="3">
                         <div class="mt-2 text-justify">
                             Dalam hal ini bertindak untuk dan atas nama <strong>{{ $pengaturan->nama_perusahaan ?? 'Perusahaan' }}</strong> yang berkedudukan di Jakarta Utara,
-                            yang selanjutnya dalam perjanjian ini disebut <strong class="text-[#32745e]">PIHAK PERTAMA</strong>.
+                            yang selanjutnya dalam perjanjian ini disebut <strong class="text-[{{ $t['primary'] ?? '#32745e' }}]">PIHAK PERTAMA</strong>.
                         </div>
                     </td>
                 </tr>
@@ -260,7 +260,7 @@
                     <td colspan="3">
                         <div class="mt-2 text-justify">
                             Dalam hal ini bertindak untuk dan atas nama pribadi, yang selanjutnya dalam perjanjian ini disebut
-                            <strong class="text-[#32745e]">PIHAK KEDUA</strong>.
+                            <strong class="text-[{{ $t['primary'] ?? '#32745e' }}]">PIHAK KEDUA</strong>.
                         </div>
                     </td>
                 </tr>
@@ -436,7 +436,7 @@
             </div>
 
             <div class="mt-8 text-center px-2">
-                <a href="{{ route('kontrak.print', Crypt::encrypt($kontrak->id)) }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[#32745e] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#32745e]/20 active:scale-95 transition-all">
+                <a href="{{ route('kontrak.print', Crypt::encrypt($kontrak->id)) }}" class="flex items-center justify-center gap-2 w-full py-3 bg-[{{ $t['primary'] ?? '#32745e' }}] text-white rounded-xl font-bold text-sm shadow-lg shadow-[{{ $t['primary'] ?? '#32745e' }}]/20 active:scale-95 transition-all">
                     <ion-icon name="print-outline" class="text-lg"></ion-icon> Download / Cetak PDF
                 </a>
             </div>

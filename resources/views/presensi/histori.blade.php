@@ -22,10 +22,16 @@
 @push('mystyle')
     <script>
         (function() {
-            var savedTheme = localStorage.getItem('smatt_theme');
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var lastServerScheme = localStorage.getItem('smatt_server_scheme');
+            if (lastServerScheme !== serverScheme) {
+                localStorage.setItem('smatt_server_scheme', serverScheme);
+                localStorage.setItem('smatt_theme', serverScheme === 'dark' ? 'dark' : 'light');
+            }
+            var savedTheme = localStorage.getItem('smatt_theme') || (serverScheme === 'dark' ? 'dark' : 'light');
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
-                document.body.classList.add('dark');
+                if (document.body) document.body.classList.add('dark');
             } else {
                 document.documentElement.classList.remove('dark', 'dark-mode-active');
                 if (document.body) {
@@ -41,7 +47,7 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            background-color: #f8fafc !important;
+            background-color: {{ $t['bg_body'] ?? '#f8fafc' }} !important;
             color: #0f172a !important;
         }
 
@@ -237,7 +243,7 @@
                         <label class="text-[10px] font-bold text-transparent block mb-1 select-none">Cari</label>
                         <button type="submit" id="btnCari"
                             class="w-full h-[37px] rounded-xl text-white flex items-center justify-center font-bold text-sm shadow-md active:scale-95 transition-all"
-                            style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%);">
+                            style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%);">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </div>

@@ -17,6 +17,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        $agent = new \Jenssegers\Agent\Agent();
+        $isV2 = function_exists('get_admin_theme') && get_admin_theme() === 'v2';
+
+        if ($agent->isMobile()) {
+            return $isV2 ? view('v2.auth.loginusermobile') : view('auth.loginusermobile');
+        }
+
+        if ($isV2) {
+            return view('v2.auth.login');
+        }
         return view('auth.login');
     }
 

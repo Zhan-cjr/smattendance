@@ -27,7 +27,7 @@ class PengumumanController extends Controller
             return view('pengumuman.index_mobile', compact('pengumuman'));
         }
 
-        return view('pengumuman.index', compact('pengumuman'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pengumuman.index', compact('pengumuman'));
     }
 
     public function show($id)
@@ -42,12 +42,12 @@ class PengumumanController extends Controller
         }
 
         // Default or Admin view can be added here if needed
-        return view('pengumuman.show', compact('pengumuman'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pengumuman.show', compact('pengumuman'));
     }
 
     public function create()
     {
-        return view('pengumuman.create');
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pengumuman.create');
     }
 
     public function store(Request $request)

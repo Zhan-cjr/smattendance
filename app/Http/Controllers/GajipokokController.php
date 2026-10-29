@@ -33,13 +33,13 @@ class GajipokokController extends Controller
         $data['gajipokok'] = $gajipokok;
         $data['departemen'] = Departemen::orderBy('kode_dept')->get();
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
-        return view('datamaster.gajipokok.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.gajipokok.index' : 'datamaster.gajipokok.index', $data);
     }
 
     public function create()
     {
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
-        return view('datamaster.gajipokok.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.gajipokok.create' : 'datamaster.gajipokok.create', $data);
     }
 
 
@@ -121,7 +121,7 @@ class GajipokokController extends Controller
         $kode_gaji = Crypt::decrypt($kode_gaji);
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
         $data['gajipokok'] = Gajipokok::where('kode_gaji', $kode_gaji)->first();
-        return view('datamaster.gajipokok.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.gajipokok.edit' : 'datamaster.gajipokok.edit', $data);
     }
 
     public function update(Request $request, $kode_gaji)

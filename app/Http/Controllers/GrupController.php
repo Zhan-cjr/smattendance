@@ -16,17 +16,18 @@ class GrupController extends Controller
 
     public function index(Request $request)
     {
-        $query = Grup::query();
+        $query = Grup::withCount('karyawan');
         if (!empty($request->nama_grup)) {
             $query->where('nama_grup', 'like', '%' . $request->nama_grup . '%');
         }
         $data['grup'] = $query->orderBy('kode_grup')->get();
-        return view('datamaster.grup.index', $data);
+        $data['total_grup'] = Grup::count();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.grup.index' : 'datamaster.grup.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.grup.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.grup.create' : 'datamaster.grup.create');
     }
 
     public function store(Request $request)
@@ -114,7 +115,7 @@ class GrupController extends Controller
     {
         $kode_grup = Crypt::decrypt($kode_grup);
         $data['grup'] = Grup::where('kode_grup', $kode_grup)->first();
-        return view('datamaster.grup.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.grup.edit' : 'datamaster.grup.edit', $data);
     }
 
     public function update($kode_grup, Request $request)
@@ -257,7 +258,7 @@ class GrupController extends Controller
             'allKaryawan' => $allKaryawan
         ];
 
-        return view('datamaster.grup.detail', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.grup.detail' : 'datamaster.grup.detail', $data);
     }
 
     public function addKaryawan(Request $request)
@@ -334,7 +335,7 @@ class GrupController extends Controller
             'cabang' => $cabang
         ];
 
-        return view('datamaster.grup.create-karyawan-form', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.grup.create-karyawan-form' : 'datamaster.grup.create-karyawan-form', $data);
     }
 
     public function getAnggotaGrup($kode_grup)
@@ -418,10 +419,11 @@ class GrupController extends Controller
         $data = [
             'grup' => $grup,
             'jamKerja' => $jamKerja,
-            'jamKerjaBydate' => $jamKerjaBydate
+            'jamKerjaBydate' => $jamKerjaBydate,
+            'shiftPatterns' => collect(),
         ];
 
-        return view('datamaster.grup.set-jam-kerja', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.grup.set-jam-kerja' : 'datamaster.grup.set-jam-kerja', $data);
     }
 
     public function updateJamKerja(Request $request, $kode_grup)

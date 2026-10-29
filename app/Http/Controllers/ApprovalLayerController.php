@@ -11,25 +11,29 @@ use Illuminate\Support\Facades\Redirect;
 
 class ApprovalLayerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $approvalLayers = ApprovalLayer::orderBy('feature')
-            ->orderBy('level')
-            ->get();
+        $feature = $request->query('feature');
+        $query = ApprovalLayer::orderBy('feature')->orderBy('level');
+        if ($feature) {
+            $query->where('feature', $feature);
+        }
+        $approvalLayers = $query->get();
         $cabangs = Cabang::all();
         $departemens = Departemen::all();
         $jabatans = \App\Models\Jabatan::all();
 
-        return view('konfigurasi.approvallayer.index', compact('approvalLayers', 'cabangs', 'departemens', 'jabatans'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.konfigurasi.approvallayer.index' : 'konfigurasi.approvallayer.index', compact('approvalLayers', 'cabangs', 'departemens', 'jabatans', 'feature'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $feature = $request->query('feature');
         $roles = Role::all();
         $departemen = Departemen::all();
         $cabang = Cabang::all();
         $jabatan = \App\Models\Jabatan::all();
-        return view('konfigurasi.approvallayer.create', compact('roles', 'departemen', 'cabang', 'jabatan'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.konfigurasi.approvallayer.create' : 'konfigurasi.approvallayer.create', compact('roles', 'departemen', 'cabang', 'jabatan', 'feature'));
     }
 
     public function store(Request $request)
@@ -90,9 +94,10 @@ class ApprovalLayerController extends Controller
         $cabang = Cabang::all();
         $jabatan = \App\Models\Jabatan::all();
 
-        return view('konfigurasi.approvallayer.edit', compact(
+        $feature = $request->query('feature', 'IZIN');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.konfigurasi.approvallayer.edit' : 'konfigurasi.approvallayer.edit', compact(
             'approvalLayers', 'roles', 'departemen', 'cabang', 'jabatan',
-            'kode_cabang', 'kode_dept', 'kode_jabatan'
+            'kode_cabang', 'kode_dept', 'kode_jabatan', 'feature'
         ));
     }
 

@@ -12,17 +12,18 @@ class DepartemenController extends Controller
 
     public function index(Request $request)
     {
-        $query = Departemen::query();
+        $query = Departemen::withCount('karyawan');
         if (!empty($request->nama_dept)) {
             $query->where('nama_dept', 'like', '%' . $request->nama_dept . '%');
         }
         $data['departemen'] = $query->orderBy('kode_dept')->get();
-        return view('datamaster.departemen.index', $data);
+        $data['total_departemen'] = Departemen::count();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.departemen.index' : 'datamaster.departemen.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.departemen.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.departemen.create' : 'datamaster.departemen.create');
     }
 
     public function store(Request $request)
@@ -111,7 +112,7 @@ class DepartemenController extends Controller
     {
         $kode_dept = Crypt::decrypt($kode_dept);
         $data['departemen'] = Departemen::where('kode_dept', $kode_dept)->first();
-        return view('datamaster.departemen.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.departemen.edit' : 'datamaster.departemen.edit', $data);
     }
 
     public function update($kode_dept, Request $request)

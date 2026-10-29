@@ -1,3 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f6f8fa;
+        color: #1e293b;
+    }
+}
+
+.custom-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.03);
+}
+
+.metric-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}

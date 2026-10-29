@@ -48,14 +48,18 @@ class PinjamanController extends Controller
 
         $data['list_bulan'] = config('global.list_bulan');
         $data['start_year'] = config('global.start_year');
+        $latestHistory = PinjamanGenerateHistory::orderBy('tahun', 'desc')->orderBy('bulan', 'desc')->first();
+        $data['latest_history_id'] = $latestHistory?->id;
+        $data['cabang'] = auth()->user()->getCabang();
+        $data['departemen'] = auth()->user()->getDepartemen();
 
-        return view('payroll.pinjaman.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.index' : 'payroll.pinjaman.index', $data);
     }
 
     public function create()
     {
         $data['karyawan'] = Karyawan::orderBy('nama_karyawan')->get();
-        return view('payroll.pinjaman.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.create' : 'payroll.pinjaman.create', $data);
     }
 
     public function store(Request $request)
@@ -157,7 +161,7 @@ class PinjamanController extends Controller
                 return $h->bulan . '-' . $h->tahun;
             })->toArray();
             
-        return view('payroll.pinjaman.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.show' : 'payroll.pinjaman.show', $data);
     }
 
     public function edit($id)
@@ -170,7 +174,7 @@ class PinjamanController extends Controller
             return Redirect::back()->with(messageError('Pinjaman tidak dapat diedit karena sudah ada pembayaran'));
         }
         
-        return view('payroll.pinjaman.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.edit' : 'payroll.pinjaman.edit', $data);
     }
 
     public function update(Request $request, $id)
@@ -270,7 +274,7 @@ class PinjamanController extends Controller
     {
         $data['list_bulan'] = config('global.list_bulan');
         $data['start_year'] = config('global.start_year');
-        return view('payroll.pinjaman.generate', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.generate' : 'payroll.pinjaman.generate', $data);
     }
 
     public function prosesGeneratePembayaran(Request $request)
@@ -370,11 +374,12 @@ class PinjamanController extends Controller
         $data['pinjaman'] = Pinjaman::with(['karyawan', 'rencana_cicilan'])->find($id);
         $data['rencana_cicilan'] = $data['pinjaman']->rencana_cicilan()->where('status', 'B')->orderBy('tahun', 'asc')->orderBy('bulan', 'asc')->get();
 
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.pembayaran_manual' : 'payroll.pinjaman.pembayaran_manual';
         if ($request->ajax()) {
-            return view('payroll.pinjaman.pembayaran_manual', $data)->with('is_ajax', true);
+            return view($view, $data)->with('is_ajax', true);
         }
 
-        return view('payroll.pinjaman.pembayaran_manual', $data);
+        return view($view, $data);
     }
 
     public function storePembayaranManual(Request $request, $id)
@@ -597,7 +602,7 @@ class PinjamanController extends Controller
             }
         }
 
-        return view('payroll.pinjaman.preview', compact('preview'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.preview' : 'payroll.pinjaman.preview', compact('preview'));
     }
 
     public function showHistoryGenerate($id)
@@ -607,7 +612,7 @@ class PinjamanController extends Controller
             $q->with(['pinjaman.karyawan', 'rencana_cicilan']);
         }])->find($id);
 
-        return view('payroll.pinjaman.history_detail', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.pinjaman.history_detail' : 'payroll.pinjaman.history_detail', $data);
     }
 
     public function destroyHistoryGenerate($id)

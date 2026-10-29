@@ -35,7 +35,7 @@ class SlipgajiController extends Controller
 
             $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
             $data['departemen'] = Departemen::orderBy('kode_dept')->get();
-            return view('payroll.slipgaji.index', $data);
+            return view(session('admin_theme', 'v2') === 'v2' ? 'v2.slipgaji.index' : 'payroll.slipgaji.index', $data);
         }
     }
 
@@ -43,7 +43,8 @@ class SlipgajiController extends Controller
     {
         $data['list_bulan'] = config('global.list_bulan');
         $data['start_year'] = config('global.start_year');
-        return view('payroll.slipgaji.create', $data);
+        $data['periode_gaji'] = collect();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.slipgaji.create' : 'payroll.slipgaji.create', $data);
     }
 
     public function store(Request $request)
@@ -68,7 +69,8 @@ class SlipgajiController extends Controller
         $data['slipgaji'] = Slipgaji::where('kode_slip_gaji', $kode_slip_gaji)->first();
         $data['list_bulan'] = config('global.list_bulan');
         $data['start_year'] = config('global.start_year');
-        return view('payroll.slipgaji.edit', $data);
+        $data['periode_gaji'] = collect();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.slipgaji.edit' : 'payroll.slipgaji.edit', $data);
     }
 
     public function update(Request $request, $kode_slip_gaji)

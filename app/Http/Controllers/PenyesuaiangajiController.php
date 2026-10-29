@@ -16,7 +16,7 @@ class PenyesuaiangajiController extends Controller
         $tahun = !empty($request->tahun) ? $request->tahun : date('Y');
         $data['penyesuaiangaji'] = Penyesuaiangaji::where('tahun', $tahun)->orderBy('bulan')->get();
         $data['start_year'] = config('global.start_year');
-        return view('payroll.penyesuaiangaji.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.penyesuaiangaji.index' : 'payroll.penyesuaiangaji.index', $data);
     }
 
 
@@ -24,7 +24,7 @@ class PenyesuaiangajiController extends Controller
     {
         $data['list_bulan'] = config('global.list_bulan');
         $data['start_year'] = config('global.start_year');
-        return view('payroll.penyesuaiangaji.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.penyesuaiangaji.create' : 'payroll.penyesuaiangaji.create', $data);
     }
 
 
@@ -34,7 +34,7 @@ class PenyesuaiangajiController extends Controller
         $data['penyesuaiangaji'] = Penyesuaiangaji::where('kode_penyesuaian_gaji', $kode_penyesuaian_gaji)->first();
         $data['list_bulan'] = config('global.list_bulan');
         $data['start_year'] = config('global.start_year');
-        return view('payroll.penyesuaiangaji.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.penyesuaiangaji.edit' : 'payroll.penyesuaiangaji.edit', $data);
     }
 
     public function store(Request $request)
@@ -100,14 +100,14 @@ class PenyesuaiangajiController extends Controller
             ->join('karyawan', 'karyawan_penyesuaian_gaji_detail.nik', '=', 'karyawan.nik')
             ->select('karyawan_penyesuaian_gaji_detail.*', 'karyawan.nama_karyawan', 'karyawan.nik_show')
             ->get();
-        return view('payroll.penyesuaiangaji.setkaryawan', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.penyesuaiangaji.setkaryawan' : 'payroll.penyesuaiangaji.setkaryawan', $data);
     }
 
     public function addkaryawan($kode_penyesuaian_gaji)
     {
         $data['kode_penyesuaian_gaji'] = Crypt::decrypt($kode_penyesuaian_gaji);
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
-        return view('payroll.penyesuaiangaji.addkaryawan', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.penyesuaiangaji.addkaryawan' : 'payroll.penyesuaiangaji.addkaryawan', $data);
     }
 
     public function storekaryawan(Request $request, $kode_penyesuaian_gaji)
@@ -147,7 +147,7 @@ class PenyesuaiangajiController extends Controller
         $nik = Crypt::decrypt($nik);
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
         $data['detailpenyesuaian'] = Detailpenyesuaiangaji::where('kode_penyesuaian_gaji', $kode_penyesuaian_gaji)->where('nik', $nik)->first();
-        return view('payroll.penyesuaiangaji.editkaryawan', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.penyesuaiangaji.editkaryawan' : 'payroll.penyesuaiangaji.editkaryawan', $data);
     }
 
 

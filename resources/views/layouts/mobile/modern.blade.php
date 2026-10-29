@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="{{ ($isDark ?? false) ? 'dark' : '' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>@yield('title')</title>
 
+    <script>
+        (function() {
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var lastServerScheme = localStorage.getItem('smatt_server_scheme');
+            if (lastServerScheme !== serverScheme) {
+                localStorage.setItem('smatt_server_scheme', serverScheme);
+                localStorage.setItem('smatt_theme', serverScheme === 'dark' ? 'dark' : 'light');
+            }
+            var savedTheme = localStorage.getItem('smatt_theme');
+            if (savedTheme === 'dark' || serverScheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -37,6 +53,7 @@
             --bg-indicator: {{ $t['primary'] }};
             --color-nav-hover: {{ $t['primary_light'] }};
             --bg-nav: #ffffff;
+            --bg-body: {{ $t['bg_body'] }};
         }
         html { background: {{ $t['primary'] }}; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -47,16 +64,40 @@
             -webkit-tap-highlight-color: transparent;
             color: #1e293b;
         }
+        html.dark body, body.dark {
+            background: #070b14 !important;
+            color: #f8fafc !important;
+        }
 
         /* PWA Header handling */
         header { 
             padding-top: env(safe-area-inset-top);
-            background: {{ $t['primary'] }};
+            background: linear-gradient(135deg, {{ $t['primary'] }} 0%, {{ $t['primary_dark'] ?? $t['primary'] }} 100%);
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 50;
+        }
+        html.dark header {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Dark Mode High-Contrast Overrides for Modern Layout */
+        html.dark .bg-white, html.dark .card {
+            background-color: #131d31 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            color: #f8fafc !important;
+        }
+        html.dark .text-slate-800, html.dark .text-slate-900, html.dark .text-gray-800 {
+            color: #f8fafc !important;
+        }
+        html.dark .text-slate-600, html.dark .text-slate-700 {
+            color: #cbd5e1 !important;
+        }
+        html.dark .text-slate-500, html.dark .text-slate-400 {
+            color: #94a3b8 !important;
         }
 
         /* Override template resets that conflict */
@@ -96,7 +137,12 @@
 
     @stack('mystyle')
 </head>
-<body>
+<body class="{{ ($isDark ?? false) ? 'dark' : '' }}">
+    <script>
+        if (document.documentElement.classList.contains('dark')) {
+            document.body.classList.add('dark');
+        }
+    </script>
     <header>
         <div class="flex items-center justify-between px-4 h-14">
             <div class="left">
@@ -111,6 +157,10 @@
 
     <main class="pt-[calc(4rem+env(safe-area-inset-top))] pb-24 px-3 max-w-lg mx-auto">
         @yield('content')
+
+        <div class="text-center pt-4 pb-6 text-[11px] text-slate-400 dark:text-slate-500">
+            <span>SMATT_V4 &bull; Aplikasi ini dikembangkan oleh <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" class="font-bold hover:underline" style="color: {{ $t['primary'] ?? '#32745e' }};">ZhanSoft - Amnal</a></span>
+        </div>
     </main>
 
     @if(!trim($__env->yieldContent('hide_nav')))

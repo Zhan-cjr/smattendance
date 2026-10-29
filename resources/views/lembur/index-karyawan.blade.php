@@ -127,7 +127,7 @@
         .date-badge.indigo { background: #e0e7ff; color: #4f46e5; }
         .date-badge.purple { background: #f3e8ff; color: #9333ea; }
         .date-badge.orange { background: #ffedd5; color: #ea580c; }
-        .date-badge.teal { background: #ccfbf1; color: #0d9488; }
+        .date-badge.teal { background: #ccfbf1; color: {{ $t['primary'] ?? '#0d9488' }}; }
         .date-badge.cyan { background: #cffafe; color: #0891b2; }
 
         /* Status Badge */

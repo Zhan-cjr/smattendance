@@ -1,0 +1,452 @@
+@php
+    $themeColor1 = $general_setting->theme_color_1 ?? '#0a5c41';
+    $themeColor2 = $general_setting->theme_color_2 ?? '#117956';
+@endphp
+
+<form action="{{ route('project.task.store', $projectId) }}" method="POST" id="formCreateTaskV2" class="space-y-5" novalidate>
+    @csrf
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- Left Section: Detail Spesifikasi & Timeline Tugas (7 Cols) -->
+        <div class="lg:col-span-7 space-y-4">
+            
+            <!-- Section Header -->
+            <div class="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-2xs shrink-0"
+                     style="background: linear-gradient(135deg, {{ $themeColor1 }}, {{ $themeColor2 }});">
+                    <i class="ti ti-checkbox text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-slate-800">Detail & Rincian Tugas</h3>
+                    <p class="text-[11px] text-slate-400">Judul pekerjaan, deskripsi, dan hierarki sub-task</p>
+                </div>
+            </div>
+
+            <!-- Judul Task -->
+            <div class="space-y-1">
+                <label for="judul" class="block text-xs font-bold text-slate-700">
+                    Judul Task <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="ti ti-edit text-sm"></i>
+                    </span>
+                    <input type="text" name="judul" id="judul" value="{{ old('judul') }}" required
+                           placeholder="Contoh: Implementasi Desain Layout Dashboard"
+                           class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-semibold"
+                           style="--tw-ring-color: {{ $themeColor1 }};">
+                </div>
+                <span class="text-[11px] text-rose-500 font-medium hidden error-feedback mt-1 block" id="err_judul"></span>
+            </div>
+
+            <!-- Sub-task Dari (Parent Task) -->
+            <div class="space-y-1">
+                <label for="parent_id" class="block text-xs font-bold text-slate-700">
+                    Sub-task Dari (Parent Task)
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="ti ti-git-branch text-sm"></i>
+                    </span>
+                    <select name="parent_id" id="parent_id"
+                            class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-medium cursor-pointer"
+                            style="--tw-ring-color: {{ $themeColor1 }};">
+                        <option value="">-- Tanpa Parent (Tugas Utama) --</option>
+                        @foreach ($parentTasks as $parent)
+                            <option value="{{ $parent->id }}" {{ old('parent_id', isset($parentId) ? $parentId : '') == $parent->id ? 'selected' : '' }}>
+                                {{ $parent->kode_task }} - {{ $parent->judul }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <p class="text-[10.5px] text-slate-400">Pilih jika task ini merupakan turunan dari tugas utama.</p>
+            </div>
+
+            <!-- Tanggal Mulai & Target Deadline (Flatpickr Datepicker) -->
+            <div class="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/80 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <i class="ti ti-calendar-event text-emerald-600"></i> Rentang Waktu Pengerjaan
+                    </span>
+                    <span class="text-[10px] text-slate-400">Jadwal mulai & batas akhir tugas</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label for="start_date" class="block text-[11px] font-bold text-slate-600">
+                            Tanggal Mulai
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="ti ti-calendar text-sm"></i>
+                            </span>
+                            <input type="text" name="start_date" id="start_date" 
+                                   value="{{ old('start_date', date('Y-m-d')) }}"
+                                   placeholder="Pilih tanggal mulai"
+                                   autocomplete="off"
+                                   class="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:border-transparent transition-all cursor-pointer flatpickr-task-date"
+                                   style="--tw-ring-color: {{ $themeColor1 }};">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="ti ti-chevron-down text-xs"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label for="due_date" class="block text-[11px] font-bold text-slate-600">
+                            Target Deadline
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="ti ti-calendar-due text-sm"></i>
+                            </span>
+                            <input type="text" name="due_date" id="due_date" 
+                                   value="{{ old('due_date') }}"
+                                   placeholder="Pilih target deadline"
+                                   autocomplete="off"
+                                   class="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:border-transparent transition-all cursor-pointer flatpickr-task-date"
+                                   style="--tw-ring-color: {{ $themeColor1 }};">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="ti ti-chevron-down text-xs"></i>
+                            </span>
+                        </div>
+                        <span class="text-[11px] text-rose-500 font-medium hidden error-feedback mt-1 block" id="err_due_date"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deskripsi Tugas -->
+            <div class="space-y-1">
+                <label for="deskripsi" class="block text-xs font-bold text-slate-700">Deskripsi & Instruksi Tugas</label>
+                <textarea name="deskripsi" id="deskripsi" rows="2"
+                          placeholder="Masukkan detail instruksi, kriteria penerimaan, atau keterangan pengerjaan..."
+                          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-medium leading-relaxed"
+                          style="--tw-ring-color: {{ $themeColor1 }};">{{ old('deskripsi') }}</textarea>
+            </div>
+        </div>
+
+        <!-- Right Section: Status, Progres & Penugasan Personil (5 Cols) -->
+        <div class="lg:col-span-5 space-y-4">
+            
+            <!-- Section Header -->
+            <div class="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-2xs shrink-0"
+                     style="background: linear-gradient(135deg, {{ $themeColor1 }}, {{ $themeColor2 }});">
+                    <i class="ti ti-users text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-slate-800">Status & Delegasi Tim</h3>
+                    <p class="text-[11px] text-slate-400">Prioritas, status pelaksanaan, dan personil pelaksana</p>
+                </div>
+            </div>
+
+            <!-- Prioritas & Status -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div class="space-y-1">
+                    <label for="prioritas" class="block text-xs font-bold text-slate-700">
+                        Prioritas <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="ti ti-flag text-sm"></i>
+                        </span>
+                        <select name="prioritas" id="prioritas" required
+                                class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-semibold cursor-pointer"
+                                style="--tw-ring-color: {{ $themeColor1 }};">
+                            <option value="low" {{ old('prioritas') == 'low' ? 'selected' : '' }}>Rendah (Low)</option>
+                            <option value="medium" {{ old('prioritas') == 'medium' || !old('prioritas') ? 'selected' : '' }}>Sedang (Medium)</option>
+                            <option value="high" {{ old('prioritas') == 'high' ? 'selected' : '' }}>Tinggi (High)</option>
+                            <option value="critical" {{ old('prioritas') == 'critical' ? 'selected' : '' }}>Kritis (Critical)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label for="status" class="block text-xs font-bold text-slate-700">
+                        Status <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="ti ti-progress-check text-sm"></i>
+                        </span>
+                        <select name="status" id="status" required
+                                class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-semibold cursor-pointer"
+                                style="--tw-ring-color: {{ $themeColor1 }};">
+                            <option value="todo" {{ old('status') == 'todo' || !old('status') ? 'selected' : '' }}>To Do</option>
+                            <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                            <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Review</option>
+                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="cancelled" {{ old('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progres (%) & Urutan -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div class="space-y-1">
+                    <label for="progress" class="block text-xs font-bold text-slate-700">Capaian Progres (%)</label>
+                    <div class="relative">
+                        <input type="number" name="progress" id="progress" min="0" max="100" value="{{ old('progress', 0) }}" required
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-semibold"
+                               style="--tw-ring-color: {{ $themeColor1 }};">
+                        <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-xs font-bold text-slate-400">
+                            %
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label for="urutan" class="block text-xs font-bold text-slate-700">Urutan Tampil</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="ti ti-arrows-sort text-sm"></i>
+                        </span>
+                        <input type="number" name="urutan" id="urutan" min="0" value="{{ old('urutan', 0) }}"
+                               class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all font-medium"
+                               style="--tw-ring-color: {{ $themeColor1 }};">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ditugaskan Kepada (Searchable Member Checklist) -->
+            <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-bold text-slate-700">
+                        Ditugaskan Kepada (Anggota Tim)
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btnSelectAllTaskMembers" class="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer">
+                            Pilih Semua
+                        </button>
+                        <span class="text-slate-300 text-[10px]">|</span>
+                        <button type="button" id="btnDeselectAllTaskMembers" class="text-[10px] font-bold text-slate-500 hover:text-rose-600 cursor-pointer">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Search for Task Members -->
+                <div class="relative mb-2">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="ti ti-search text-xs"></i>
+                    </span>
+                    <input type="text" id="searchTaskMemberInput" placeholder="Cari personil tugas..."
+                           class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:border-transparent transition-all"
+                           style="--tw-ring-color: {{ $themeColor1 }};">
+                </div>
+
+                <div class="border border-slate-200 rounded-xl bg-slate-50/70 p-2 max-h-40 overflow-y-auto space-y-1.5" id="taskMemberChecklistContainer">
+                    @forelse ($project->members as $member)
+                        @if($member->karyawan)
+                            <label class="task-member-item flex items-center gap-2.5 p-2 rounded-lg bg-white border border-slate-200/80 hover:bg-slate-50 transition cursor-pointer text-xs select-none"
+                                   data-search="{{ strtolower($member->karyawan->nama_karyawan . ' ' . $member->nik . ' ' . ($member->karyawan->nik_show ?? '') . ' ' . ($member->karyawan->jabatan ? $member->karyawan->jabatan->nama_jabatan : '')) }}">
+                                <input type="checkbox" name="members[]" value="{{ $member->nik }}"
+                                       {{ (collect(old('members'))->contains($member->nik)) ? 'checked' : '' }}
+                                       class="task-member-checkbox rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 border-slate-300">
+                                <div class="min-w-0 flex-1">
+                                    <span class="font-bold text-slate-800 block truncate">{{ $member->karyawan->nama_karyawan }}</span>
+                                    <span class="text-[10px] text-slate-400 block truncate">{{ !empty($member->karyawan->nik_show) ? $member->karyawan->nik_show : $member->nik }} • {{ $member->karyawan->jabatan ? $member->karyawan->jabatan->nama_jabatan : 'Staf' }}</span>
+                                </div>
+                            </label>
+                        @endif
+                    @empty
+                        <div class="text-xs text-slate-400 text-center py-3">Belum ada anggota tim dalam project ini.</div>
+                    @endforelse
+                    <div id="noTaskMembersListFound" class="hidden text-xs text-slate-400 text-center py-3">
+                        <i class="ti ti-user-x text-base block mb-1"></i>
+                        Tidak ada anggota yang cocok dengan pencarian
+                    </div>
+                </div>
+                <p class="text-[10.5px] text-slate-400">Centang anggota tim yang ditugaskan mengerjakan tugas ini.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+        <button type="button" class="btnCloseModalTask px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition shadow-2xs cursor-pointer">
+            Batal
+        </button>
+        <button type="submit" id="btnSubmitCreateTaskV2"
+                class="inline-flex items-center gap-2 px-6 py-2.5 text-white font-bold rounded-xl text-xs shadow-xs transition-all duration-200 active:scale-95 cursor-pointer hover:opacity-95"
+                style="background: linear-gradient(135deg, {{ $themeColor1 }}, {{ $themeColor2 }});">
+            <i class="ti ti-device-floppy text-sm"></i>
+            <span>Simpan Task</span>
+        </button>
+    </div>
+</form>
+
+<script>
+$(document).ready(function() {
+    // 1. Inisialisasi Flatpickr Tanggal Task
+    if (typeof flatpickr !== 'undefined') {
+        const fpTaskStart = flatpickr("#start_date", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d M Y",
+            allowInput: false,
+            locale: (typeof flatpickr.l10ns !== 'undefined' && flatpickr.l10ns.id) ? flatpickr.l10ns.id : 'default',
+            onChange: function(selectedDates, dateStr) {
+                if (fpTaskDue && selectedDates[0]) {
+                    fpTaskDue.set('minDate', dateStr);
+                }
+                validateTaskField('#start_date');
+            }
+        });
+
+        const fpTaskDue = flatpickr("#due_date", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d M Y",
+            allowInput: false,
+            minDate: $("#start_date").val() || null,
+            locale: (typeof flatpickr.l10ns !== 'undefined' && flatpickr.l10ns.id) ? flatpickr.l10ns.id : 'default',
+            onChange: function() {
+                validateTaskField('#due_date');
+            }
+        });
+    }
+
+    // 2. Status & Progress Sync
+    $('#status').on('change', function() {
+        if ($(this).val() === 'completed') {
+            $('#progress').val(100);
+        } else if ($(this).val() === 'todo' && $('#progress').val() == 100) {
+            $('#progress').val(0);
+        }
+    });
+
+    // 3. Live Search Task Members
+    $('#searchTaskMemberInput').on('input', function() {
+        const q = $(this).val().toLowerCase().trim();
+        let matchCount = 0;
+
+        $('#taskMemberChecklistContainer .task-member-item').each(function() {
+            const search = $(this).data('search') || $(this).text().toLowerCase();
+            if (!q || search.includes(q)) {
+                $(this).removeClass('hidden').show();
+                matchCount++;
+            } else {
+                $(this).addClass('hidden').hide();
+            }
+        });
+
+        if (matchCount === 0 && q) {
+            $('#noTaskMembersListFound').removeClass('hidden');
+        } else {
+            $('#noTaskMembersListFound').addClass('hidden');
+        }
+    });
+
+    // 4. Select All / Deselect All Task Members
+    $('#btnSelectAllTaskMembers').on('click', function() {
+        $('#taskMemberChecklistContainer .task-member-item:visible .task-member-checkbox').prop('checked', true);
+    });
+
+    $('#btnDeselectAllTaskMembers').on('click', function() {
+        $('#taskMemberChecklistContainer .task-member-checkbox').prop('checked', false);
+    });
+
+    // Helper: Validasi Konsisten
+    function showTaskError(selector, msg) {
+        const $el = $(selector);
+        const errId = '#err_' + $el.attr('id');
+        $(errId).text(msg).removeClass('hidden');
+        
+        $el.addClass('border-rose-500');
+        if ($el.next('.flatpickr-input').length) {
+            $el.next('.flatpickr-input').addClass('border-rose-500');
+        }
+    }
+
+    function clearTaskError(selector) {
+        const $el = $(selector);
+        const errId = '#err_' + $el.attr('id');
+        $(errId).text('').addClass('hidden');
+        $el.removeClass('border-rose-500');
+        if ($el.next('.flatpickr-input').length) {
+            $el.next('.flatpickr-input').removeClass('border-rose-500');
+        }
+    }
+
+    function validateTaskField(selector) {
+        const $el = $(selector);
+        const id = $el.attr('id');
+        const val = ($el.val() || '').trim();
+
+        if (id === 'judul') {
+            if (!val) {
+                showTaskError('#judul', 'Judul task wajib diisi.');
+                return false;
+            }
+            clearTaskError('#judul');
+            return true;
+        }
+
+        if (id === 'due_date') {
+            const startVal = $('#start_date').val();
+            if (startVal && val && val < startVal) {
+                showTaskError('#due_date', 'Target deadline tidak boleh sebelum tanggal mulai.');
+                return false;
+            }
+            clearTaskError('#due_date');
+            return true;
+        }
+
+        return true;
+    }
+
+    $('#judul').on('input change blur', function() {
+        validateTaskField(this);
+    });
+
+    // Form Submit Handler
+    $('#formCreateTaskV2').on('submit', function(e) {
+        let isValid = true;
+        let firstInvalidEl = null;
+
+        const fields = ['#judul', '#due_date'];
+        fields.forEach(function(f) {
+            if (!validateTaskField(f)) {
+                isValid = false;
+                if (!firstInvalidEl) {
+                    firstInvalidEl = $(f);
+                }
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            if (firstInvalidEl) {
+                firstInvalidEl.focus();
+                if (firstInvalidEl.next('.flatpickr-input').length) {
+                    firstInvalidEl.next('.flatpickr-input').focus();
+                }
+            }
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Formulir Belum Lengkap',
+                    text: 'Silakan lengkapi field yang ditandai merah sebelum menyimpan tugas.',
+                    customClass: {
+                        popup: 'rounded-2xl shadow-xl'
+                    }
+                });
+            }
+            return false;
+        }
+
+        const btn = $('#btnSubmitCreateTaskV2');
+        btn.prop('disabled', true).addClass('opacity-70 cursor-not-allowed').html(`
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <span>Menyimpan Task...</span>
+        `);
+    });
+});
+</script>

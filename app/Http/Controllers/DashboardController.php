@@ -679,6 +679,58 @@ class DashboardController extends Controller
             $data['kontrak_bulandepan'] = $sk->getRekapkontrak(2, $userCabangs, $userDepartemens);
             $data['kontrak_duabulan'] = $sk->getRekapkontrak(3, $userCabangs, $userDepartemens);
 
+            $data['pengumuman_terbaru'] = Pengumuman::orderBy('created_at', 'desc')->take(5)->get();
+
+            // Karyawan Terlambat Hari Ini
+            $queryTerlambat = Presensi::query();
+            $queryTerlambat->join('karyawan', 'presensi.nik', '=', 'karyawan.nik');
+            $queryTerlambat->leftJoin('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan');
+            $queryTerlambat->leftJoin('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept');
+            $queryTerlambat->leftJoin('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang');
+            $queryTerlambat->leftJoin('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja');
+            $queryTerlambat->where('presensi.tanggal', $targetTanggal);
+            $queryTerlambat->where('presensi.status', 'h');
+            $queryTerlambat->whereRaw("presensi.jam_in > CONCAT(presensi.tanggal, ' ', IFNULL(presensi_jamkerja.jam_masuk, '08:00:00'))");
+
+            if (!$user->isSuperAdmin()) {
+                if (!empty($userCabangs)) {
+                    $queryTerlambat->whereIn('karyawan.kode_cabang', $userCabangs);
+                } else {
+                    $queryTerlambat->whereRaw('1 = 0');
+                }
+                if (!empty($userDepartemens)) {
+                    $queryTerlambat->whereIn('karyawan.kode_dept', $userDepartemens);
+                } else {
+                    $queryTerlambat->whereRaw('1 = 0');
+                }
+            }
+            if (!empty($request->kode_cabang)) {
+                $queryTerlambat->where('karyawan.kode_cabang', $request->kode_cabang);
+            }
+            if (!empty($request->kode_dept)) {
+                $queryTerlambat->where('karyawan.kode_dept', $request->kode_dept);
+            }
+
+            $data['karyawan_terlambat_hariini'] = $queryTerlambat->select(
+                'karyawan.nik',
+                'karyawan.nama_karyawan',
+                'karyawan.foto',
+                'jabatan.nama_jabatan',
+                'departemen.nama_dept',
+                'cabang.nama_cabang',
+                'presensi.jam_in',
+                'presensi.tanggal',
+                DB::raw("IFNULL(presensi_jamkerja.jam_masuk, '08:00:00') as jadwal_masuk")
+            )->orderBy('presensi.jam_in', 'desc')->get();
+
+            $data['storage_info'] = null;
+            $data['expired_alert'] = null;
+
+            $theme = get_admin_theme();
+            if ($theme === 'v2') {
+                return view('v2.dashboard.index', $data);
+            }
+
             return view('dashboard.dashboard', $data);
         }
     }
@@ -748,5 +800,115 @@ class DashboardController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function getKaryawanPresensi(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        
+        $userCabangs = $user->getCabangCodes();
+        $userDepartemens = $user->getDepartemenCodes();
+        
+        $selectedCabang = $request->kode_cabang;
+        $selectedDept = $request->kode_dept;
+
+        if (!$user->isSuperAdmin()) {
+            if (empty($userCabangs) || empty($userDepartemens)) {
+                $targetCabangs = ['INVALID'];
+                $targetDepartemens = ['INVALID'];
+            } else {
+                if (!empty($selectedCabang)) {
+                    $targetCabangs = in_array($selectedCabang, $userCabangs) ? [$selectedCabang] : ['INVALID'];
+                } else {
+                    $targetCabangs = $userCabangs;
+                }
+
+                if (!empty($selectedDept)) {
+                    $targetDepartemens = in_array($selectedDept, $userDepartemens) ? [$selectedDept] : ['INVALID'];
+                } else {
+                    $targetDepartemens = $userDepartemens;
+                }
+            }
+        } else {
+            $targetCabangs = !empty($selectedCabang) ? [$selectedCabang] : [];
+            $targetDepartemens = !empty($selectedDept) ? [$selectedDept] : [];
+        }
+
+        $tanggal = $request->tanggal ?? Carbon::now(config('app.timezone'))->format('Y-m-d');
+        $status = $request->status;
+
+        $query = Presensi::query();
+        $query->join('karyawan', 'presensi.nik', '=', 'karyawan.nik');
+        $query->leftJoin('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan');
+        $query->leftJoin('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept');
+        $query->leftJoin('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang');
+
+        if ($status == 'h') {
+            $query->leftJoin('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja');
+        } elseif ($status == 'i') {
+            $query->leftJoin('presensi_izinabsen_approve', 'presensi.id', '=', 'presensi_izinabsen_approve.id_presensi');
+            $query->leftJoin('presensi_izinabsen', 'presensi_izinabsen_approve.kode_izin', '=', 'presensi_izinabsen.kode_izin');
+        } elseif ($status == 's') {
+            $query->leftJoin('presensi_izinsakit_approve', 'presensi.id', '=', 'presensi_izinsakit_approve.id_presensi');
+            $query->leftJoin('presensi_izinsakit', 'presensi_izinsakit_approve.kode_izin_sakit', '=', 'presensi_izinsakit.kode_izin_sakit');
+        } elseif ($status == 'c') {
+            $query->leftJoin('presensi_izincuti_approve', 'presensi.id', '=', 'presensi_izincuti_approve.id_presensi');
+            $query->leftJoin('presensi_izincuti', 'presensi_izincuti_approve.kode_izin_cuti', '=', 'presensi_izincuti.kode_izin_cuti');
+        }
+
+        $query->where('presensi.tanggal', $tanggal);
+        $query->where('presensi.status', $status);
+
+        if (!empty($targetCabangs)) {
+            $query->whereIn('karyawan.kode_cabang', $targetCabangs);
+        }
+        if (!empty($targetDepartemens)) {
+            $query->whereIn('karyawan.kode_dept', $targetDepartemens);
+        }
+
+        $query->select(
+            'karyawan.nik',
+            'karyawan.nama_karyawan',
+            'karyawan.foto',
+            'jabatan.nama_jabatan',
+            'departemen.nama_dept',
+            'cabang.nama_cabang',
+            'presensi.jam_in',
+            'presensi.jam_out',
+            'presensi.status'
+        );
+
+        if ($status == 'h') {
+            $query->addSelect('presensi_jamkerja.nama_jam_kerja', 'presensi_jamkerja.jam_masuk', 'presensi_jamkerja.jam_pulang');
+        } elseif ($status == 'i') {
+            $query->addSelect('presensi_izinabsen.keterangan as keterangan');
+        } elseif ($status == 's') {
+            $query->addSelect('presensi_izinsakit.keterangan as keterangan');
+        } elseif ($status == 'c') {
+            $query->addSelect('presensi_izincuti.keterangan as keterangan');
+        }
+
+        $karyawanList = $query->orderBy('karyawan.nama_karyawan', 'asc')->get();
+
+        $title = 'List Karyawan - ';
+        if ($status == 'h') {
+            $title .= 'Hadir';
+        } elseif ($status == 'i') {
+            $title .= 'Izin';
+        } elseif ($status == 's') {
+            $title .= 'Sakit';
+        } elseif ($status == 'c') {
+            $title .= 'Cuti';
+        }
+
+        $viewName = (session('admin_theme', 'v2') === 'v2') ? 'v2.dashboard.karyawan_list_modal' : 'v2.dashboard.karyawan_list_modal';
+        $html = view($viewName, compact('karyawanList', 'status'))->render();
+
+        return response()->json([
+            'success' => true,
+            'title' => $title,
+            'html' => $html
+        ]);
     }
 }

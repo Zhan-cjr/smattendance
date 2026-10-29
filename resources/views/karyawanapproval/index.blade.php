@@ -18,12 +18,12 @@
         }
 
         .approval-summary {
-            background: linear-gradient(135deg, #32745e 0%, #2a6350 50%, #1f4d3d 100%);
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#32745e' }} 0%, {{ $t['primary_dark'] ?? '#2a6350' }} 50%, #1f4d3d 100%);
             border-radius: 14px;
             padding: 18px;
             color: white;
             margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(50, 116, 94, 0.3);
+            box-shadow: 0 4px 15px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.3);
         }
 
         .approval-summary .admin-name {
@@ -160,7 +160,7 @@
         }
 
         .btn-proses {
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: white;
             border: none;
             border-radius: 8px;
@@ -175,7 +175,7 @@
         }
 
         .btn-proses:hover, .btn-proses:active {
-            background: #2a6350;
+            background: {{ $t['primary_dark'] ?? '#2a6350' }};
             color: white;
             text-decoration: none;
         }
@@ -188,7 +188,7 @@
 
         .empty-state ion-icon {
             font-size: 72px;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
         }
 
         .empty-state p {
@@ -204,8 +204,8 @@
         .type-sakit-bg { background: rgba(255, 99, 132, 0.1); }
         .type-cuti { color: #ff9f40; }
         .type-cuti-bg { background: rgba(255, 159, 64, 0.1); }
-        .type-dinas { color: #32745e; }
-        .type-dinas-bg { background: rgba(50, 116, 94, 0.1); }
+        .type-dinas { color: {{ $t['primary'] ?? '#32745e' }}; }
+        .type-dinas-bg { background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1); }
     </style>
 
     <div id="header-section">
@@ -364,7 +364,7 @@
                                     <div class="keterangan">{{ $izin->keterangan }}</div>
                                 </div>
                                 <div class="izin-action">
-                                    <div class="step-badge" style="background: rgba(50,116,94,0.1); color: #32745e;">Tahap {{ $izin->approval_step }}</div>
+                                    <div class="step-badge" style="background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }},0.1); color: {{ $t['primary'] ?? '#32745e' }};">Tahap {{ $izin->approval_step }}</div>
                                     <a href="{{ route('karyawan-approval.izindinas.approve', Crypt::encrypt($izin->kode_izin_dinas)) }}" class="btn-proses">
                                         <ion-icon name="checkmark-outline"></ion-icon> Proses
                                     </a>

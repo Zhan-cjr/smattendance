@@ -72,7 +72,17 @@ class ProfileController extends Controller
     public function editprofile()
     {
         $user = auth()->user();
-        return view('profile.edit', compact('user'));
+        $user_karyawan = Userkaryawan::where('id_user', $user->id)->first();
+        $karyawan = null;
+        if ($user_karyawan) {
+            $karyawan = Karyawan::where('karyawan.nik', $user_karyawan->nik)
+                ->leftJoin('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
+                ->leftJoin('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
+                ->leftJoin('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
+                ->select('karyawan.*', 'departemen.nama_dept', 'cabang.nama_cabang', 'jabatan.nama_jabatan')
+                ->first();
+        }
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.profile.edit' : 'profile.edit', compact('user', 'karyawan'));
     }
 
     public function updateprofile(Request $request)

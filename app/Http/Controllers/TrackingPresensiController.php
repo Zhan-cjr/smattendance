@@ -29,7 +29,8 @@ class TrackingPresensiController extends Controller
         // Ambil data cabang dengan radius untuk ditampilkan di peta
         $cabangRadius = $this->getCabangRadius($request->get('kode_cabang'), $user);
 
-        return view('trackingpresensi.index', compact('presensis', 'cabangs', 'tanggal', 'cabangRadius'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.trackingpresensi.index' : 'trackingpresensi.index';
+        return view($view, compact('presensis', 'cabangs', 'tanggal', 'cabangRadius'));
     }
 
     /**

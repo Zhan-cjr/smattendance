@@ -11,7 +11,7 @@
 @push('mystyle')
     <style>
         body {
-            background: #e6fcf5 !important;
+            background: {{ $t['bg_body'] ?? '#e6fcf5' }} !important;
         }
 
         .search-container {
@@ -22,7 +22,7 @@
             position: relative;
             margin-bottom: 12px;
             background: transparent !important;
-            border: 1px solid #32745e;
+            border: 1px solid {{ $t['primary'] ?? '#32745e' }};
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
@@ -33,7 +33,7 @@
             left: 15px;
             top: 15px;
             font-size: 24px;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             z-index: 10;
             pointer-events: none;
         }
@@ -44,7 +44,7 @@
             padding: 22px 15px 5px 52px !important;
             font-size: 16px;
             font-weight: 500;
-            color: #2a6350;
+            color: {{ $t['primary_dark'] ?? '#2a6350' }};
             background: transparent !important;
             border: none !important;
             outline: none !important;
@@ -58,7 +58,7 @@
             top: 15px;
             left: 52px;
             font-size: 16px;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             opacity: 0.8;
             pointer-events: none;
             transition: all 0.2s ease-in-out;
@@ -72,13 +72,13 @@
             left: 52px;
             font-size: 11px;
             font-weight: 600;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
         }
 
         .btn-search-modern {
             width: 100%;
             height: 48px;
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: #ffffff;
             border: none;
             border-radius: 12px;
@@ -94,20 +94,20 @@
 
         .btn-search-modern:active {
             transform: scale(0.97);
-            background: #2a6350;
+            background: {{ $t['primary_dark'] ?? '#2a6350' }};
         }
 
         /* Slip Card Styling */
         .slip-card-modern {
             background: #fff;
-            border: 1px solid #32745e20;
+            border: 1px solid {{ $t['primary'] ?? '#32745e' }}20;
             border-radius: 16px;
             padding: 12px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 15px rgba(50, 116, 94, 0.05);
+            box-shadow: 0 4px 15px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.05);
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
@@ -121,8 +121,8 @@
         .slip-icon-box {
             width: 50px;
             height: 50px;
-            background: rgba(50, 116, 94, 0.1);
-            color: #32745e;
+            background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1);
+            color: {{ $t['primary'] ?? '#32745e' }};
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -138,7 +138,7 @@
         .slip-title {
             font-size: 14px;
             font-weight: 700;
-            color: #2a6350;
+            color: {{ $t['primary_dark'] ?? '#2a6350' }};
             margin-bottom: 2px;
             line-height: 1.2;
         }
@@ -153,7 +153,7 @@
         }
 
         .chevron-icon {
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             font-size: 20px;
             opacity: 0.5;
         }
@@ -177,7 +177,7 @@
 
         @can('slipgaji.create')
             <div class="mb-4 px-1">
-                <a href="#" class="flex items-center justify-center gap-2 w-full py-3 bg-[#32745e] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#32745e]/20" id="btnCreate">
+                <a href="#" class="flex items-center justify-center gap-2 w-full py-3 bg-[{{ $t['primary'] ?? '#32745e' }}] text-white rounded-xl font-bold text-sm shadow-lg shadow-[{{ $t['primary'] ?? '#32745e' }}]/20" id="btnCreate">
                     <ion-icon name="add-circle-outline" class="text-xl"></ion-icon>
                     <span>Buat Slip Gaji Baru</span>
                 </a>
@@ -185,7 +185,7 @@
         @endcan
 
         {{-- Slip Gaji List --}}
-        <h2 class="px-1 text-[13px] font-bold text-[#32745e] uppercase tracking-wider mb-3">Daftar Slip Gaji</h2>
+        <h2 class="px-1 text-[13px] font-bold text-[{{ $t['primary'] ?? '#32745e' }}] uppercase tracking-wider mb-3">Daftar Slip Gaji</h2>
         
         @if (count($slipgaji))
             @foreach ($slipgaji as $d)
@@ -274,7 +274,7 @@
                     text: "Fitur ini biasanya diakses dari panel admin.",
                     icon: 'info',
                     showCancelButton: true,
-                    confirmButtonColor: '#32745e',
+                    confirmButtonColor: '{{ $t['primary'] ?? '#32745e' }}',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Lanjutkan'
                 });
@@ -289,7 +289,7 @@
                     text: "Data slip gaji ini akan dihapus permanen!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#32745e',
+                    confirmButtonColor: '{{ $t['primary'] ?? '#32745e' }}',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Ya, Hapus!',
                     cancelButtonText: 'Batal'

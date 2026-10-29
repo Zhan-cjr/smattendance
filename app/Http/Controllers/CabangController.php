@@ -13,14 +13,15 @@ class CabangController extends Controller
     public function index(Request $request)
     {
 
-        $query = Cabang::query();
+        $query = Cabang::withCount('karyawan');
         if (!empty($request->nama_cabang)) {
             $query->where('nama_cabang', 'like', '%' . $request->nama_cabang . '%');
         }
         $query->orderBy('kode_cabang');
+        $total_karyawan = (clone $query)->get()->sum('karyawan_count');
         $cabang = $query->paginate(10);
         $cabang->appends(request()->all());
-        return view('datamaster.cabang.index', compact('cabang'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.cabang.index' : 'datamaster.cabang.index', compact('cabang', 'total_karyawan'));
     }
 
     public function create()
@@ -29,7 +30,7 @@ class CabangController extends Controller
         $pengaturan = Pengaturanumum::where('id', 1)->first();
         $defaultTimezone = $pengaturan->timezone ?? 'Asia/Jakarta';
         
-        return view('datamaster.cabang.create', compact('defaultTimezone'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.cabang.create' : 'datamaster.cabang.create', compact('defaultTimezone'));
     }
 
     public function store(Request $request)
@@ -180,7 +181,7 @@ class CabangController extends Controller
         $pengaturan = Pengaturanumum::where('id', 1)->first();
         $defaultTimezone = $pengaturan->timezone ?? 'Asia/Jakarta';
         
-        return view('datamaster.cabang.edit', compact('cabang', 'defaultTimezone'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.cabang.edit' : 'datamaster.cabang.edit', compact('cabang', 'defaultTimezone'));
     }
 
 

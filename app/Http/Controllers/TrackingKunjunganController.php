@@ -31,7 +31,8 @@ class TrackingKunjunganController extends Controller
             $kunjungans = $this->getKunjunganData($tanggal, $tanggal, $nik, $user);
         }
 
-        return view('tracking-kunjungan.index', compact('kunjungans', 'karyawans', 'tanggal', 'nik'));
+        $viewPrefix = session('admin_theme', 'v2') === 'v2' ? 'v2.' : '';
+        return view($viewPrefix . 'tracking-kunjungan.index', compact('kunjungans', 'karyawans', 'tanggal', 'nik'));
     }
 
     /**

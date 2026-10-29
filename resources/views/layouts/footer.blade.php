@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
             <div class="text-muted" style="font-size: 0.8rem;">
-                © {{ date('Y') }} <strong>SMATT V3</strong> &bull; Aplikasi ini dikembangkan oleh 
+                © {{ date('Y') }} <strong>SMATT_V4</strong> &bull; Aplikasi ini dikembangkan oleh 
                 <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" class="fw-bold text-primary text-decoration-none">
                     ZhanSoft - Amnal
                 </a>

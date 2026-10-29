@@ -12,12 +12,13 @@ class CutiController extends Controller
     public function index(Request $request)
     {
         $data['cuti'] = Cuti::orderBy('kode_cuti')->get();
-        return view('datamaster.cuti.index', $data);
+        $data['total_cuti'] = Cuti::count();
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.cuti.index' : 'datamaster.cuti.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.cuti.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.cuti.create' : 'datamaster.cuti.create');
     }
 
     public function store(Request $request)
@@ -124,7 +125,7 @@ class CutiController extends Controller
     {
         $kode_cuti = Crypt::decrypt($kode_cuti);
         $data['cuti'] = Cuti::where('kode_cuti', $kode_cuti)->first();
-        return view('datamaster.cuti.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.cuti.edit' : 'datamaster.cuti.edit', $data);
     }
 
     public function update(Request $request, $kode_cuti)

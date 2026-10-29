@@ -17,12 +17,12 @@ class JamkerjaController extends Controller
         }
         $data['jamkerja'] = $query->get();
 
-        return view('datamaster.jamkerja.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.jamkerja.index' : 'datamaster.jamkerja.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.jamkerja.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.jamkerja.create' : 'datamaster.jamkerja.create');
     }
 
     public function store(Request $request)
@@ -214,7 +214,7 @@ class JamkerjaController extends Controller
         $kode_jam_kerja = Crypt::decrypt($kode_jam_kerja);
         $data['jamkerja'] = Jamkerja::where('kode_jam_kerja', $kode_jam_kerja)->first();
         //dd($data['jamkerja']);
-        return view('datamaster.jamkerja.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.datamaster.jamkerja.edit' : 'datamaster.jamkerja.edit', $data);
     }
 
 

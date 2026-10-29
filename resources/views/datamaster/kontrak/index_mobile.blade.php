@@ -16,14 +16,14 @@
         /* Slip Card Styling */
         .slip-card-modern {
             background: #fff;
-            border: 1px solid #32745e20;
+            border: 1px solid {{ $t['primary'] ?? '#32745e' }}20;
             border-radius: 16px;
             padding: 12px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 15px rgba(50, 116, 94, 0.05);
+            box-shadow: 0 4px 15px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.05);
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
@@ -37,8 +37,8 @@
         .slip-icon-box {
             width: 50px;
             height: 50px;
-            background: rgba(50, 116, 94, 0.1);
-            color: #32745e;
+            background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1);
+            color: {{ $t['primary'] ?? '#32745e' }};
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -54,7 +54,7 @@
         .slip-title {
             font-size: 14px;
             font-weight: 700;
-            color: #2a6350;
+            color: {{ $t['primary_dark'] ?? '#2a6350' }};
             margin-bottom: 2px;
             line-height: 1.2;
             display: flex;
@@ -72,7 +72,7 @@
         }
 
         .chevron-icon {
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             font-size: 20px;
             opacity: 0.5;
         }
@@ -175,7 +175,7 @@
             @else
                 <div class="empty-state fade-up" style="animation-delay: 0.1s">
                     <ion-icon name="document-text-outline" class="text-5xl mb-3" style="opacity: 0.5"></ion-icon>
-                    <p style="font-size: 16px; font-weight: 700; color: #2a6350; margin-bottom: 5px;">Belum Ada Kontrak</p>
+                    <p style="font-size: 16px; font-weight: 700; color: {{ $t['primary_dark'] ?? '#2a6350' }}; margin-bottom: 5px;">Belum Ada Kontrak</p>
                     <p style="font-size: 13px; color: #6a9c89;">Anda belum memiliki riwayat kontrak kerja yang tercatat.</p>
                 </div>
             @endif

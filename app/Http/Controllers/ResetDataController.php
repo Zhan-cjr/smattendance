@@ -13,7 +13,8 @@ class ResetDataController extends Controller
      */
     public function index(Request $request)
     {
-        return view('utilities.resetdata.index');
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.utilities.resetdata.index' : 'utilities.resetdata.index';
+        return view($view);
     }
 
     /**

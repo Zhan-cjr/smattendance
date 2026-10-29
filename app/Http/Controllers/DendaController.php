@@ -13,19 +13,19 @@ class DendaController extends Controller
     public function index()
     {
         $data['denda'] = Denda::orderBy('id')->get();
-        return view('denda.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.denda.index' : 'denda.index', $data);
     }
 
     public function create()
     {
-        return view('denda.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.denda.create' : 'denda.create');
     }
 
     public function edit($id)
     {
         $id = Crypt::decrypt($id);
         $data['denda'] = Denda::findorFail($id);
-        return view('denda.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.denda.edit' : 'denda.edit', $data);
     }
 
     public function update(Request $request, $id)

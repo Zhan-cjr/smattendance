@@ -64,15 +64,41 @@ class LemburController extends Controller
             $qlembur->where('lembur.status', $request->status);
         }
 
+        $tahun = $request->get('tahun', date('Y'));
+        $labelPeriode = 'Tahun ' . $tahun;
+        if (!empty($request->dari) && !empty($request->sampai)) {
+            $labelPeriode = \Carbon\Carbon::parse($request->dari)->format('d M Y') . ' - ' . \Carbon\Carbon::parse($request->sampai)->format('d M Y');
+        } elseif ($tahun === 'all' || empty($tahun)) {
+            $labelPeriode = 'Semua Tahun';
+        }
+
         if ($user->hasRole('karyawan')) {
             $qlembur->where('lembur.nik', $userkaryawan->nik);
         }
+
+        $statsQ = (clone $qlembur)->reorder();
+        $statsQ->getQuery()->columns = null;
+        $statsData = $statsQ->selectRaw("
+            COUNT(*) as total,
+            SUM(CASE WHEN lembur.status = 0 THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN lembur.status = 1 THEN 1 ELSE 0 END) as approved,
+            SUM(CASE WHEN lembur.status = 2 THEN 1 ELSE 0 END) as rejected
+        ")->first();
+
+        $data['stats'] = [
+            'total' => (int) ($statsData->total ?? 0),
+            'pending' => (int) ($statsData->pending ?? 0),
+            'approved' => (int) ($statsData->approved ?? 0),
+            'rejected' => (int) ($statsData->rejected ?? 0),
+        ];
 
         $qlembur->orderBy('lembur.status');
         $qlembur->orderBy('lembur.tanggal', 'desc');
         $lembur = $qlembur->paginate(15);
         $lembur->appends($request->all());
         $data['lembur'] = $lembur;
+        $data['tahun'] = $tahun;
+        $data['labelPeriode'] = $labelPeriode;
         
         if ($user->hasRole('karyawan')) {
             $data['cabang'] = collect();
@@ -85,7 +111,7 @@ class LemburController extends Controller
         if ($user->hasRole('karyawan')) {
             return view('lembur.index-karyawan', $data);
         } else {
-            return view('lembur.index', $data);
+            return view(session('admin_theme', 'v2') === 'v2' ? 'v2.lembur.index' : 'lembur.index', $data);
         }
     }
 
@@ -122,7 +148,7 @@ class LemburController extends Controller
         if ($user->hasRole('karyawan')) {
             return view('lembur.create-karyawan', $data);
         } else {
-            return view('lembur.create', $data);
+            return view(session('admin_theme', 'v2') === 'v2' ? 'v2.lembur.create' : 'lembur.create', $data);
         }
     }
 
@@ -213,7 +239,7 @@ class LemburController extends Controller
         $karyawan = $qkaryawan->get();
         $data['karyawan'] = $karyawan;
         $data['lembur'] = $lembur;
-        return view('lembur.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.lembur.edit' : 'lembur.edit', $data);
     }
 
 
@@ -269,7 +295,7 @@ class LemburController extends Controller
         }
 
         $data['lembur'] = $lembur;
-        return view('lembur.approve', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.lembur.approve' : 'lembur.approve', $data);
     }
 
 
@@ -365,7 +391,7 @@ class LemburController extends Controller
         }
         
         $data['lembur'] = $lembur;
-        return view('lembur.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.lembur.show' : 'lembur.show', $data);
     }
 
     public function destroy($id)

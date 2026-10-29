@@ -53,7 +53,8 @@ class MonitoringLokasiController extends Controller
         // Get general settings for monitoring status
         $generalSetting = Pengaturanumum::where('id', 1)->first();
 
-        return view('monitoring-lokasi.index', compact(
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.monitoring-lokasi.index' : 'monitoring-lokasi.index';
+        return view($view, compact(
             'spyEmployees',
             'selectedEmployee',
             'selectedNik',

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Laporan Rekap Mutasi Pinjaman - {{ date('d/m/Y H:i') }}</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    
+    <style>
+        :root {
+            --primary: {{ $generalsetting->theme_color_1 ?? '#0a5c41' }};
+            --primary-dark: {{ $generalsetting->theme_color_2 ?? '#064430' }};
+            --primary-light: #ecfdf5;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 11px;
+            color: var(--slate-800);
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 16px 20px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Top Action Bar (Screen Only) */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+
+        .top-bar-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-total {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(10, 92, 65, 0.15);
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .btn-excel {
+            background: #059669;
+            color: #ffffff;
+        }
+
+        .btn-excel:hover {
+            background: #047857;
+        }
+
+        .btn-print {
+            background: var(--slate-900);
+            color: #ffffff;
+        }
+
+        .btn-print:hover {
+            background: var(--slate-800);
+        }
+
+        /* Company Header */
+        .report-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--slate-200);
+            margin-bottom: 14px;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .company-logo {
+            max-height: 46px;
+            max-width: 90px;
+            object-fit: contain;
+        }
+
+        .company-details h2 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--slate-900);
+            margin: 0 0 2px 0;
+            letter-spacing: -0.2px;
+        }
+
+        .company-details p {
+            font-size: 11px;
+            color: var(--slate-500);
+            margin: 0;
+        }
+
+        .report-title-badge {
+            text-align: right;
+        }
+
+        .report-title-badge h3 {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0 0 4px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-periode {
+            display: inline-block;
+            background: var(--slate-100);
+            color: var(--slate-700);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--slate-200);
+        }
+
+        /* Meta Parameters Bar */
+        .meta-param-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 10px 16px;
+            background: #ffffff;
+            border-radius: 10px;
+            border: 1px solid var(--slate-200);
+            margin-bottom: 14px;
+            font-size: 11px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-label {
+            color: var(--slate-500);
+            font-weight: 500;
+        }
+
+        .meta-value {
+            font-weight: 700;
+            color: var(--slate-900);
+        }
+
+        /* Table Card Container */
+        .table-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--slate-200);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Modern Data Table */
+        table.data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 11px;
+        }
+
+        table.data-table thead th {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            padding: 8px 8px;
+            text-align: center;
+            vertical-align: middle;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        table.data-table thead tr:nth-child(2) th {
+            background: var(--primary-dark);
+            font-size: 9.5px;
+            padding: 5px 6px;
+        }
+
+        table.data-table thead th:last-child {
+            border-right: none;
+        }
+
+        table.data-table tbody td {
+            padding: 8px 8px;
+            border-bottom: 1px solid var(--slate-200);
+            border-right: 1px solid var(--slate-200);
+            vertical-align: middle;
+            font-size: 10.5px;
+        }
+
+        table.data-table tbody td:last-child {
+            border-right: none;
+        }
+
+        table.data-table tbody tr:nth-child(even) td {
+            background-color: var(--slate-50);
+        }
+
+        table.data-table tbody tr:hover td {
+            background-color: var(--primary-light);
+        }
+
+        table.data-table tfoot td {
+            background: #f1f5f9;
+            font-weight: 800;
+            color: var(--slate-900);
+            padding: 9px 8px;
+            border-top: 2px solid var(--slate-300);
+            border-bottom: 1px solid var(--slate-300);
+            border-right: 1px solid var(--slate-200);
+        }
+
+        table.data-table tfoot td:last-child {
+            border-right: none;
+        }
+
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+            }
+
+            .top-bar {
+                display: none !important;
+            }
+
+            .report-header, .meta-param-bar {
+                border: 1px solid var(--slate-300) !important;
+                border-radius: 0 !important;
+                margin-bottom: 8px !important;
+                padding: 8px 12px !important;
+            }
+
+            .table-card {
+                border: 1px solid var(--slate-300) !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+
+            .table-responsive {
+                overflow: visible !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Action Bar (Screen Only) -->
+    <div class="top-bar">
+        <div class="top-bar-info">
+            <div class="top-bar-title">
+                <i class="ti ti-chart-arrows-vertical text-primary"></i>
+                Laporan Rekap Mutasi Pinjaman Bulanan
+            </div>
+            <span class="badge-total">{{ count($rekap) }} Karyawan</span>
+        </div>
+        <div class="top-bar-actions">
+            <form action="{{ route('laporan.cetakpinjaman') }}" method="POST" style="display: inline;">
+                @csrf
+                <input type="hidden" name="jenis_laporan" value="rekap">
+                <input type="hidden" name="kode_cabang" value="{{ request('kode_cabang') }}">
+                <input type="hidden" name="kode_dept" value="{{ request('kode_dept') }}">
+                <input type="hidden" name="nik" value="{{ request('nik') }}">
+                <input type="hidden" name="bulan" value="{{ $bulan }}">
+                <input type="hidden" name="tahun" value="{{ $tahun }}">
+                <input type="hidden" name="exportButton" value="1">
+                <button type="submit" class="btn-action btn-excel">
+                    <i class="ti ti-file-spreadsheet"></i>
+                    Export Excel
+                </button>
+            </form>
+            <button onclick="window.print()" class="btn-action btn-print">
+                <i class="ti ti-printer"></i>
+                Cetak Laporan
+            </button>
+        </div>
+    </div>
+
+    <!-- Company & Report Header -->
+    <div class="report-header">
+        <div class="company-info">
+            @if (!empty($generalsetting->logo) && Storage::disk('public')->exists('/logo/' . $generalsetting->logo))
+                <img src="{{ asset('storage/logo/' . $generalsetting->logo) }}" alt="Logo" class="company-logo">
+            @elseif (!empty($generalsetting->logo) && file_exists(public_path('storage/logo/' . $generalsetting->logo)))
+                <img src="{{ asset('storage/logo/' . $generalsetting->logo) }}" alt="Logo" class="company-logo">
+            @endif
+            <div class="company-details">
+                <h2>{{ $generalsetting->nama_perusahaan }}</h2>
+                <p>{{ $generalsetting->alamat ?? 'Human Resource & Payroll Management' }} | Telp: {{ $generalsetting->telepon ?? '-' }}</p>
+            </div>
+        </div>
+        <div class="report-title-badge">
+            <h3>Rekapitulasi Mutasi Pinjaman</h3>
+            <span class="badge-periode">
+                <i class="ti ti-calendar"></i>
+                Periode: {{ getNamabulan($bulan) }} {{ $tahun }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Parameter Filter Summary Bar -->
+    <div class="meta-param-bar">
+        <div class="meta-item">
+            <span class="meta-label">Cabang:</span>
+            <span class="meta-value">{{ textUpperCase($namacabang) }}</span>
+        </div>
+        <span class="text-slate-300">|</span>
+        <div class="meta-item">
+            <span class="meta-label">Departemen:</span>
+            <span class="meta-value">{{ textUpperCase($namadept) }}</span>
+        </div>
+        <span class="text-slate-300">|</span>
+        <div class="meta-item">
+            <span class="meta-label">Bulan/Tahun:</span>
+            <span class="meta-value text-emerald-700">{{ getNamabulan($bulan) }} {{ $tahun }}</span>
+        </div>
+    </div>
+
+    <!-- Main Table Card Container -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 32px;">No</th>
+                        <th rowspan="2" style="width: 80px;">NIK</th>
+                        <th rowspan="2" style="width: 170px; text-align: left; padding-left: 10px;">Nama Karyawan</th>
+                        <th rowspan="2" style="width: 110px;">Departemen</th>
+                        <th rowspan="2" style="width: 100px;">Cabang</th>
+                        <th rowspan="2" style="width: 110px; text-align: right; padding-right: 10px;">Saldo Awal</th>
+                        <th rowspan="2" style="width: 110px; text-align: right; padding-right: 10px;">Penambah<br>(Pinjaman Baru)</th>
+                        <th colspan="2">Pembayaran / Angsuran</th>
+                        <th rowspan="2" style="width: 115px; text-align: right; padding-right: 10px;">Saldo Akhir</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 105px; text-align: right; padding-right: 8px;">Potong Gaji</th>
+                        <th style="width: 105px; text-align: right; padding-right: 8px;">Bayar Cash</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($rekap as $r)
+                        <tr>
+                            <td style="text-align: center;">{{ $loop->iteration }}</td>
+                            <td style="text-align: center;">{{ $r->nik_show ?? $r->nik }}</td>
+                            <td style="font-weight: 700; color: var(--slate-900); padding-left: 10px;">{{ $r->nama_karyawan }}</td>
+                            <td style="text-align: center;">{{ $r->nama_dept }}</td>
+                            <td style="text-align: center;">{{ $r->nama_cabang }}</td>
+                            <td style="text-align: right; font-weight: 600; padding-right: 10px;">Rp {{ number_format($r->saldo_awal, 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 600; color: #1e40af; padding-right: 10px;">Rp {{ number_format($r->penambah, 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 600; color: #166534; padding-right: 8px;">Rp {{ number_format($r->potong_gaji, 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 600; color: #0891b2; padding-right: 8px;">Rp {{ number_format($r->bayar_cash, 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 800; color: #991b1b; padding-right: 10px;">Rp {{ number_format($r->saldo_akhir, 0, ',', '.') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="10" style="text-align: center; padding: 20px; color: var(--slate-400);">
+                                Tidak ada data mutasi pinjaman karyawan pada periode yang dipilih.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+                @if(count($rekap) > 0)
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" style="text-align: right; font-weight: 800;">TOTAL MUTASI PINJAMAN</td>
+                            <td style="text-align: right; font-weight: 800; padding-right: 10px;">Rp {{ number_format($rekap->sum('saldo_awal'), 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 800; color: #1e40af; padding-right: 10px;">Rp {{ number_format($rekap->sum('penambah'), 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 800; color: #166534; padding-right: 8px;">Rp {{ number_format($rekap->sum('potong_gaji'), 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 800; color: #0891b2; padding-right: 8px;">Rp {{ number_format($rekap->sum('bayar_cash'), 0, ',', '.') }}</td>
+                            <td style="text-align: right; font-weight: 800; color: #991b1b; padding-right: 10px;">Rp {{ number_format($rekap->sum('saldo_akhir'), 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                @endif
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>

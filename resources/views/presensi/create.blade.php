@@ -2,7 +2,13 @@
 @section('content')
     <script>
         (function() {
-            var savedTheme = localStorage.getItem('smatt_theme');
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var lastServerScheme = localStorage.getItem('smatt_server_scheme');
+            if (lastServerScheme !== serverScheme) {
+                localStorage.setItem('smatt_server_scheme', serverScheme);
+                localStorage.setItem('smatt_theme', serverScheme === 'dark' ? 'dark' : 'light');
+            }
+            var savedTheme = localStorage.getItem('smatt_theme') || (serverScheme === 'dark' ? 'dark' : 'light');
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
                 if (document.body) {
@@ -19,12 +25,12 @@
     <style>
         :root {
             --primary-color: {{ $t['primary'] ?? '#0f766e' }};
-            --primary-dark: #115e59;
+            --primary-dark: {{ $t['primary_dark'] ?? '#115e59' }};
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif !important;
-            background-color: #f8fafc;
+            background-color: {{ $t['bg_body'] ?? '#f8fafc' }};
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -291,9 +297,9 @@
         }
 
         .jadwalkerja-row {
-            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 50%, #042f2e 100%);
+            background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary_dark'] ?? '#115e59' }} 50%, #042f2e 100%);
             border-radius: 20px;
-            box-shadow: 0 8px 24px -4px rgba(15, 118, 110, 0.35);
+            box-shadow: 0 8px 24px -4px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }}, 0.35);
             margin: 0;
             padding: 10px 6px;
             display: flex;
@@ -413,7 +419,7 @@
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             font-weight: 700;
             font-size: 12.5px;
-            color: #0f766e;
+            color: {{ $t['primary'] ?? '#0f766e' }};
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -472,7 +478,7 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
     <div id="header-section">
-        <div class="appHeader bg-primary text-light" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 100%) !important; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <div class="appHeader bg-primary text-light" style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary_dark'] ?? '#115e59' }} 100%) !important; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             <div class="left">
                 <a href="{{ route('dashboard.index') }}" class="headerButton goBack" style="color:#ffffff;">
                     <ion-icon name="chevron-back-outline"></ion-icon>
@@ -696,7 +702,8 @@
         }
 
         $(function() {
-            var savedTheme = localStorage.getItem('smatt_theme');
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var savedTheme = localStorage.getItem('smatt_theme') || (serverScheme === 'dark' ? 'dark' : 'light');
             if (savedTheme === 'dark') {
                 $('html, body').addClass('dark');
             } else {
@@ -713,9 +720,9 @@
                         <div style="display:flex;flex-direction:column;gap:12px;">
                             <button type="button" id="btn-pilih-masuk" class="btn-absen-choice" style="
                                 display:flex;align-items:center;gap:14px;padding:12px 14px;
-                                background:linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+                                background:linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary'] ?? '#0d9488' }} 100%);
                                 color:#ffffff;border:none;border-radius:16px;cursor:pointer;
-                                text-align:left;box-shadow:0 6px 16px -2px rgba(15,118,110,0.35);
+                                text-align:left;box-shadow:0 6px 16px -2px rgba({{ $t['primary_rgb'] ?? '15, 118, 110' }},0.35);
                             ">
                                 <div style="width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">
                                     📥

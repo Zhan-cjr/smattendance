@@ -76,7 +76,7 @@
             margin-top: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.1s;
-            background-color: #32745e !important; /* Warna primer dari dashboard */
+            background-color: {{ $t['primary'] ?? '#32745e' }} !important; /* Warna primer dari dashboard */
             color: #fff;
             border: none;
         }
@@ -126,7 +126,7 @@
         
         /* Header style dari histori.blade.php */
         .appHeader {
-            background-color: #32745e !important;
+            background-color: {{ $t['primary'] ?? '#32745e' }} !important;
             color: #fff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             height: 56px;

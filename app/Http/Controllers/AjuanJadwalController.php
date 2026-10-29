@@ -93,6 +93,21 @@ class AjuanJadwalController extends Controller
         // Order by latest
         $query->orderBy('created_at', 'desc');
 
+        $statusCounts = (clone $query)->reorder()->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $stats = [
+            'pending' => $statusCounts['p'] ?? 0,
+            'disetujui' => $statusCounts['a'] ?? 0,
+            'ditolak' => $statusCounts['r'] ?? 0,
+        ];
+        $tahun = $request->tahun ?? date('Y');
+        $labelPeriode = (!empty($request->dari) && !empty($request->sampai))
+            ? $request->dari . ' s/d ' . $request->sampai
+            : ($tahun === 'all' ? 'Semua Tahun' : 'Tahun ' . $tahun);
+
         $ajuanjadwal = $query->paginate(10);
         $ajuanjadwal->appends($request->all());
 
@@ -110,7 +125,7 @@ class AjuanJadwalController extends Controller
              // Fallback if no NIK found (shouldn't happen for valid employee user)
              return redirect()->back()->with('warning', 'Data Karyawan tidak ditemukan.');
         }
-        return view('ajuanjadwal.index', compact('ajuanjadwal', 'cabang', 'departemen'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.ajuanjadwal.index' : 'ajuanjadwal.index', compact('ajuanjadwal', 'cabang', 'departemen', 'stats', 'tahun', 'labelPeriode'));
     }
 
     public function create()
@@ -123,7 +138,7 @@ class AjuanJadwalController extends Controller
              $karyawan = Karyawan::orderBy('nama_karyawan')->get();
         }
         
-        return view('ajuanjadwal.create', compact('jamkerja', 'karyawan'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.ajuanjadwal.create' : 'ajuanjadwal.create', compact('jamkerja', 'karyawan'));
     }
 
     public function store(Request $request)

@@ -16,7 +16,8 @@ class WagatewayController extends Controller
     {
         $data['generalsetting'] = Pengaturanumum::where('id', 1)->first();
         $data['devices'] = Device::orderBy('created_at', 'desc')->get();
-        return view('wagateway.scanqr', $data);
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.wagateway.scanqr' : 'wagateway.scanqr';
+        return view($view, $data);
     }
 
     public function addDevice(Request $request)
@@ -528,7 +529,8 @@ class WagatewayController extends Controller
     public function messages()
     {
         $messages = Message::orderBy('created_at', 'desc')->paginate(20);
-        return view('wagateway.messages', compact('messages'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.wagateway.messages' : 'wagateway.messages';
+        return view($view, compact('messages'));
     }
 
     public function fetchGroups(Request $request)

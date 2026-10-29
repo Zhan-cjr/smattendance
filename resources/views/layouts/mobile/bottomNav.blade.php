@@ -54,11 +54,11 @@
 
     /* Active State */
     .appBottomMenu .item.active ion-icon {
-        color: {{ $t['primary'] ?? '#0f766e' }} !important;
+        color: {{ $t['primary'] ?? '#32745e' }} !important;
         transform: translateY(-1px);
     }
     .appBottomMenu .item.active strong {
-        color: {{ $t['primary'] ?? '#0f766e' }} !important;
+        color: {{ $t['primary'] ?? '#32745e' }} !important;
         font-weight: 800 !important;
     }
 
@@ -70,8 +70,8 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        background: linear-gradient(135deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #0d9488 100%) !important;
-        box-shadow: 0 8px 20px rgba(15, 118, 110, 0.4) !important;
+        background: linear-gradient(135deg, {{ $t['primary'] ?? '#32745e' }} 0%, {{ $t['primary_light'] ?? '#58907D' }} 100%) !important;
+        box-shadow: 0 8px 20px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.4) !important;
         position: relative !important;
         top: -14px !important;
         border: 3px solid #ffffff !important;
@@ -83,7 +83,7 @@
     }
     .appBottomMenu .item:active .action-button.large {
         transform: scale(0.92) translateY(2px) !important;
-        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
+        box-shadow: 0 4px 12px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.3) !important;
     }
 
     /* Dark Mode Bottom Navigation */

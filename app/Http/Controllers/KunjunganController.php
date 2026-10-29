@@ -61,6 +61,13 @@ class KunjunganController extends Controller
             $query->whereDate('kunjungan.tanggal_kunjungan', '<=', $request->tanggal_akhir);
         }
 
+        $stats = [
+            'total' => (clone $query)->count(),
+            'today' => (clone $query)->whereDate('kunjungan.tanggal_kunjungan', date('Y-m-d'))->count(),
+            'with_foto' => (clone $query)->whereNotNull('kunjungan.foto')->where('kunjungan.foto', '!=', '')->count(),
+            'with_lokasi' => (clone $query)->whereNotNull('kunjungan.lokasi')->where('kunjungan.lokasi', '!=', '')->count(),
+        ];
+
         $kunjungan = $query->orderBy('kunjungan.tanggal_kunjungan', 'desc')->paginate(10);
         
         // Get karyawans based on access
@@ -75,7 +82,7 @@ class KunjunganController extends Controller
             return view('kunjungan.index-mobile', compact('kunjungan', 'karyawans'));
         }
 
-        return view('kunjungan.index', compact('kunjungan', 'karyawans'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'kunjungan.index', compact('kunjungan', 'karyawans', 'stats'));
     }
     
     /**
@@ -120,7 +127,7 @@ class KunjunganController extends Controller
             return view('kunjungan.create-mobile', compact('karyawan'));
         } else {
             $karyawans = $this->getKaryawansByAccess($user);
-            return view('kunjungan.create', compact('karyawans'));
+            return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'kunjungan.create', compact('karyawans'));
         }
     }
 
@@ -213,7 +220,7 @@ class KunjunganController extends Controller
     public function show(Kunjungan $kunjungan)
     {
         $kunjungan->load('karyawan');
-        return view('kunjungan.show', compact('kunjungan'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'kunjungan.show', compact('kunjungan'));
     }
 
     /**
@@ -238,7 +245,7 @@ class KunjunganController extends Controller
         }
         
         $karyawans = $this->getKaryawansByAccess($user);
-        return view('kunjungan.edit', compact('kunjungan', 'karyawans'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'kunjungan.edit', compact('kunjungan', 'karyawans'));
     }
 
     /**

@@ -33,7 +33,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #32745e, #4b9b82); /* Green theme */
+            background: linear-gradient(90deg, {{ $t['primary'] ?? '#32745e' }}, #4b9b82); /* Green theme */
         }
 
         .announcement-header {
@@ -49,7 +49,7 @@
             width: 48px;
             height: 48px;
             background: #f0fdf4;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             border-radius: 12px;
             display: flex;
             align-items: center;

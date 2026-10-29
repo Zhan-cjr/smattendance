@@ -26,7 +26,7 @@ class JamkerjabydeptController extends Controller
         }
         $data['jamkerjabydept'] = $query->paginate(15);
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
-        return view('jamkerjabydept.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jamkerjabydept.index' : 'jamkerjabydept.index', $data);
     }
 
     public function create()
@@ -34,7 +34,7 @@ class JamkerjabydeptController extends Controller
         $data['cabang'] = Cabang::orderby('kode_cabang')->get();
         $data['departemen'] = Departemen::orderBy('kode_dept')->get();
         $data['jamkerja'] = Jamkerja::orderBy('kode_jam_kerja')->get();
-        return view('jamkerjabydept.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jamkerjabydept.create' : 'jamkerjabydept.create', $data);
     }
 
 
@@ -93,7 +93,7 @@ class JamkerjabydeptController extends Controller
             ->first();
         $data['jamkerja'] = Jamkerja::orderBy('kode_jam_kerja')->get();
         $data['detailjamkerjabydept'] = Detailsetjamkerjabydept::where('kode_jk_dept', $kode_jk_dept)->pluck('kode_jam_kerja', 'hari')->toArray();
-        return view('jamkerjabydept.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.jamkerjabydept.edit' : 'jamkerjabydept.edit', $data);
     }
 
     public function update($kode_jk_dept, Request $request)

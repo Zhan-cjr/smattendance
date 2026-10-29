@@ -33,13 +33,13 @@ class BpjskesehatanController extends Controller
         $data['bpjskesehatan'] = $bpjskesehatan;
         $data['departemen'] = Departemen::orderBy('kode_dept')->get();
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
-        return view('datamaster.bpjskesehatan.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.bpjskesehatan.index' : 'datamaster.bpjskesehatan.index', $data);
     }
 
     public function create()
     {
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
-        return view('datamaster.bpjskesehatan.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.bpjskesehatan.create' : 'datamaster.bpjskesehatan.create', $data);
     }
 
     public function store(Request $request)
@@ -116,7 +116,7 @@ class BpjskesehatanController extends Controller
         $kode_bpjs_kesehatan = Crypt::decrypt($kode_bpjs_kesehatan);
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
         $data['bpjskesehatan'] = Bpjskesehatan::where('kode_bpjs_kesehatan', $kode_bpjs_kesehatan)->first();
-        return view('datamaster.bpjskesehatan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.bpjskesehatan.edit' : 'datamaster.bpjskesehatan.edit', $data);
     }
 
     public function update(Request $request, $kode_bpjs_kesehatan)

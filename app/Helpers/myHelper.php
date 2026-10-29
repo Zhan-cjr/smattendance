@@ -9,6 +9,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redirect;
 
+if (!function_exists('get_admin_theme')) {
+    /**
+     * Get active admin dashboard theme ('v2' or 'classic')
+     */
+    function get_admin_theme(): string
+    {
+        try {
+            $setting = \App\Models\Pengaturanumum::where('id', 1)->first();
+            return $setting->admin_theme ?? 'v2';
+        } catch (\Throwable $e) {
+            return session('admin_theme', 'v2');
+        }
+    }
+}
+
 function buatkode($nomor_terakhir, $kunci, $jumlah_karakter = 0)
 {
     /* mencari nomor baru dengan memecah nomor terakhir dan menambahkan 1
@@ -841,4 +856,170 @@ function hitungPotonganIstirahat($istirahat_in, $istirahat_out, $jam_awal_istira
     }
     return 0;
 }
+
+if (!function_exists('getJamKerjaKaryawanByDate')) {
+    function getJamKerjaKaryawanByDate($nik, $tanggal)
+    {
+        $karyawan = \App\Models\Karyawan::where('nik', $nik)->first();
+        if (!$karyawan) {
+            return null;
+        }
+
+        $namahari = getnamaHari(date('D', strtotime($tanggal)));
+        $kode_dept = $karyawan->kode_dept;
+
+        // 1. Cek Ajuan Jadwal yang sudah disetujui (Approved)
+        if (class_exists(\App\Models\AjuanJadwal::class)) {
+            $ajuan_jadwal = \App\Models\AjuanJadwal::where('nik', $nik)
+                ->where('tanggal', $tanggal)
+                ->where('status', 'a')
+                ->first();
+
+            if ($ajuan_jadwal) {
+                return \App\Models\Jamkerja::where('kode_jam_kerja', $ajuan_jadwal->kode_jam_kerja_tujuan)->first();
+            }
+        }
+
+        // 2. Cek Jam Kerja By Date (Khusus karyawan per tanggal)
+        $jamkerja = \App\Models\Setjamkerjabydate::join('presensi_jamkerja', 'presensi_jamkerja_bydate.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+            ->where('nik', $nik)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        if ($jamkerja) {
+            return $jamkerja;
+        }
+
+        // 3. Cek Jam Kerja Grup By Date
+        $cek_group = \App\Models\GrupDetail::where('nik', $nik)->first();
+        if ($cek_group) {
+            $jamkerja = \App\Models\GrupJamkerjaBydate::where('kode_grup', $cek_group->kode_grup)
+                ->where('tanggal', $tanggal)
+                ->join('presensi_jamkerja', 'grup_jamkerja_bydate.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+                ->first();
+
+            if ($jamkerja) {
+                return $jamkerja;
+            }
+        }
+
+        // 4. Cek Jam Kerja Harian (By Day per karyawan)
+        $jamkerja = \App\Models\Setjamkerjabyday::join('presensi_jamkerja', 'presensi_jamkerja_byday.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+            ->where('nik', $nik)
+            ->where('hari', $namahari)
+            ->first();
+
+        if ($jamkerja) {
+            return $jamkerja;
+        }
+
+        // 5. Cek Jam Kerja By Dept
+        $jamkerja = \App\Models\Detailsetjamkerjabydept::join('presensi_jamkerja_bydept', 'presensi_jamkerja_bydept_detail.kode_jk_dept', '=', 'presensi_jamkerja_bydept.kode_jk_dept')
+            ->join('presensi_jamkerja', 'presensi_jamkerja_bydept_detail.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+            ->where('kode_dept', $kode_dept)
+            ->where('kode_cabang', $karyawan->kode_cabang)
+            ->where('hari', $namahari)
+            ->first();
+
+        if ($jamkerja) {
+            return $jamkerja;
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('getJamKerja')) {
+    function getJamKerja($nik, $tanggal)
+    {
+        return getJamKerjaKaryawanByDate($nik, $tanggal);
+    }
+}
+
+if (!function_exists('cekHariLiburKaryawan')) {
+    function cekHariLiburKaryawan($nik, $tanggal)
+    {
+        return \App\Models\Detailharilibur::join('hari_libur', 'hari_libur_detail.kode_libur', '=', 'hari_libur.kode_libur')
+            ->where('nik', $nik)
+            ->where('tanggal', $tanggal)
+            ->first();
+    }
+}
+
+if (!function_exists('hitungHariCuti')) {
+    function hitungHariCuti($nik, $dari, $sampai)
+    {
+        if (empty($nik) || empty($dari) || empty($sampai)) {
+            return [
+                'total_hari' => 0,
+                'detail_hari' => [],
+                'hari_libur' => [],
+                'hari_off' => [],
+            ];
+        }
+
+        $start = strtotime($dari);
+        $end = strtotime($sampai);
+
+        if ($start > $end) {
+            return [
+                'total_hari' => 0,
+                'detail_hari' => [],
+                'hari_libur' => [],
+                'hari_off' => [],
+            ];
+        }
+
+        $detail_hari = [];
+        $hari_libur = [];
+        $hari_off = [];
+
+        $current = $start;
+        while ($current <= $end) {
+            $tgl = date('Y-m-d', $current);
+
+            $libur = cekHariLiburKaryawan($nik, $tgl);
+            if ($libur) {
+                $hari_libur[] = [
+                    'tanggal' => $tgl,
+                    'keterangan' => $libur->keterangan ?? 'Hari Libur',
+                ];
+                $current = strtotime('+1 day', $current);
+                continue;
+            }
+
+            $jamkerja = getJamKerjaKaryawanByDate($nik, $tgl);
+            if (!$jamkerja) {
+                $hari_off[] = [
+                    'tanggal' => $tgl,
+                    'keterangan' => 'Tidak Ada Jadwal / Hari Libur Shift',
+                ];
+                $current = strtotime('+1 day', $current);
+                continue;
+            }
+
+            $detail_hari[] = [
+                'tanggal' => $tgl,
+                'jamkerja' => $jamkerja,
+            ];
+
+            $current = strtotime('+1 day', $current);
+        }
+
+        return [
+            'total_hari' => count($detail_hari),
+            'detail_hari' => $detail_hari,
+            'hari_libur' => $hari_libur,
+            'hari_off' => $hari_off,
+        ];
+    }
+}
+
+if (!function_exists('hitungHariKerja')) {
+    function hitungHariKerja($nik, $dari, $sampai)
+    {
+        return hitungHariCuti($nik, $dari, $sampai);
+    }
+}
+
 

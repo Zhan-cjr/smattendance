@@ -42,7 +42,7 @@ class KpiIndicatorController extends Controller
         // And list of Departemen
         $departemen_list = \App\Models\Departemen::orderBy('nama_dept')->get();
 
-        return view('kpi.indicators.index', compact('kpi_indicators', 'jabatan_list', 'departemen_list'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.indicators.index' : 'kpi.indicators.index', compact('kpi_indicators', 'jabatan_list', 'departemen_list'));
     }
 
     public function create(Request $request)
@@ -58,7 +58,7 @@ class KpiIndicatorController extends Controller
             if ($existing) {
                  return redirect()->route('kpi.indicators.edit', $existing->id)->with(['info' => 'Konfigurasi KPI Global sudah ada']);
             }
-            return view('kpi.indicators.create', [
+            return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.indicators.create' : 'kpi.indicators.create', [
                 'jabatan' => null, 
                 'departemen' => null,
                 'is_global' => true
@@ -79,7 +79,7 @@ class KpiIndicatorController extends Controller
             }
         }
         
-        return view('kpi.indicators.create', compact('jabatan', 'departemen'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.indicators.create' : 'kpi.indicators.create', compact('jabatan', 'departemen'));
     }
 
     public function store(Request $request)
@@ -154,7 +154,7 @@ class KpiIndicatorController extends Controller
     public function edit(string $id)
     {
         $kpi_indicator = KpiIndicator::with('details', 'jabatan')->findOrFail($id);
-        return view('kpi.indicators.edit', compact('kpi_indicator'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.indicators.edit' : 'kpi.indicators.edit', compact('kpi_indicator'));
     }
 
     public function update(Request $request, string $id)

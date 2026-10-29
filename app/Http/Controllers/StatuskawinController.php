@@ -16,12 +16,12 @@ class StatuskawinController extends Controller
             $query->where('status_kawin', 'like', '%' . $request->status_kawin . '%');
         }
         $data['statuskawin'] = $query->orderBy('kode_status_kawin')->get();
-        return view('datamaster.status_kawin.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.status_kawin.index' : 'datamaster.status_kawin.index', $data);
     }
 
     public function create()
     {
-        return view('datamaster.status_kawin.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.status_kawin.create' : 'datamaster.status_kawin.create');
     }
 
     public function store(Request $request)
@@ -53,7 +53,7 @@ class StatuskawinController extends Controller
     {
         $kode_status_kawin = Crypt::decrypt($kode_status_kawin);
         $data['statuskawin'] = Statuskawin::where('kode_status_kawin', $kode_status_kawin)->first();
-        return view('datamaster.status_kawin.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.status_kawin.edit' : 'datamaster.status_kawin.edit', $data);
     }
 
     public function update($kode_status_kawin, Request $request)

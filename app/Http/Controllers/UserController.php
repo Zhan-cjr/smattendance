@@ -42,7 +42,7 @@ class UserController extends Controller
         $users->appends($request->all());
 
         $roles = Role::orderBy('name')->get();
-        return view('settings.users.index', compact('users', 'roles'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.users.index' : 'settings.users.index', compact('users', 'roles'));
     }
 
     public function create()
@@ -50,7 +50,7 @@ class UserController extends Controller
         $roles = Role::orderBy('name')->where('name', '!=', 'karyawan')->get();
         $cabangs = Cabang::orderBy('kode_cabang')->get();
         $departemens = Departemen::orderBy('kode_dept')->get();
-        return view('settings.users.create', compact('roles', 'cabangs', 'departemens'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.users.create' : 'settings.users.create', compact('roles', 'cabangs', 'departemens'));
     }
 
     public function edit($id)
@@ -68,7 +68,7 @@ class UserController extends Controller
     $adminUsers = User::role(Role::where('name', '!=', 'karyawan')->pluck('name')->toArray())->orderBy('name')->get();
     $userkaryawan = Userkaryawan::where('id_user', $user->id)->first();
     
-    return view('settings.users.edit', compact('user', 'roles', 'cabangs', 'departemens', 'userCabangs', 'userDepartemens', 'adminUsers', 'userkaryawan'));
+    return view(session('admin_theme', 'v2') === 'v2' ? 'v2.users.edit' : 'settings.users.edit', compact('user', 'roles', 'cabangs', 'departemens', 'userCabangs', 'userDepartemens', 'adminUsers', 'userkaryawan'));
 }
 
     public function store(Request $request)

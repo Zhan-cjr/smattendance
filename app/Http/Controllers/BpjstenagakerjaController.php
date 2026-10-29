@@ -33,13 +33,13 @@ class BpjstenagakerjaController extends Controller
         $data['bpjstenagakerja'] = $bpjstenagakerja;
         $data['departemen'] = Departemen::orderBy('kode_dept')->get();
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
-        return view('datamaster.bpjstenagakerja.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.bpjstenagakerja.index' : 'datamaster.bpjstenagakerja.index', $data);
     }
 
     public function create()
     {
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
-        return view('datamaster.bpjstenagakerja.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.bpjstenagakerja.create' : 'datamaster.bpjstenagakerja.create', $data);
     }
 
     public function store(Request $request)
@@ -116,7 +116,7 @@ class BpjstenagakerjaController extends Controller
         $kode_bpjs_tk = Crypt::decrypt($kode_bpjs_tk);
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
         $data['bpjstenagakerja'] = Bpjstenagakerja::where('kode_bpjs_tk', $kode_bpjs_tk)->first();
-        return view('datamaster.bpjstenagakerja.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.bpjstenagakerja.edit' : 'datamaster.bpjstenagakerja.edit', $data);
     }
 
     public function update(Request $request, $kode_bpjs_tk)

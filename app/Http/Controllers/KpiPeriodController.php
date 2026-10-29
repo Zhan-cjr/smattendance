@@ -18,8 +18,9 @@ class KpiPeriodController extends Controller
         if (!empty($request->nama_periode)) {
             $query->where('nama_periode', 'like', '%' . $request->nama_periode . '%');
         }
+        $active_periods_count = (clone $query)->where('is_active', 1)->count();
         $kpi_periods = $query->paginate(10);
-        return view('kpi.periods.index', compact('kpi_periods'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.periods.index' : 'kpi.periods.index', compact('kpi_periods', 'active_periods_count'));
     }
 
     /**
@@ -27,7 +28,7 @@ class KpiPeriodController extends Controller
      */
     public function create()
     {
-        return view('kpi.periods.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.periods.create' : 'kpi.periods.create');
     }
 
     /**
@@ -69,7 +70,7 @@ class KpiPeriodController extends Controller
     {
         $id = $request->id;
         $kpi_period = KpiPeriod::findOrFail($id);
-        return view('kpi.periods.edit', compact('kpi_period'));
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.kpi.periods.edit' : 'kpi.periods.edit', compact('kpi_period'));
     }
 
     /**

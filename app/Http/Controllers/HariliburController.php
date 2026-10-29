@@ -33,14 +33,14 @@ class HariliburController extends Controller
 
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
 
-        return view('harilibur.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.index' : 'harilibur.index', $data);
     }
 
     public function create()
     {
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
         $data['user'] = User::where('id', '=', auth()->user()->id)->first();
-        return view('harilibur.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.create' : 'harilibur.create', $data);
     }
 
     public function store(Request $request)
@@ -99,7 +99,7 @@ class HariliburController extends Controller
         $data['harilibur'] = Harilibur::where('kode_libur', $kode_libur)->first();
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
         $data['user'] = User::where('id', '=', auth()->user()->id)->first();
-        return view('harilibur.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.edit' : 'harilibur.edit', $data);
     }
 
     public function update(Request $request, $kode_libur)
@@ -152,7 +152,7 @@ class HariliburController extends Controller
         $data['harilibur'] = Harilibur::where('kode_libur', $kode_libur)
             ->join('cabang', 'hari_libur.kode_cabang', '=', 'cabang.kode_cabang')
             ->first();
-        return view('harilibur.aturharilibur', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.aturharilibur' : 'harilibur.aturharilibur', $data);
     }
 
     public function aturkaryawan($kode_libur)
@@ -165,7 +165,7 @@ class HariliburController extends Controller
         $data['harilibur'] = $harilibur;
 
 
-        return view('harilibur.aturkaryawan', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.aturkaryawan' : 'harilibur.aturkaryawan', $data);
     }
 
     function getkaryawan(Request $request)
@@ -201,7 +201,7 @@ class HariliburController extends Controller
         );
         $query->orderBy('nama_karyawan');
         $data['karyawan'] = $query->get();
-        return view('harilibur.getkaryawan', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.getkaryawan' : 'harilibur.getkaryawan', $data);
     }
 
 
@@ -231,7 +231,7 @@ class HariliburController extends Controller
             ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
             ->select('hari_libur_detail.*', 'karyawan.nik', 'karyawan.nik_show', 'karyawan.nama_karyawan', 'karyawan.kode_dept', 'departemen.nama_dept')
             ->where('kode_libur', $kode_libur)->get();
-        return view('harilibur.getkaryawanlibur', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.harilibur.getkaryawanlibur' : 'harilibur.getkaryawanlibur', $data);
     }
 
 

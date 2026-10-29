@@ -44,13 +44,21 @@
             'bg_indicator' => '#e65100',
             'color_nav_hover' => '#ff9800',
         ],
+        'rose' => [
+            'bg_body' => '#fff5f7',
+            'bg_nav' => '#ffffff',
+            'color_nav' => '#be185d',
+            'color_nav_active' => '#ec4899',
+            'bg_indicator' => '#be185d',
+            'color_nav_hover' => '#f472b6',
+        ],
         'dark' => [
-            'bg_body' => '#121212',
-            'bg_nav' => '#1e1e1e',
-            'color_nav' => '#e0e0e0', // Light text
-            'color_nav_active' => '#bb86fc', // Purple accent
-            'bg_indicator' => '#bb86fc',
-            'color_nav_hover' => '#cf6679',
+            'bg_body' => '#0b1120',
+            'bg_nav' => '#1e293b',
+            'color_nav' => '#0f172a',
+            'color_nav_active' => '#10b981',
+            'bg_indicator' => '#10b981',
+            'color_nav_hover' => '#34d399',
         ],
     ];
     $c = $colors[$scheme] ?? $colors['green'];
@@ -573,6 +581,11 @@
     <!-- App Capsule -->
     <div id="appCapsule">
         @yield('content')
+
+        <div style="text-align: center; padding: 14px 12px 90px; font-size: 11px; color: #94a3b8;">
+            SMATT_V4 &bull; Aplikasi ini dikembangkan oleh
+            <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" style="color: {{ $t['primary'] ?? '#32745e' }}; font-weight: 700; text-decoration: none;">ZhanSoft - Amnal</a>
+        </div>
     </div>
     <!-- * App Capsule -->
 

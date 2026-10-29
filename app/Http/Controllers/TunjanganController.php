@@ -63,7 +63,7 @@ class TunjanganController extends Controller
         $data['departemen'] = Departemen::orderBy('kode_dept')->get();
         $data['cabang'] = Cabang::orderBy('kode_cabang')->get();
         $data['jenis_tunjangan'] = $jenis_tunjangan;
-        return view('datamaster.tunjangan.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.tunjangan.index' : 'datamaster.tunjangan.index', $data);
     }
 
 
@@ -71,7 +71,7 @@ class TunjanganController extends Controller
     {
         $data['karyawan'] = Karyawan::orderby('nama_karyawan')->get();
         $data['jenis_tunjangan'] = Jenistunjangan::orderBy('kode_jenis_tunjangan')->get();
-        return view('datamaster.tunjangan.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.tunjangan.create' : 'datamaster.tunjangan.create', $data);
     }
 
 
@@ -85,7 +85,7 @@ class TunjanganController extends Controller
             ->orderBy('jenis_tunjangan.kode_jenis_tunjangan')
             ->get();
         $data['jenis_tunjangan'] = $detail_tunjangan;
-        return view('datamaster.tunjangan.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.tunjangan.edit' : 'datamaster.tunjangan.edit', $data);
     }
 
 

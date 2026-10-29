@@ -73,6 +73,21 @@ class IzinabsenController extends Controller
             $qizin->where('karyawan.kode_dept', $request->kode_dept);
         }
 
+        $statusCounts = (clone $qizin)->reorder()
+            ->select('presensi_izinabsen.status', DB::raw('count(*) as total'))
+            ->groupBy('presensi_izinabsen.status')
+            ->pluck('total', 'status')
+            ->toArray();
+        $data['stats'] = [
+            'pending' => $statusCounts[0] ?? 0,
+            'disetujui' => $statusCounts[1] ?? 0,
+            'ditolak' => $statusCounts[2] ?? 0,
+        ];
+        $data['tahun'] = $request->get('tahun', date('Y'));
+        $data['labelPeriode'] = (!empty($request->dari) && !empty($request->sampai))
+            ? $request->dari . ' s/d ' . $request->sampai
+            : ($data['tahun'] === 'all' ? 'Semua Tahun' : 'Tahun ' . $data['tahun']);
+
         if (!empty($request->status) || $request->status === '0') {
             $qizin->where('presensi_izinabsen.status', $request->status);
         }
@@ -80,6 +95,7 @@ class IzinabsenController extends Controller
             'presensi_izinabsen.*',
             'karyawan.nama_karyawan',
             'karyawan.nik_show',
+            'karyawan.foto',
             'jabatan.nama_jabatan',
             'karyawan.kode_dept',
             'karyawan.kode_cabang',
@@ -94,7 +110,7 @@ class IzinabsenController extends Controller
         $data['izinabsen'] = $izinabsen;
         $data['cabang'] = $user->getCabang();
         $data['departemen'] = $user->getDepartemen();
-        return view('izinabsen.index', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinabsen.index' : 'izinabsen.index', $data);
     }
 
     public function create()
@@ -131,7 +147,7 @@ class IzinabsenController extends Controller
 
         $data['karyawan'] = $karyawan;
 
-        return view('izinabsen.create', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinabsen.create' : 'izinabsen.create', $data);
     }
 
     public function edit($kode_izin)
@@ -179,7 +195,7 @@ class IzinabsenController extends Controller
         $data['karyawan'] = $karyawan;
         $data['izinabsen'] = $izinabsen;
 
-        return view('izinabsen.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinabsen.edit' : 'izinabsen.edit', $data);
     }
 
     public function store(Request $request)
@@ -316,7 +332,7 @@ class IzinabsenController extends Controller
         }
 
         $data['izinabsen'] = $izinabsen;
-        return view('izinabsen.approve', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinabsen.approve' : 'izinabsen.approve', $data);
     }
 
     public function storeapprove(Request $request, $kode_izin, ApprovalService $approvalService)
@@ -640,7 +656,7 @@ class IzinabsenController extends Controller
         }
 
         $data['izinabsen'] = $izinabsen;
-        return view('izinabsen.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.izinabsen.show' : 'izinabsen.show', $data);
     }
 
     /**

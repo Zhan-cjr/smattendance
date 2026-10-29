@@ -22,7 +22,8 @@ class BersihkanfotoController extends Controller
         $defaultDays = $setting->auto_hapus_foto_hari ?? 60;
         $cutoffDate = Carbon::now()->subDays($defaultDays)->format('Y-m-d');
 
-        return view('utilities.bersihkanfoto.index', compact('setting', 'defaultDays', 'cutoffDate'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.utilities.bersihkanfoto.index' : 'utilities.bersihkanfoto.index';
+        return view($view, compact('setting', 'defaultDays', 'cutoffDate'));
     }
 
     /**

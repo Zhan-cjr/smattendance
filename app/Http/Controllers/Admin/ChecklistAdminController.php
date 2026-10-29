@@ -56,7 +56,8 @@ class ChecklistAdminController extends Controller
         $departemens = Departemen::orderBy('nama_dept', 'asc')->get();
         $cabangs = Cabang::orderBy('nama_cabang', 'asc')->get();
 
-        return view('admin.checklist.checkpoints.index', compact('checkpoints', 'departemens', 'cabangs'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.checklist.checkpoints.index' : 'admin.checklist.checkpoints.index';
+        return view($view, compact('checkpoints', 'departemens', 'cabangs'));
     }
 
     /**
@@ -238,7 +239,8 @@ class ChecklistAdminController extends Controller
         $cabangs = Cabang::orderBy('nama_cabang', 'asc')->get();
         $departemens = Departemen::orderBy('nama_dept', 'asc')->get();
 
-        return view('admin.checklist.monitoring.index', compact('laporans', 'cabangs', 'departemens'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.checklist.monitoring.index' : 'admin.checklist.monitoring.index';
+        return view($view, compact('laporans', 'cabangs', 'departemens'));
     }
 
     /**
@@ -249,7 +251,8 @@ class ChecklistAdminController extends Controller
         $laporan = ChecklistLaporan::with(['karyawan', 'cabang', 'departemen', 'collages', 'details'])
             ->findOrFail($id);
 
-        return view('admin.checklist.monitoring.show', compact('laporan'));
+        $view = session('admin_theme', 'v2') === 'v2' ? 'v2.checklist.monitoring.show' : 'admin.checklist.monitoring.show';
+        return view($view, compact('laporan'));
     }
 
     /**

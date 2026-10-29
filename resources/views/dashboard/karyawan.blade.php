@@ -34,13 +34,13 @@
                     },
                     colors: {
                         brand: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
+                            50: '{{ $t["bg_body"] ?? "#f0fdfa" }}',
+                            100: '{{ $t["bg_body"] ?? "#ccfbf1" }}',
                             500: '{{ $t["primary"] ?? "#0f766e" }}',
-                            600: '#0d9488',
-                            700: '#0f766e',
-                            800: '#115e59',
-                            900: '#134e4a',
+                            600: '{{ $t["primary"] ?? "#0d9488" }}',
+                            700: '{{ $t["primary_dark"] ?? "#0f766e" }}',
+                            800: '{{ $t["primary_dark"] ?? "#115e59" }}',
+                            900: '{{ $t["primary_dark"] ?? "#134e4a" }}',
                         }
                     },
                     boxShadow: {
@@ -69,16 +69,16 @@
         }
 
         .hero-gradient {
-            background: linear-gradient(145deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 50%, #042f2e 100%);
+            background: linear-gradient(145deg, {{ $t['primary_light'] ?? '#58907D' }} 0%, {{ $t['primary'] ?? '#32745e' }} 50%, {{ $t['primary_dark'] ?? '#1e4b3d' }} 100%);
             border-bottom-left-radius: 36px;
             border-bottom-right-radius: 36px;
             position: relative;
-            box-shadow: 0 14px 35px -8px rgba(15, 118, 110, 0.35);
+            box-shadow: 0 14px 35px -8px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.35);
         }
         .dark .hero-gradient {
-            background: linear-gradient(145deg, #022c22 0%, #064e3b 50%, #031a15 100%) !important;
-            box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.8), 0 0 25px rgba(16, 185, 129, 0.15) !important;
-            border-bottom: 1px solid rgba(16, 185, 129, 0.25) !important;
+            background: linear-gradient(145deg, #0f172a 0%, {{ $t['primary_dark'] ?? '#1e293b' }} 55%, #020617 100%) !important;
+            box-shadow: 0 14px 35px -8px rgba(0, 0, 0, 0.8), 0 0 25px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.2) !important;
+            border-bottom: 1px solid rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.3) !important;
         }
 
         .glass-btn {
@@ -115,8 +115,8 @@
             position: relative;
         }
         .dark .avatar-ring {
-            background: linear-gradient(135deg, #10b981, rgba(255,255,255,0.3)) !important;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35) !important;
+            background: linear-gradient(135deg, {{ $t['primary_light'] ?? '#10b981' }}, rgba(255,255,255,0.3)) !important;
+            box-shadow: 0 8px 25px rgba({{ $t['primary_rgb'] ?? '16, 185, 129' }}, 0.35) !important;
         }
 
         .avatar-img {
@@ -369,7 +369,7 @@
                     <!-- Dynamic Action Button -->
                     @if (empty($presensi->jam_in))
                         <a href="/presensi/create" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-white shadow-md active:scale-95 transition-all"
-                           style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                           style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#059669' }} 0%, {{ $t['primary_light'] ?? '#10b981' }} 100%);">
                             <ion-icon name="finger-print" style="font-size:16px;"></ion-icon>
                             <span>Absen Masuk</span>
                         </a>
@@ -653,7 +653,8 @@
 
         {{-- ===== RETAIL OPENING & CLOSING CHECKLIST BANNER ===== --}}
         <div class="px-4 mt-4">
-            <a href="{{ route('checklist.index') }}" class="block p-3.5 rounded-2xl bg-gradient-to-r from-teal-800 via-teal-900 to-slate-900 text-white shadow-sm border border-teal-700/50 hover:brightness-105 active:scale-[0.99] transition-all text-decoration-none relative overflow-hidden">
+            <a href="{{ route('checklist.index') }}" class="block p-3.5 rounded-2xl text-white shadow-sm hover:brightness-105 active:scale-[0.99] transition-all text-decoration-none relative overflow-hidden"
+               style="background: linear-gradient(135deg, {{ $t['primary'] ?? '#115e59' }} 0%, {{ $t['primary_dark'] ?? '#134e4a' }} 55%, #0f172a 100%); border: 1px solid rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.4);">
                 <div class="absolute -right-3 -bottom-4 text-white/5 text-6xl pointer-events-none">
                     <i class="fa-solid fa-store"></i>
                 </div>
@@ -667,7 +668,7 @@
                             <p class="text-[10.5px] text-white/75 mt-0.5">Checklist report keadaan Kantor/Toko</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1 text-teal-300 font-bold text-xs">
+                    <div class="flex items-center gap-1 text-white/90 font-bold text-xs">
                         <span>Buka</span>
                         <i class="fa-solid fa-chevron-right text-[10px]"></i>
                     </div>
@@ -948,7 +949,7 @@
             <div id="birthdayModal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4" style="display:none;">
                 <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
                 <div class="relative rounded-[32px] w-full max-w-[340px] overflow-hidden shadow-2xl p-6 text-center text-white z-10"
-                     style="background: linear-gradient(145deg, {{ $t['primary'] ?? '#0f766e' }} 0%, #115e59 100%);">
+                     style="background: linear-gradient(145deg, {{ $t['primary'] ?? '#0f766e' }} 0%, {{ $t['primary_dark'] ?? '#115e59' }} 100%);">
                     <button onclick="hideBirthday()" class="absolute top-4 right-4 text-white/60 hover:text-white">
                         <i class="fa-solid fa-circle-xmark text-2xl"></i>
                     </button>
@@ -960,7 +961,7 @@
                             Semoga di usia ke-<strong>{{ $umur }}</strong> tahun ini selalu diberikan kesehatan, kesuksesan, dan kebahagiaan. 🎉
                         </p>
                     @endif
-                    <button onclick="hideBirthday()" class="w-full py-3 rounded-full bg-white font-bold text-teal-800 shadow-lg active:scale-95 transition-all">
+                    <button onclick="hideBirthday()" class="w-full py-3 rounded-full bg-white font-bold shadow-lg active:scale-95 transition-all" style="color: {{ $t['primary_dark'] ?? '#115e59' }};">
                         Terima Kasih! 🙏
                     </button>
                 </div>
@@ -969,7 +970,7 @@
 
         {{-- ===== DEVELOPER FOOTER ===== --}}
         <div class="text-center py-6 pb-24 text-[11px] text-slate-400 dark:text-slate-500">
-            <span>SMATT V3 &bull; Dikembangkan oleh <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" class="text-slate-600 dark:text-slate-400 font-bold hover:underline">ZhanSoft - Amnal</a></span>
+            <span>SMATT_V4 &bull; Aplikasi ini dikembangkan oleh <a href="https://www.instagram.com/amn4ll/?utm_source=ig_web_button_share_sheet" target="_blank" class="font-bold hover:underline" style="color: {{ $t['primary'] ?? '#0f766e' }};">ZhanSoft - Amnal</a></span>
         </div>
 
         {{-- ===== BOTTOM NAVIGATION ===== --}}
@@ -981,8 +982,14 @@
     <script>
         // ===== THEME TOGGLE (DARK / LIGHT MODE) =====
         function initTheme() {
-            var savedTheme = localStorage.getItem('smatt_theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var lastServerScheme = localStorage.getItem('smatt_server_scheme');
+            if (lastServerScheme !== serverScheme) {
+                localStorage.setItem('smatt_server_scheme', serverScheme);
+                localStorage.setItem('smatt_theme', serverScheme === 'dark' ? 'dark' : 'light');
+            }
+            var savedTheme = localStorage.getItem('smatt_theme') || (serverScheme === 'dark' ? 'dark' : 'light');
+            if (savedTheme === 'dark') {
                 document.documentElement.classList.add('dark');
                 document.body.classList.add('dark');
                 updateThemeIcon(true);

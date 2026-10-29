@@ -36,7 +36,7 @@
             top: 0;
             bottom: 0;
             width: 3px;
-            background: linear-gradient(180deg, #32745e 0%, rgba(50, 116, 94, 0.1) 100%);
+            background: linear-gradient(180deg, {{ $t['primary'] ?? '#32745e' }} 0%, rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.1) 100%);
             transform: translateX(-50%);
             border-radius: 2px;
             z-index: 1;
@@ -60,7 +60,7 @@
             background: #ffffff;
             border-radius: 16px;
             padding: 10px;
-            box-shadow: 0 4px 15px rgba(50, 116, 94, 0.08);
+            box-shadow: 0 4px 15px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.08);
             border: 1px solid rgba(50, 116, 110, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
@@ -85,11 +85,11 @@
             width: 16px;
             height: 16px;
             background: #ffffff;
-            border: 4px solid #32745e;
+            border: 4px solid {{ $t['primary'] ?? '#32745e' }};
             border-radius: 50%;
             z-index: 3;
             transform: translateX(-50%);
-            box-shadow: 0 0 0 4px rgba(50, 116, 94, 0.15);
+            box-shadow: 0 0 0 4px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.15);
         }
 
         /* Card Content Styling */
@@ -103,7 +103,7 @@
         .timeline-time {
             font-size: 11px;
             font-weight: 800;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             display: flex;
             align-items: center;
             gap: 3px;
@@ -164,7 +164,7 @@
         .timeline-loc {
             font-size: 10px;
             font-weight: 600;
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             display: flex;
             align-items: center;
             gap: 3px;
@@ -212,14 +212,14 @@
             right: 20px;
             width: 56px;
             height: 56px;
-            background: #32745e;
+            background: {{ $t['primary'] ?? '#32745e' }};
             color: white;
             border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 28px;
-            box-shadow: 0 8px 25px rgba(50, 116, 94, 0.3);
+            box-shadow: 0 8px 25px rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.3);
             z-index: 100;
             transition: all 0.3s;
         }
@@ -321,7 +321,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            color: #32745e;
+            color: {{ $t['primary'] ?? '#32745e' }};
             font-size: 16px;
             border: none;
         }
@@ -369,8 +369,8 @@
         .info-icon-box {
             width: 34px;
             height: 34px;
-            background: rgba(50, 116, 94, 0.08);
-            color: #32745e;
+            background: rgba({{ $t['primary_rgb'] ?? '50, 116, 94' }}, 0.08);
+            color: {{ $t['primary'] ?? '#32745e' }};
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -458,7 +458,7 @@
         </form>
 
         {{-- Timeline List --}}
-        <h2 class="px-1 text-[11px] font-bold text-[#32745e] uppercase tracking-widest mb-2 opacity-80">Aktivitas Kunjungan</h2>
+        <h2 class="px-1 text-[11px] font-bold text-[{{ $t['primary'] ?? '#32745e' }}] uppercase tracking-widest mb-2 opacity-80">Aktivitas Kunjungan</h2>
         
         <div class="timeline-modern">
             @if ($kunjungan->count() > 0)

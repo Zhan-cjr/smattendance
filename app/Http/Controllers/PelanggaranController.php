@@ -94,7 +94,7 @@ class PelanggaranController extends Controller
             return view('pelanggaran.index_mobile', compact('pelanggaran'));
         }
 
-        return view('pelanggaran.index', compact('pelanggaran', 'karyawans'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pelanggaran.index', compact('pelanggaran', 'karyawans'));
     }
 
     /**
@@ -133,7 +133,7 @@ class PelanggaranController extends Controller
         $user = auth()->user();
         $karyawans = $this->getKaryawansByAccess($user);
         
-        return view('pelanggaran.create', compact('karyawans'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pelanggaran.create', compact('karyawans'));
     }
 
     /**
@@ -251,7 +251,7 @@ class PelanggaranController extends Controller
             return view('pelanggaran.show_mobile', compact('pelanggaran', 'pengaturan'));
         }
 
-        return view('pelanggaran.show', compact('pelanggaran', 'pengaturan'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pelanggaran.show', compact('pelanggaran', 'pengaturan'));
     }
 
     /**
@@ -283,7 +283,7 @@ class PelanggaranController extends Controller
 
         $karyawans = $this->getKaryawansByAccess($user);
         
-        return view('pelanggaran.edit', compact('pelanggaran', 'karyawans'));
+        return view((session('admin_theme', 'v2') === 'v2' ? 'v2.' : '') . 'pelanggaran.edit', compact('pelanggaran', 'karyawans'));
     }
 
     /**

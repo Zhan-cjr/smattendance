@@ -18,7 +18,7 @@ class SlipgajiHarianController extends Controller
 {
     public function create()
     {
-        return view('payroll.slipgajiharian.create');
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.slipgajiharian.create' : 'payroll.slipgajiharian.create');
     }
 
     public function store(Request $request)
@@ -70,7 +70,7 @@ class SlipgajiHarianController extends Controller
             ->join('karyawan', 'slip_gaji_harian_detail.nik', '=', 'karyawan.nik')
             ->select('slip_gaji_harian_detail.nik', 'karyawan.nama_karyawan')
             ->get();
-        return view('payroll.slipgajiharian.edit', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.slipgajiharian.edit' : 'payroll.slipgajiharian.edit', $data);
     }
 
     public function update(Request $request, $kode_slip)
@@ -114,7 +114,7 @@ class SlipgajiHarianController extends Controller
             ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
             ->select('slip_gaji_harian_detail.nik', 'karyawan.nama_karyawan', 'jabatan.nama_jabatan', 'departemen.nama_dept')
             ->get();
-        return view('payroll.slipgajiharian.show', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.slipgajiharian.show' : 'payroll.slipgajiharian.show', $data);
     }
 
     public function cetak(Request $request)
@@ -184,7 +184,7 @@ class SlipgajiHarianController extends Controller
 
         $data['laporan_presensi'] = $laporan_presensi;
 
-        return view('laporan.slip_harian_cetak', $data);
+        return view(session('admin_theme', 'v2') === 'v2' ? 'v2.laporan.slip_harian_cetak' : 'laporan.slip_harian_cetak', $data);
     }
 
     public function destroy($kode_slip)
