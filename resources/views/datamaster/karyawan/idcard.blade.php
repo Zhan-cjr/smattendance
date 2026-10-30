@@ -1078,15 +1078,46 @@
                 buttonEl.disabled = true;
             }
 
-            // Render high-res image
-            html2canvas(target, {
-                backgroundColor: null,
-                scale: 4, // 4x Ultra HD rendering
+            // Simpan status dan transform sebelum capture
+            var flipContainer = document.getElementById('flipContainer');
+            var cardFlipper = flipContainer ? flipContainer.querySelector('.card-flipper') : null;
+            var isTargetBack = (elementId === 'idcard-back-area');
+            
+            // Siapkan style clone container
+            // Buat kloning elemen di luar viewport tanpa transform 3D / rotasi
+            var clone = target.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.transform = 'none';
+            clone.style.webkitTransform = 'none';
+            clone.style.margin = '0';
+            clone.style.width = '340px';
+            clone.style.minHeight = '540px';
+            clone.style.height = 'auto';
+            clone.style.zIndex = '-9999';
+            clone.style.boxShadow = 'none';
+            clone.style.overflow = 'hidden';
+            clone.style.borderRadius = '26px';
+            clone.style.background = '#ffffff';
+
+            document.body.appendChild(clone);
+
+            // Render high-res image dari elemen bersih
+            html2canvas(clone, {
+                backgroundColor: '#ffffff',
+                scale: 3, // 3x High Definition
                 useCORS: true,
                 allowTaint: true,
                 logging: false,
-                borderRadius: 26
+                width: 340,
+                height: clone.offsetHeight || 540,
+                windowWidth: 340,
+                scrollX: 0,
+                scrollY: 0
             }).then(function(canvas) {
+                document.body.removeChild(clone);
+
                 var link = document.createElement('a');
                 link.download = filename;
                 link.href = canvas.toDataURL('image/png');
@@ -1109,6 +1140,9 @@
                 }
             }).catch(function(e) {
                 console.error(e);
+                if (clone && clone.parentNode) {
+                    document.body.removeChild(clone);
+                }
                 if (buttonEl) {
                     buttonEl.innerHTML = originalBtnHtml;
                     buttonEl.disabled = false;
