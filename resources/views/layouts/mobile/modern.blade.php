@@ -11,7 +11,7 @@
 
     <script>
         (function() {
-            var serverScheme = "{{ $general_setting->mobile_theme_scheme ?? 'green' }}";
+            var serverScheme = "{{ $scheme ?? ($general_setting->mobile_theme_scheme ?? 'green') }}";
             var lastServerScheme = localStorage.getItem('smatt_server_scheme');
             if (lastServerScheme !== serverScheme) {
                 localStorage.setItem('smatt_server_scheme', serverScheme);

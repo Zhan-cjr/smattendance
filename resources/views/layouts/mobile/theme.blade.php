@@ -1,5 +1,10 @@
 @php
-    $scheme = $general_setting->mobile_theme_scheme ?? 'green';
+    $validSchemes = ['green', 'blue', 'red', 'purple', 'orange', 'rose', 'dark'];
+    $scheme = (auth()->check() && !empty(auth()->user()->mobile_theme_scheme) && in_array(auth()->user()->mobile_theme_scheme, $validSchemes, true))
+        ? auth()->user()->mobile_theme_scheme
+        : ((request()->cookie('smatt_user_mobile_scheme') && in_array(request()->cookie('smatt_user_mobile_scheme'), $validSchemes, true))
+            ? request()->cookie('smatt_user_mobile_scheme')
+            : ($general_setting->mobile_theme_scheme ?? 'green'));
     
     $colors = [
         'green' => [

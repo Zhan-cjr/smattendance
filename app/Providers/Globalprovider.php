@@ -29,21 +29,13 @@ class Globalprovider extends ServiceProvider
     public function boot(Guard $auth): void
     {
         // Share general_setting globally with try-catch to prevent errors during dump-autoload
+        $settings = null;
         try {
             $settings = Pengaturanumum::first();
             View::share('general_setting', $settings);
 
-            // Modern theme variables (shared globally for modern layout)
-            $scheme = $settings->mobile_theme_scheme ?? 'green';
-            $themeColors = [
-                'green' => ['primary' => '#32745e', 'primary_light' => '#58907D', 'primary_dark' => '#1e4b3d', 'primary_rgb' => '50, 116, 94', 'bg_body' => '#f0fdf9'],
-                'blue' => ['primary' => '#0d47a1', 'primary_light' => '#1976d2', 'primary_dark' => '#072a60', 'primary_rgb' => '13, 71, 161', 'bg_body' => '#eff6ff'],
-                'red' => ['primary' => '#b71c1c', 'primary_light' => '#d32f2f', 'primary_dark' => '#7f1212', 'primary_rgb' => '183, 28, 28', 'bg_body' => '#fef2f2'],
-                'purple' => ['primary' => '#4a148c', 'primary_light' => '#7b1fa2', 'primary_dark' => '#2c0b54', 'primary_rgb' => '74, 20, 140', 'bg_body' => '#faf5ff'],
-                'orange' => ['primary' => '#e65100', 'primary_light' => '#f57c00', 'primary_dark' => '#993600', 'primary_rgb' => '230, 81, 0', 'bg_body' => '#fff8f1'],
-                'rose' => ['primary' => '#be185d', 'primary_light' => '#ec4899', 'primary_dark' => '#831843', 'primary_rgb' => '190, 24, 93', 'bg_body' => '#fff5f7'],
-                'dark' => ['primary' => '#0f172a', 'primary_light' => '#334155', 'primary_dark' => '#020617', 'primary_rgb' => '15, 23, 42', 'bg_body' => '#070b14'],
-            ];
+            $scheme = $this->resolveMobileThemeScheme($settings);
+            $themeColors = $this->getMobileThemeColors();
             $t = $themeColors[$scheme] ?? $themeColors['green'];
             $isDark = ($scheme === 'dark');
             View::share('t', $t);
@@ -57,7 +49,7 @@ class Globalprovider extends ServiceProvider
         }
 
 
-        view()->composer('*', function ($view) use ($auth) {
+        view()->composer('*', function ($view) use ($auth, $settings) {
             static $composed = false;
             if ($composed)
                 return;
@@ -65,6 +57,14 @@ class Globalprovider extends ServiceProvider
             if ($auth->check()) {
                 /** @var \App\Models\User $user */
                 $user = $auth->user();
+
+                // Re-resolve per-user mobile theme scheme once auth session is available
+                $userScheme = $this->resolveMobileThemeScheme($settings, $user);
+                $themeColors = $this->getMobileThemeColors();
+                $t = $themeColors[$userScheme] ?? $themeColors['green'];
+                View::share('t', $t);
+                View::share('isDark', $userScheme === 'dark');
+                View::share('scheme', $userScheme);
                 $isSuperAdmin = $user->isSuperAdmin();
                 $userCabangs = $isSuperAdmin ? [] : $user->getCabangCodes();
                 $userDepartemens = $isSuperAdmin ? [] : $user->getDepartemenCodes();
@@ -171,5 +171,41 @@ class Globalprovider extends ServiceProvider
                 View::share($shareddata);
             }
         });
+    }
+
+    /**
+     * Get the available mobile theme color palettes.
+     */
+    private function getMobileThemeColors(): array
+    {
+        return [
+            'green' => ['primary' => '#32745e', 'primary_light' => '#58907D', 'primary_dark' => '#1e4b3d', 'primary_rgb' => '50, 116, 94', 'bg_body' => '#f0fdf9'],
+            'blue' => ['primary' => '#0d47a1', 'primary_light' => '#1976d2', 'primary_dark' => '#072a60', 'primary_rgb' => '13, 71, 161', 'bg_body' => '#eff6ff'],
+            'red' => ['primary' => '#b71c1c', 'primary_light' => '#d32f2f', 'primary_dark' => '#7f1212', 'primary_rgb' => '183, 28, 28', 'bg_body' => '#fef2f2'],
+            'purple' => ['primary' => '#4a148c', 'primary_light' => '#7b1fa2', 'primary_dark' => '#2c0b54', 'primary_rgb' => '74, 20, 140', 'bg_body' => '#faf5ff'],
+            'orange' => ['primary' => '#e65100', 'primary_light' => '#f57c00', 'primary_dark' => '#993600', 'primary_rgb' => '230, 81, 0', 'bg_body' => '#fff8f1'],
+            'rose' => ['primary' => '#be185d', 'primary_light' => '#ec4899', 'primary_dark' => '#831843', 'primary_rgb' => '190, 24, 93', 'bg_body' => '#fff5f7'],
+            'dark' => ['primary' => '#0f172a', 'primary_light' => '#334155', 'primary_dark' => '#020617', 'primary_rgb' => '15, 23, 42', 'bg_body' => '#070b14'],
+        ];
+    }
+
+    /**
+     * Resolve effective mobile theme scheme: user preference > cookie > global setting.
+     */
+    private function resolveMobileThemeScheme($settings, $user = null): string
+    {
+        $valid = ['green', 'blue', 'red', 'purple', 'orange', 'rose', 'dark'];
+
+        if ($user && !empty($user->mobile_theme_scheme) && in_array($user->mobile_theme_scheme, $valid, true)) {
+            return $user->mobile_theme_scheme;
+        }
+
+        $cookieScheme = request()->cookie('smatt_user_mobile_scheme');
+        if (!empty($cookieScheme) && in_array($cookieScheme, $valid, true)) {
+            return $cookieScheme;
+        }
+
+        $globalScheme = $settings->mobile_theme_scheme ?? 'green';
+        return in_array($globalScheme, $valid, true) ? $globalScheme : 'green';
     }
 }
